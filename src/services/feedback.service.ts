@@ -10,13 +10,13 @@ const submitFeedback = async (feedbackData: FeedbackData) => {
       created_at: new Date(),
     };
     
-    const result = await db.collection<Feedback>("feedback").insertOne(newFeedback);
+    const result = await db.collection("feedback").insertOne(newFeedback);
     
     if (!result.acknowledged) {
       throw new Error("Failed to insert feedback");
     }
     
-    const insertedFeedback = await db.collection<Feedback>("feedback").findOne({ _id: result.insertedId });
+    const insertedFeedback = await db.collection("feedback").findOne({ _id: result.insertedId });
     return insertedFeedback ? [insertedFeedback] : [];
   } catch (error) {
     console.error("Error submitting feedback:", error);

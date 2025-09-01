@@ -16,10 +16,10 @@ import { RetellWebClient } from "retell-client-js-sdk";
 import MiniLoader from "../loaders/mini-loader/miniLoader";
 import { toast } from "sonner";
 import { isLightColor, testEmail } from "@/lib/utils";
-import { ResponseService } from "@/services/responses.service";
+
 import { Interview } from "@/types/interview";
 import { FeedbackData } from "@/types/response";
-import { FeedbackService } from "@/services/feedback.service";
+
 import { FeedbackForm } from "@/components/call/feedbackForm";
 import {
   TabSwitchWarning,
@@ -36,7 +36,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { InterviewerService } from "@/services/interviewers.service";
+
 
 const webClient = new RetellWebClient();
 
@@ -88,12 +88,12 @@ function Call({ interview }: InterviewProps) {
     formData: Omit<FeedbackData, "interview_id">,
   ) => {
     try {
-      const result = await FeedbackService.submitFeedback({
+      const response = await axios.post('/api/feedback', {
         ...formData,
         interview_id: interview.id,
       });
 
-      if (result) {
+      if (response.data.success) {
         toast.success("Thank you for your feedback!");
         setIsFeedbackSubmitted(true);
         setIsDialogOpen(false);
@@ -204,9 +204,8 @@ function Call({ interview }: InterviewProps) {
     };
     setLoading(true);
 
-    const oldUserEmails: string[] = (
-      await ResponseService.getAllEmails(interview.id)
-    ).map((item) => item.email);
+    const emailsResponse = await axios.get(`/api/responses/emails?interviewId=${interview.id}`);
+    const oldUserEmails: string[] = emailsResponse.data.map((item: any) => item.email);
     const OldUser =
       oldUserEmails.includes(email) ||
       (interview?.respondents && !interview?.respondents.includes(email));
@@ -252,9 +251,8 @@ function Call({ interview }: InterviewProps) {
 
   useEffect(() => {
     const fetchInterviewer = async () => {
-      const interviewer = await InterviewerService.getInterviewerById(
-        interview.interviewer_id,
-      );
+      const response = await axios.get(`/api/interviewers/${interview.interviewer_id}`);
+      const interviewer = response.data;
       setInterviewerImg(interviewer.image);
     };
     fetchInterviewer();
@@ -264,10 +262,10 @@ function Call({ interview }: InterviewProps) {
   useEffect(() => {
     if (isEnded) {
       const updateInterview = async () => {
-        await ResponseService.saveResponse(
-          { is_ended: true, tab_switch_count: tabSwitchCount },
-          callId,
-        );
+        await axios.put(`/api/responses/call/${callId}`, {
+          is_ended: true,
+          tab_switch_count: tabSwitchCount,
+        });
       };
 
       updateInterview();

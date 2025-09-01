@@ -10,7 +10,7 @@ const createResponse = async (payload: any) => {
       created_at: new Date(),
     };
     
-    const result = await db.collection<Response>("response").insertOne(newResponse);
+    const result = await db.collection("response").insertOne(newResponse);
     
     if (!result.acknowledged) {
       console.log("Failed to create response");
@@ -27,7 +27,7 @@ const createResponse = async (payload: any) => {
 const saveResponse = async (payload: any, call_id: string) => {
   try {
     const db = await getDb();
-    const result = await db.collection<Response>("response").updateOne(
+    const result = await db.collection("response").updateOne(
       { call_id },
       { $set: { ...payload } }
     );
@@ -47,7 +47,7 @@ const saveResponse = async (payload: any, call_id: string) => {
 const getResponseByCallId = async (call_id: string) => {
   try {
     const db = await getDb();
-    const response = await db.collection<Response>("response").findOne({ call_id });
+    const response = await db.collection("response").findOne({ call_id });
     return response;
   } catch (error) {
     console.log(error);
@@ -58,7 +58,7 @@ const getResponseByCallId = async (call_id: string) => {
 const getAllResponses = async (interviewId: string) => {
   try {
     const db = await getDb();
-    const responses = await db.collection<Response>("response")
+    const responses = await db.collection("response")
       .find({ interview_id: interviewId })
       .sort({ created_at: -1 })
       .toArray();
@@ -73,7 +73,7 @@ const getAllResponses = async (interviewId: string) => {
 const updateResponse = async (id: string, updates: any) => {
   try {
     const db = await getDb();
-    const result = await db.collection<Response>("response").updateOne(
+    const result = await db.collection("response").updateOne(
       { _id: new ObjectId(id) },
       { $set: updates }
     );
@@ -107,7 +107,7 @@ const getResponseCountByOrganizationId = async (organizationId: string): Promise
 const getAllEmailAddressesForInterview = async (interviewId: string) => {
   try {
     const db = await getDb();
-    const responses = await db.collection<Response>("response")
+    const responses = await db.collection("response")
       .find({ interview_id: interviewId })
       .project({ email: 1 })
       .toArray();

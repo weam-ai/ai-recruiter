@@ -73,6 +73,17 @@ export const InterviewsProvider = ({ children }) => {
     }
   };
 
+  const getInterviewById = async (id) => {
+    try {
+      const response = await fetch(`/api/interviews/${id}`);
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error fetching interview by ID:", error);
+      return null;
+    }
+  };
+
   const fetchInterviews = () => {
     console.log("fetchInterviews called");
   };
@@ -85,6 +96,7 @@ export const InterviewsProvider = ({ children }) => {
     createInterview,
     updateInterview,
     deleteInterview,
+    getInterviewById,
     fetchInterviews,
   };
 

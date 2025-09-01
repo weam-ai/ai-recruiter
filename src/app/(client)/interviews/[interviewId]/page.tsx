@@ -8,14 +8,13 @@ import { useInterviews } from "@/contexts/interviews.context";
 import { Share2, Filter, Pencil, UserIcon, Eye, Palette } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useRouter } from "next/navigation";
-import { ResponseService } from "@/services/responses.service";
-import { ClientService } from "@/services/clients.service";
+import axios from "axios";
 import { Interview } from "@/types/interview";
 import { Response } from "@/types/response";
 import { formatTimestampToDateHHMM } from "@/lib/utils";
 import CallInfo from "@/components/call/callInfo";
 import SummaryInfo from "@/components/dashboard/interview/summaryInfo";
-import { InterviewService } from "@/services/interviews.service";
+
 import EditInterview from "@/components/dashboard/interview/editInterview";
 import Modal from "@/components/dashboard/Modal";
 import { toast } from "sonner";
@@ -108,7 +107,8 @@ function InterviewHome({ params, searchParams }: Props) {
     const fetchOrganizationData = async () => {
       try {
         if (organization?.id) {
-          const data = await ClientService.getOrganizationById(organization.id);
+          const response = await axios.post(`/api/clients?organizationId=${organization.id}&organizationName=${organization.name}`);
+          const data = response.data;
           if (data?.plan) {
             setCurrentPlan(data.plan);
           }
@@ -123,10 +123,8 @@ function InterviewHome({ params, searchParams }: Props) {
   useEffect(() => {
     const fetchResponses = async () => {
       try {
-        const response = await ResponseService.getAllResponses(
-          params.interviewId,
-        );
-        setResponses(response);
+        const response = await axios.get(`/api/responses?interviewId=${params.interviewId}`);
+        setResponses(response.data);
         setLoading(true);
       } catch (error) {
         console.error(error);
@@ -152,7 +150,7 @@ function InterviewHome({ params, searchParams }: Props) {
 
   const handleResponseClick = async (response: Response) => {
     try {
-      await ResponseService.saveResponse({ is_viewed: true }, response.call_id);
+      await axios.put(`/api/responses/call/${response.call_id}`, { is_viewed: true });
       if (responses) {
         const updatedResponses = responses.map((r) =>
           r.call_id === response.call_id ? { ...r, is_viewed: true } : r,
@@ -170,10 +168,9 @@ function InterviewHome({ params, searchParams }: Props) {
       const updatedIsActive = !isActive;
       setIsActive(updatedIsActive);
 
-      await InterviewService.updateInterview(
-        params.interviewId,
-        { is_active: updatedIsActive },
-      );
+      await axios.put(`/api/interviews/${params.interviewId}`, {
+        is_active: updatedIsActive,
+      });
 
       toast.success("Interview status updated", {
         description: `The interview is now ${
@@ -193,10 +190,9 @@ function InterviewHome({ params, searchParams }: Props) {
 
   const handleThemeColorChange = async (newColor: string) => {
     try {
-      await InterviewService.updateInterview(
-        params.interviewId,
-        { theme_color: newColor },
-      );
+      await axios.put(`/api/interviews/${params.interviewId}`, {
+        theme_color: newColor,
+      });
 
       toast.success("Theme color updated", {
         position: "bottom-right",

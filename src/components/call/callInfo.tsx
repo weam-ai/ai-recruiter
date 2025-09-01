@@ -8,7 +8,7 @@ import ReactAudioPlayer from "react-audio-player";
 import { DownloadIcon, TrashIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { ResponseService } from "@/services/responses.service";
+
 import { useRouter } from "next/navigation";
 import LoaderWithText from "@/components/loaders/loader-with-text/loaderWithText";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -86,12 +86,13 @@ function CallInfo({
     const fetchEmail = async () => {
       setIsLoading(true);
       try {
-        const response = await ResponseService.getResponseByCallId(call_id);
-        setEmail(response.email);
-        setName(response.name);
-        setCandidateStatus(response.candidate_status);
-        setInterviewId(response.interview_id);
-        setTabSwitchCount(response.tab_switch_count);
+        const response = await axios.get(`/api/responses/call/${call_id}`);
+        const data = response.data;
+        setEmail(data.email);
+        setName(data.name);
+        setCandidateStatus(data.candidate_status);
+        setInterviewId(data.interview_id);
+        setTabSwitchCount(data.tab_switch_count);
       } catch (error) {
         console.error(error);
       } finally {
@@ -126,12 +127,13 @@ function CallInfo({
 
   const onDeleteResponseClick = async () => {
     try {
-      const response = await ResponseService.getResponseByCallId(call_id);
+      const response = await axios.get(`/api/responses/call/${call_id}`);
+      const data = response.data;
 
-      if (response) {
-        const interview_id = response.interview_id;
+      if (data) {
+        const interview_id = data.interview_id;
 
-        await (ResponseService as any).updateResponse(call_id, { is_deleted: true });
+        await axios.put(`/api/responses/call/${call_id}`, { is_deleted: true });
 
         router.push(`/interviews/${interview_id}`);
 
@@ -203,10 +205,9 @@ function CallInfo({
                       value={candidateStatus}
                       onValueChange={async (newValue: string) => {
                         setCandidateStatus(newValue);
-                        await ResponseService.updateResponse(
-                          { candidate_status: newValue },
-                          call_id,
-                        );
+                        await axios.put(`/api/responses/call/${call_id}`, {
+                          candidate_status: newValue,
+                        });
                         onCandidateStatusChange(call_id, newValue);
                       }}
                     >

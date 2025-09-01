@@ -10,7 +10,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { useInterviews } from "@/contexts/interviews.context";
-import { InterviewService } from "@/services/interviews.service";
+import axios from "axios";
 import { CardTitle } from "../../ui/card";
 import Image from "next/image";
 import { toast } from "sonner";
@@ -115,10 +115,7 @@ function EditInterview({ interview }: EditInterviewProps) {
       if (!interview) {
         return;
       }
-      const response = await InterviewService.updateInterview(
-        interview?.id,
-        interviewData,
-      );
+      const response = await axios.put(`/api/interviews/${interview?.id}`, interviewData);
       setIsClicked(false);
       fetchInterviews();
       toast.success("Interview updated successfully.", {
@@ -137,7 +134,7 @@ function EditInterview({ interview }: EditInterviewProps) {
     }
 
     try {
-      await InterviewService.deleteInterview(interview.id);
+      await axios.delete(`/api/interviews/${interview.id}`);
       router.push("/dashboard");
     } catch (error) {
       console.error("Error deleting interview:", error);

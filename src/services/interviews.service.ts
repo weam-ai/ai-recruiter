@@ -4,7 +4,7 @@ import { Interview } from "@/types/database.types";
 const getAllInterviews = async (userId: string, organizationId: string) => {
   try {
     const db = await getDb();
-    const interviews = await db.collection<Interview>("interview")
+    const interviews = await db.collection("interview")
       .find({ user_id: userId, organization_id: organizationId })
       .sort({ created_at: -1 })
       .toArray();
@@ -19,7 +19,7 @@ const getAllInterviews = async (userId: string, organizationId: string) => {
 const getInterviewById = async (id: string) => {
   try {
     const db = await getDb();
-    const interview = await db.collection<Interview>("interview").findOne({ id });
+    const interview = await db.collection("interview").findOne({ id });
     return interview;
   } catch (error) {
     console.log(error);
@@ -35,14 +35,14 @@ const createInterview = async (payload: any) => {
       created_at: new Date(),
     };
     
-    const result = await db.collection<Interview>("interview").insertOne(newInterview);
+    const result = await db.collection("interview").insertOne(newInterview);
     
     if (!result.acknowledged) {
       console.log("Failed to create interview");
       return null;
     }
     
-    const insertedInterview = await db.collection<Interview>("interview").findOne({ _id: result.insertedId });
+    const insertedInterview = await db.collection("interview").findOne({ _id: result.insertedId });
     return insertedInterview;
   } catch (error) {
     console.log(error);
@@ -53,7 +53,7 @@ const createInterview = async (payload: any) => {
 const updateInterview = async (id: string, updates: any) => {
   try {
     const db = await getDb();
-    const result = await db.collection<Interview>("interview").updateOne(
+    const result = await db.collection("interview").updateOne(
       { id },
       { $set: updates }
     );
@@ -68,7 +68,7 @@ const updateInterview = async (id: string, updates: any) => {
 const deleteInterview = async (id: string) => {
   try {
     const db = await getDb();
-    const result = await db.collection<Interview>("interview").deleteOne({ id });
+    const result = await db.collection("interview").deleteOne({ id });
     
     return result.deletedCount > 0;
   } catch (error) {
@@ -80,7 +80,7 @@ const deleteInterview = async (id: string) => {
 const getInterviewsByOrganization = async (organizationId: string) => {
   try {
     const db = await getDb();
-    const interviews = await db.collection<Interview>("interview")
+    const interviews = await db.collection("interview")
       .find({ organization_id: organizationId })
       .sort({ created_at: -1 })
       .toArray();
@@ -95,7 +95,7 @@ const getInterviewsByOrganization = async (organizationId: string) => {
 const deactivateInterviewsByOrgId = async (organizationId: string) => {
   try {
     const db = await getDb();
-    const result = await db.collection<Interview>("interview").updateMany(
+    const result = await db.collection("interview").updateMany(
       { organization_id: organizationId },
       { $set: { is_active: false } }
     );

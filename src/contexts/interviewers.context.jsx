@@ -5,8 +5,8 @@ import React, { createContext, useContext, useState, useCallback } from "react";
 const InterviewersContext = createContext({
   interviewers: [],
   setInterviewers: () => {},
-  getAllInterviewers: async () => {},
-  createInterviewer: async () => {},
+  getAllInterviewers: async (clientId) => {},
+  createInterviewer: async (payload) => {},
   interviewersLoading: false,
   setInterviewersLoading: () => {},
 });

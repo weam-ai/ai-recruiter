@@ -5,12 +5,12 @@ import React, { createContext, useContext, useState } from "react";
 const ResponsesContext = createContext({
   responses: [],
   setResponses: () => {},
-  getAllResponses: async () => {},
-  getResponseByCallId: async () => null,
-  createResponse: async () => null,
-  saveResponse: async () => null,
-  updateResponse: async () => false,
-  deleteResponse: async () => false,
+  getAllResponses: async (interviewId) => {},
+  getResponseByCallId: async (callId) => null,
+  createResponse: async (payload) => null,
+  saveResponse: async (payload, callId) => null,
+  updateResponse: async (id, updates) => false,
+  deleteResponse: async (id) => false,
 });
 
 export const useResponses = () => useContext(ResponsesContext);
