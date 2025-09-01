@@ -251,11 +251,23 @@ function Call({ interview }: InterviewProps) {
 
   useEffect(() => {
     const fetchInterviewer = async () => {
-      const response = await axios.get(`/api/interviewers/${interview.interviewer_id}`);
-      const interviewer = response.data;
-      setInterviewerImg(interviewer.image);
+      try {
+        const response = await axios.get(`/api/interviewers/${interview.interviewer_id}`);
+        const interviewer = response.data;
+        setInterviewerImg(interviewer.image);
+      } catch (error) {
+        console.error("Error fetching interviewer:", error);
+        // Set default interviewer image if fetch fails
+        setInterviewerImg("/interviewers/Lisa.png");
+      }
     };
-    fetchInterviewer();
+    
+    if (interview.interviewer_id) {
+      fetchInterviewer();
+    } else {
+      // Set default image if no interviewer_id
+      setInterviewerImg("/interviewers/Lisa.png");
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [interview.interviewer_id]);
 

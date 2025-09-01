@@ -1,10 +1,10 @@
 "use client";
 
 import React from "react";
-import { Card, CardContent } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
-import { ArrowUp, Copy } from "lucide-react";
+import { ArrowUpRight, Copy } from "lucide-react";
 import Image from "next/image";
+import { Button } from "@/components/ui/button";
 
 function InterviewCard({ interview }) {
   const router = useRouter();
@@ -13,65 +13,72 @@ function InterviewCard({ interview }) {
     router.push(`/interviews/${interview.id || interview._id}`);
   };
 
+  const handleShareClick = (e) => {
+    e.stopPropagation();
+    // Navigate to the call/interview page
+    const callUrl = interview?.readable_slug 
+      ? `/call/${interview.readable_slug}`
+      : `/call/${interview.id || interview._id}`;
+    
+    window.open(callUrl, '_blank');
+  };
+
+  const handleCopyClick = (e) => {
+    e.stopPropagation();
+    // Copy the call URL to clipboard
+    const baseUrl = window.location.origin;
+    const callUrl = interview?.readable_slug 
+      ? `${baseUrl}/call/${interview.readable_slug}`
+      : `${baseUrl}/call/${interview.id || interview._id}`;
+    
+    navigator.clipboard.writeText(callUrl);
+    console.log("Interview URL copied to clipboard:", callUrl);
+  };
+
   return (
-    <Card
-      className="h-60 w-56 rounded-xl overflow-hidden shadow-md border-0 cursor-pointer hover:scale-105 transition-all duration-200"
-      onClick={handleCardClick}
-    >
-      <CardContent className="p-0 h-full flex flex-col">
-        {/* Purple top section - exact color from screenshot */}
-        <div className="w-full h-32 bg-purple-400 flex items-center justify-center relative">
-          {/* Top-right icons */}
-          <div className="absolute top-2 right-2 flex gap-1">
-            <button 
-              className="p-1 text-white hover:bg-purple-500 rounded transition-colors"
-              onClick={(e) => {
-                e.stopPropagation();
-                // Handle expand/duplicate
-                console.log("Expand/duplicate clicked");
-              }}
-            >
-              <ArrowUp size={14} />
-            </button>
-            <button 
-              className="p-1 text-white hover:bg-purple-500 rounded transition-colors"
-              onClick={(e) => {
-                e.stopPropagation();
-                // Handle copy
-                navigator.clipboard.writeText(interview.name || "Interview");
-                console.log("Copied to clipboard");
-              }}
-            >
-              <Copy size={14} />
-            </button>
-          </div>
-          
-          {/* Interview name */}
-          <span className="text-white text-lg font-semibold text-center px-2 truncate">
+    <div className="bg-white relative p-0 mt-4 inline-block cursor-pointer h-60 w-56 ml-1 mr-3 rounded-xl shrink-0 overflow-hidden shadow-md">
+      <div className="p-0" onClick={handleCardClick}>
+        {/* Top purple section with interview name */}
+        <div className="w-full h-40 overflow-hidden bg-indigo-600 flex items-center text-center">
+          <h3 className="font-semibold tracking-tight w-full mt-3 mx-2 text-white text-lg">
             {interview.name || "Untitled Interview"}
-          </span>
+          </h3>
         </div>
         
-        {/* White bottom section */}
-        <div className="flex-1 p-4 bg-white flex items-center">
-          {/* Left side - Avatar and response count */}
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full overflow-hidden">
-              <Image
-                src="/user-icon.png"
-                alt="User avatar"
-                width={32}
-                height={32}
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <span className="text-sm text-gray-700 font-medium">
-              Responses: {interview.response_count || 0}
-            </span>
+        {/* Bottom section with avatar and response count */}
+        <div className="flex flex-row items-center mx-4">
+          <div className="w-full overflow-hidden">
+            <Image
+              alt="Picture of the interviewer"
+              width={70}
+              height={70}
+              className="object-cover object-center"
+              src="/interviewers/Lisa.png"
+              loading="lazy"
+            />
+          </div>
+          <div className="text-black text-sm font-semibold mt-2 mr-2 whitespace-nowrap">
+            Responses: <span className="font-normal">{interview.response_count || 0}</span>
           </div>
         </div>
-      </CardContent>
-    </Card>
+        
+        {/* Top-right action buttons */}
+        <div className="absolute top-2 right-2 flex gap-1">
+          <Button 
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-secondary shadow-sm hover:bg-secondary/80 py-2 text-xs text-indigo-600 px-1 h-6"
+            onClick={handleShareClick}
+          >
+            <ArrowUpRight className="w-4 h-4" />
+          </Button>
+          <Button 
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-secondary shadow-sm hover:bg-secondary/80 py-2 text-xs text-indigo-600 px-1 h-6"
+            onClick={handleCopyClick}
+          >
+            <Copy className="w-4 h-4" />
+          </Button>
+        </div>
+      </div>
+    </div>
   );
 }
 

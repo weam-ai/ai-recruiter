@@ -37,47 +37,49 @@ function Interviews() {
 
   // Sample interview for demonstration (remove this in production)
   const sampleInterview = {
-    id: "sample",
-    name: "Similique beatae nih",
-    response_count: 1
+    id: "weam-ricky",
+    name: "Ricky Sample Interview",
+    response_count: 1,
+    readable_slug: "weam-ricky",
+    interviewer_id: 1, // Lisa's ID from constants
+    is_active: true,
+    description: "Assess your technical expertise and project experience in tackling complex challenges."
   };
 
 
 
   return (
-    <div className="p-8">
-      <div className="flex flex-col">
-        {/* Header Section */}
-        <div className="mb-10">
-          <h1 className="text-4xl font-bold text-gray-900 mb-3">
-            My Interviews
-          </h1>
-          <p className="text-lg text-gray-600 font-medium">
-            Start getting responses now!
-          </p>
+    <div className="p-6">
+      {/* Header Section */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          My Interviews
+        </h1>
+        <p className="text-gray-600">
+          Start getting responses now!
+        </p>
+      </div>
+      
+      {/* Cards Section */}
+      <div className="flex flex-wrap gap-0">
+        {/* Create Interview Card */}
+        <div onClick={handleCreateInterview} style={{ cursor: 'pointer' }} className="mr-4">
+          <CreateInterviewCard />
         </div>
         
-        {/* Cards Section */}
-        <div className="flex gap-8">
-          {/* Create Interview Card */}
-          <div onClick={handleCreateInterview} style={{ cursor: 'pointer' }}>
-            <CreateInterviewCard />
+        {/* Existing Interviews */}
+        {interviewsLoading ? (
+          <div className="h-60 w-56 rounded-xl bg-gray-300 flex items-center justify-center ml-1 mr-3">
+            <p className="text-gray-600">Loading interviews...</p>
           </div>
-          
-          {/* Existing Interviews */}
-          {interviewsLoading ? (
-            <div className="h-60 w-56 rounded-xl bg-gray-300 flex items-center justify-center">
-              <p className="text-gray-600">Loading interviews...</p>
-            </div>
-          ) : interviews && interviews.length > 0 ? (
-            interviews.map((interview) => (
-              <InterviewCard key={interview.id || interview._id} interview={interview} />
-            ))
-          ) : (
-            // Show sample interview for demonstration
-            <InterviewCard interview={sampleInterview} />
-          )}
-        </div>
+        ) : interviews && interviews.length > 0 ? (
+          interviews.map((interview) => (
+            <InterviewCard key={interview.id || interview._id} interview={interview} />
+          ))
+        ) : (
+          // Show sample interview for demonstration
+          <InterviewCard interview={sampleInterview} />
+        )}
       </div>
       
       <CreateInterviewModal 

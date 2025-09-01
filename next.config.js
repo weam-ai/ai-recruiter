@@ -9,6 +9,22 @@ const nextConfig = {
   experimental: {
     typedRoutes: false,
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'img.clerk.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.clerk.com',
+        port: '',
+        pathname: '/**',
+      },
+    ],
+  },
   async redirects() {
     return [
       {
