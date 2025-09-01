@@ -116,8 +116,8 @@ function EditInterview({ interview }: EditInterviewProps) {
         return;
       }
       const response = await InterviewService.updateInterview(
-        interviewData,
         interview?.id,
+        interviewData,
       );
       setIsClicked(false);
       fetchInterviews();

@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import LoaderWithLogo from "@/components/loaders/loader-with-logo/loaderWithLogo";
 import DetailsPopup from "@/components/dashboard/interview/create-popup/details";
 import QuestionsPopup from "@/components/dashboard/interview/create-popup/questions";
 import { InterviewBase } from "@/types/interview";
+import Modal from "@/components/dashboard/Modal";
+import { useInterviewers } from "@/contexts/interviewers.context";
 
 interface Props {
   open: boolean;
@@ -29,10 +31,24 @@ function CreateInterviewModal({ open, setOpen }: Props) {
   const [interviewData, setInterviewData] = useState<InterviewBase>(
     CreateEmptyInterviewData(),
   );
+  const { interviewers, getAllInterviewers } = useInterviewers();
+  const hasLoadedInterviewers = useRef(false);
+
+  // Debug logging
+  console.log("CreateInterviewModal render:", { open, interviewersCount: interviewers?.length });
 
   // Below for File Upload
   const [isUploaded, setIsUploaded] = useState(false);
   const [fileName, setFileName] = useState("");
+
+  // Load interviewers only once when modal opens
+  useEffect(() => {
+    if (open && !hasLoadedInterviewers.current) {
+      console.log("Modal opened, loading interviewers...");
+      getAllInterviewers();
+      hasLoadedInterviewers.current = true;
+    }
+  }, [open]); // Only depend on 'open', not 'getAllInterviewers'
 
   useEffect(() => {
     if (loading == true) {
@@ -50,12 +66,21 @@ function CreateInterviewModal({ open, setOpen }: Props) {
       // Below for File Upload
       setIsUploaded(false);
       setFileName("");
+      // Reset the flag when modal closes
+      hasLoadedInterviewers.current = false;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
+  const handleClose = () => {
+    console.log("Modal close handler called");
+    setOpen(false);
+  };
+
+  console.log("Modal should be visible:", open, "Interviewers available:", interviewers?.length);
+
   return (
-    <>
+    <Modal open={open} onClose={handleClose}>
       {loading ? (
         <div className="w-[38rem] h-[35.3rem]">
           <LoaderWithLogo />
@@ -79,7 +104,7 @@ function CreateInterviewModal({ open, setOpen }: Props) {
           setOpen={setOpen}
         />
       )}
-    </>
+    </Modal>
   );
 }
 

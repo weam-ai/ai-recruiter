@@ -34,8 +34,8 @@ export async function POST(req: Request, res: Response) {
       response_format: { type: "json_object" },
     });
 
-    const basePromptOutput = baseCompletion.choices[0] || {};
-    const content = basePromptOutput.message?.content;
+    const basePromptOutput = baseCompletion.choices[0];
+    const content = basePromptOutput?.message?.content || "";
 
     logger.info("Interview questions generated successfully");
 

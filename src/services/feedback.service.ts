@@ -1,20 +1,27 @@
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { getDb } from "@/lib/mongodb";
 import { FeedbackData } from "@/types/response";
-
-const supabase = createClientComponentClient();
+import { Feedback } from "@/types/database.types";
 
 const submitFeedback = async (feedbackData: FeedbackData) => {
-  const { error, data } = await supabase
-    .from("feedback")
-    .insert(feedbackData)
-    .select();
-
-  if (error) {
+  try {
+    const db = await getDb();
+    const newFeedback: any = {
+      ...feedbackData,
+      created_at: new Date(),
+    };
+    
+    const result = await db.collection<Feedback>("feedback").insertOne(newFeedback);
+    
+    if (!result.acknowledged) {
+      throw new Error("Failed to insert feedback");
+    }
+    
+    const insertedFeedback = await db.collection<Feedback>("feedback").findOne({ _id: result.insertedId });
+    return insertedFeedback ? [insertedFeedback] : [];
+  } catch (error) {
     console.error("Error submitting feedback:", error);
     throw error;
   }
-
-  return data;
 };
 
 export const FeedbackService = {

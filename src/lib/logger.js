@@ -1,23 +1,18 @@
-type LogLevel = "info" | "warn" | "error";
 class Logger {
-  private logWithLevel(
-    level: LogLevel,
-    message: string,
-    args?: string | object | "",
-  ) {
+  logWithLevel(level, message, args = "") {
     // eslint-disable-next-line no-console
     console[level](`[${level.toUpperCase()}] ${message} ${args ? args : ""}`);
   }
 
-  info(message: string, args?: string | object) {
+  info(message, args) {
     this.logWithLevel("info", message, args);
   }
 
-  warn(message: string, args?: string | object) {
+  warn(message, args) {
     this.logWithLevel("warn", message, args);
   }
 
-  error(message: string, args?: string | object) {
+  error(message, args) {
     this.logWithLevel("error", message, args);
   }
 }

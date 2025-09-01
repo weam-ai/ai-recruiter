@@ -1,92 +1,60 @@
 "use client";
 
-import { useInterviewers } from "@/contexts/interviewers.context";
 import React from "react";
-import { ChevronLeft } from "lucide-react";
-import { ChevronRight } from "lucide-react";
-import InterviewerCard from "@/components/dashboard/interviewer/interviewerCard";
-import CreateInterviewerButton from "@/components/dashboard/interviewer/createInterviewerButton";
+import Image from "next/image";
 
 function Interviewers() {
-  const { interviewers, interviewersLoading } = useInterviewers();
-
-  const slideLeft = () => {
-    var slider = document.getElementById("slider");
-    if (slider) {
-      slider.scrollLeft = slider.scrollLeft - 190;
+  // Static interviewer data to match the design
+  const staticInterviewers = [
+    {
+      id: "lisa",
+      name: "Explorer Lisa",
+      image: "/interviewers/Lisa.png",
+      description: "AI Interviewer"
+    },
+    {
+      id: "bob", 
+      name: "Empathetic Bob",
+      image: "/interviewers/Bob.png",
+      description: "AI Interviewer"
     }
-  };
-
-  const slideRight = () => {
-    var slider = document.getElementById("slider");
-    if (slider) {
-      slider.scrollLeft = slider.scrollLeft + 190;
-    }
-  };
-
-  function InterviewersLoader() {
-    return (
-      <>
-        <div className="flex">
-          <div className="h-40 w-36 ml-1 mr-3 flex-none animate-pulse rounded-xl bg-gray-300" />
-          <div className="h-40 w-36 ml-1 mr-3 flex-none animate-pulse rounded-xl bg-gray-300" />
-          <div className="h-40 w-36 ml-1 mr-3 flex-none animate-pulse rounded-xl bg-gray-300" />
-        </div>
-      </>
-    );
-  }
+  ];
 
   return (
-    <main className="p-8 pt-0 ml-12 mr-auto rounded-md">
-      <div className="flex flex-col items-left">
-        <div className="flex flex-row mt-5">
-          <div>
-            <h2 className="mr-2 text-2xl font-semibold tracking-tight mt-3">
-              Interviewers
-            </h2>
-            <h3 className=" text-sm tracking-tight text-gray-600 font-medium ">
-              Get to know them by clicking the profile.
-            </h3>
-          </div>
+    <div className="p-8">
+      <div className="flex flex-col">
+        <div className="flex flex-col mb-8">
+          <h2 className="text-3xl font-bold text-gray-900 mb-2">
+            Interviewers
+          </h2>
+          <h3 className="text-base text-gray-600 font-medium">
+            Get to know them by clicking the profile.
+          </h3>
         </div>
-        <div className="relative flex items-center mt-2 ">
-          <div
-            id="slider"
-            className=" h-44 pt-2 overflow-x-scroll scroll whitespace-nowrap scroll-smooth scrollbar-hide w-[40rem]"
-          >
-            {interviewers.length === 0 ? <CreateInterviewerButton /> : <></>}
-            {!interviewersLoading ? (
-              <>
-                {interviewers.map((interviewer) => (
-                  <InterviewerCard
-                    key={interviewer.id}
-                    interviewer={interviewer}
-                  />
-                ))}
-              </>
-            ) : (
-              <InterviewersLoader />
-            )}
-          </div>
-          {interviewers.length > 4 ? (
-            <div className="flex-row justify-center items-center space-y-10">
-              <ChevronRight
-                className="opacity-50 cursor-pointer hover:opacity-100"
-                size={40}
-                onClick={slideRight}
-              />
-              <ChevronLeft
-                className="opacity-50 cursor-pointer hover:opacity-100"
-                size={40}
-                onClick={() => slideLeft()}
-              />
+        
+        <div className="flex gap-8">
+          {staticInterviewers.map((interviewer) => (
+            <div 
+              key={interviewer.id} 
+              className="flex flex-col items-center cursor-pointer hover:scale-105 transition-transform duration-200 p-4 rounded-lg hover:bg-gray-50"
+            >
+              <div className="w-24 h-24 mb-4 flex items-center justify-center">
+                <Image
+                  src={interviewer.image}
+                  alt={interviewer.name}
+                  width={96}
+                  height={96}
+                  className="w-full h-full object-contain"
+                />
+              </div>
+              <p className="text-base font-semibold text-center text-gray-800">
+                {interviewer.name}
+              </p>
             </div>
-          ) : (
-            <></>
-          )}
+          ))}
         </div>
       </div>
-    </main>
+    </div>
   );
 }
 

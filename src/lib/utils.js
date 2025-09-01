@@ -1,18 +1,18 @@
-import { type ClassValue, clsx } from "clsx";
+import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
-export function cn(...inputs: ClassValue[]) {
+export function cn(...inputs) {
   return twMerge(clsx(inputs));
 }
 
-export function convertToAscii(inputString: string) {
+export function convertToAscii(inputString) {
   // remove non ascii characters
   const asciiString = inputString.replace(/[^\x20-\x7F]+/g, "");
 
   return asciiString;
 }
 
-export function formatTimestampToDateHHMM(timestamp: string): string {
+export function formatTimestampToDateHHMM(timestamp) {
   const date = new Date(timestamp);
 
   // Format date to YYYY-MM-DD
@@ -31,20 +31,20 @@ export function formatTimestampToDateHHMM(timestamp: string): string {
   return `${datePart} ${timePart}`;
 }
 
-export function testEmail(email: string) {
+export function testEmail(email) {
   const re = /\S+@\S+\.\S+/;
 
   return re.test(email);
 }
 
-export function convertSecondstoMMSS(seconds: number) {
+export function convertSecondstoMMSS(seconds) {
   const minutes = Math.trunc(seconds / 60);
   const remainingSeconds = Math.round(seconds % 60);
 
   return `${minutes}m ${remainingSeconds.toString().padStart(2, "0")}s`;
 }
 
-export function isLightColor(color: string) {
+export function isLightColor(color) {
   const hex = color?.replace("#", "");
   const r = parseInt(hex?.substring(0, 2), 16);
   const g = parseInt(hex?.substring(2, 4), 16);

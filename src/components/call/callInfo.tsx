@@ -131,7 +131,7 @@ function CallInfo({
       if (response) {
         const interview_id = response.interview_id;
 
-        await ResponseService.deleteResponse(call_id);
+        await (ResponseService as any).updateResponse(call_id, { is_deleted: true });
 
         router.push(`/interviews/${interview_id}`);
 

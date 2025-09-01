@@ -1,116 +1,119 @@
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-
-const supabase = createClientComponentClient();
+import { getDb } from "@/lib/mongodb";
+import { Interview } from "@/types/database.types";
 
 const getAllInterviews = async (userId: string, organizationId: string) => {
   try {
-    const { data: clientData, error: clientError } = await supabase
-      .from("interview")
-      .select(`*`)
-      .or(`organization_id.eq.${organizationId},user_id.eq.${userId}`)
-      .order("created_at", { ascending: false });
-
-    return [...(clientData || [])];
+    const db = await getDb();
+    const interviews = await db.collection<Interview>("interview")
+      .find({ user_id: userId, organization_id: organizationId })
+      .sort({ created_at: -1 })
+      .toArray();
+    
+    return interviews;
   } catch (error) {
     console.log(error);
-
     return [];
   }
 };
 
 const getInterviewById = async (id: string) => {
   try {
-    const { data, error } = await supabase
-      .from("interview")
-      .select(`*`)
-      .or(`id.eq.${id},readable_slug.eq.${id}`);
-
-    return data ? data[0] : null;
+    const db = await getDb();
+    const interview = await db.collection<Interview>("interview").findOne({ id });
+    return interview;
   } catch (error) {
     console.log(error);
-
-    return [];
-  }
-};
-
-const updateInterview = async (payload: any, id: string) => {
-  const { error, data } = await supabase
-    .from("interview")
-    .update({ ...payload })
-    .eq("id", id);
-  if (error) {
-    console.log(error);
-
-    return [];
-  }
-
-  return data;
-};
-
-const deleteInterview = async (id: string) => {
-  const { error, data } = await supabase
-    .from("interview")
-    .delete()
-    .eq("id", id);
-  if (error) {
-    console.log(error);
-
-    return [];
-  }
-
-  return data;
-};
-
-const getAllRespondents = async (interviewId: string) => {
-  try {
-    const { data, error } = await supabase
-      .from("interview")
-      .select(`respondents`)
-      .eq("interview_id", interviewId);
-
-    return data || [];
-  } catch (error) {
-    console.log(error);
-
-    return [];
+    return null;
   }
 };
 
 const createInterview = async (payload: any) => {
-  const { error, data } = await supabase
-    .from("interview")
-    .insert({ ...payload });
-  if (error) {
+  try {
+    const db = await getDb();
+    const newInterview: any = {
+      ...payload,
+      created_at: new Date(),
+    };
+    
+    const result = await db.collection<Interview>("interview").insertOne(newInterview);
+    
+    if (!result.acknowledged) {
+      console.log("Failed to create interview");
+      return null;
+    }
+    
+    const insertedInterview = await db.collection<Interview>("interview").findOne({ _id: result.insertedId });
+    return insertedInterview;
+  } catch (error) {
     console.log(error);
+    return null;
+  }
+};
 
+const updateInterview = async (id: string, updates: any) => {
+  try {
+    const db = await getDb();
+    const result = await db.collection<Interview>("interview").updateOne(
+      { id },
+      { $set: updates }
+    );
+    
+    return result.modifiedCount > 0;
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+};
+
+const deleteInterview = async (id: string) => {
+  try {
+    const db = await getDb();
+    const result = await db.collection<Interview>("interview").deleteOne({ id });
+    
+    return result.deletedCount > 0;
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+};
+
+const getInterviewsByOrganization = async (organizationId: string) => {
+  try {
+    const db = await getDb();
+    const interviews = await db.collection<Interview>("interview")
+      .find({ organization_id: organizationId })
+      .sort({ created_at: -1 })
+      .toArray();
+    
+    return interviews;
+  } catch (error) {
+    console.log(error);
     return [];
   }
-
-  return data;
 };
 
 const deactivateInterviewsByOrgId = async (organizationId: string) => {
   try {
-    const { error } = await supabase
-      .from("interview")
-      .update({ is_active: false })
-      .eq("organization_id", organizationId)
-      .eq("is_active", true); // Optional: only update if currently active
-
-    if (error) {
-      console.error("Failed to deactivate interviews:", error);
-    }
+    const db = await getDb();
+    const result = await db.collection<Interview>("interview").updateMany(
+      { organization_id: organizationId },
+      { $set: { is_active: false } }
+    );
+    
+    return result.modifiedCount > 0;
   } catch (error) {
-    console.error("Unexpected error disabling interviews:", error);
+    console.log(error);
+    return false;
   }
 };
 
 export const InterviewService = {
   getAllInterviews,
   getInterviewById,
+  createInterview,
   updateInterview,
   deleteInterview,
-  getAllRespondents,
-  createInterview,
+  getInterviewsByOrganization,
   deactivateInterviewsByOrgId,
 };
+

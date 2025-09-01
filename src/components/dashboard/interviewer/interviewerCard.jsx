@@ -1,15 +1,10 @@
 import { useState } from "react";
 import Image from "next/image";
-import { Card, CardContent, CardTitle } from "@/components/ui/card";
-import Modal from "@/components/dashboard/Modal";
-import { Interviewer } from "@/types/interviewer";
-import InterviewerDetailsModal from "@/components/dashboard/interviewer/interviewerDetailsModal";
+import { Card, CardContent, CardTitle } from "../../../ui/card.jsx";
+import Modal from "../../Modal";
+import InterviewerDetailsModal from "./interviewerDetailsModal";
 
-interface Props {
-  interviewer: Interviewer;
-}
-
-const interviewerCard = ({ interviewer }: Props) => {
+const interviewerCard = ({ interviewer }) => {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [open, setOpen] = useState(false);
 

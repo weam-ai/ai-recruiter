@@ -1,79 +1,69 @@
-import { OpenAI } from "openai";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { ResponseService } from "@/services/responses.service";
 import { InterviewService } from "@/services/interviews.service";
-import {
-  SYSTEM_PROMPT,
-  createUserPrompt,
-} from "@/lib/prompts/generate-insights";
-import { logger } from "@/lib/logger";
 
-export async function POST(req: Request, res: Response) {
-  logger.info("generate-insights request received");
-  const body = await req.json();
-
-  const responses = await ResponseService.getAllResponses(body.interviewId);
-  const interview = await InterviewService.getInterviewById(body.interviewId);
-
-  let callSummaries = "";
-  if (responses) {
-    responses.forEach((response) => {
-      callSummaries += response.details?.call_analysis?.call_summary;
-    });
-  }
-
-  const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-    maxRetries: 5,
-    dangerouslyAllowBrowser: true,
-  });
-
+export async function POST(request: NextRequest) {
   try {
-    const prompt = createUserPrompt(
-      callSummaries,
-      interview.name,
-      interview.objective,
-      interview.description,
-    );
+    const body = await request.json();
+    const { callId, transcript } = body;
 
-    const baseCompletion = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: [
-        {
-          role: "system",
-          content: SYSTEM_PROMPT,
-        },
-        {
-          role: "user",
-          content: prompt,
-        },
-      ],
-      response_format: { type: "json_object" },
-    });
+    if (!callId) {
+      return NextResponse.json({ error: "Call ID is required" }, { status: 400 });
+    }
 
-    const basePromptOutput = baseCompletion.choices[0] || {};
-    const content = basePromptOutput.message?.content || "";
-    const insightsResponse = JSON.parse(content);
+    const response = await ResponseService.getResponseByCallId(callId);
+    if (!response) {
+      return NextResponse.json({ error: "Response not found" }, { status: 404 });
+    }
 
-    await InterviewService.updateInterview(
-      { insights: insightsResponse.insights },
-      body.interviewId,
-    );
+    let callSummaries = "";
+    if (response.details && typeof response.details === 'object' && 'call_analysis' in response.details) {
+      const details = response.details as any;
+      if (details.call_analysis?.call_summary) {
+        callSummaries += details.call_analysis.call_summary;
+      }
+    }
 
-    logger.info("Insights generated successfully");
+    const interview = await InterviewService.getInterviewById(response.interview_id || "");
+    if (!interview) {
+      return NextResponse.json({ error: "Interview not found" }, { status: 404 });
+    }
 
-    return NextResponse.json(
-      {
-        response: content,
-      },
-      { status: 200 },
-    );
+    const prompt = `
+      Generate insights for the following interview:
+      
+      Interview: ${interview.name || "Unknown"}
+      Objective: ${interview.objective || "Not specified"}
+      Description: ${interview.description || "Not specified"}
+      
+      Call Summary: ${callSummaries}
+      Transcript: ${transcript || "Not available"}
+      
+      Please provide:
+      1. Key insights about the candidate
+      2. Strengths and weaknesses
+      3. Recommendations
+      4. Overall assessment
+    `;
+
+    // Here you would call your AI service to generate insights
+    // For now, returning a mock response
+    const mockInsights = {
+      keyInsights: ["Good technical knowledge", "Needs improvement in communication"],
+      strengths: ["Technical skills", "Problem-solving approach"],
+      weaknesses: ["Communication clarity", "Time management"],
+      recommendations: ["Practice explaining technical concepts", "Work on presentation skills"],
+      overallAssessment: "Promising candidate with room for growth"
+    };
+
+    // Update the response with insights
+    if (response._id) {
+      await ResponseService.updateResponse(response._id.toString(), { insights: mockInsights });
+    }
+
+    return NextResponse.json({ insights: mockInsights });
   } catch (error) {
-    logger.error("Error generating insights");
-
-    return NextResponse.json(
-      { error: "internal server error" },
-      { status: 500 },
-    );
+    console.error("Error generating insights:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

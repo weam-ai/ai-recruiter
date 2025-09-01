@@ -171,8 +171,8 @@ function InterviewHome({ params, searchParams }: Props) {
       setIsActive(updatedIsActive);
 
       await InterviewService.updateInterview(
-        { is_active: updatedIsActive },
         params.interviewId,
+        { is_active: updatedIsActive },
       );
 
       toast.success("Interview status updated", {
@@ -194,8 +194,8 @@ function InterviewHome({ params, searchParams }: Props) {
   const handleThemeColorChange = async (newColor: string) => {
     try {
       await InterviewService.updateInterview(
-        { theme_color: newColor },
         params.interviewId,
+        { theme_color: newColor },
       );
 
       toast.success("Theme color updated", {

@@ -252,7 +252,7 @@ function Call({ interview }: InterviewProps) {
 
   useEffect(() => {
     const fetchInterviewer = async () => {
-      const interviewer = await InterviewerService.getInterviewer(
+      const interviewer = await InterviewerService.getInterviewerById(
         interview.interviewer_id,
       );
       setInterviewerImg(interviewer.image);

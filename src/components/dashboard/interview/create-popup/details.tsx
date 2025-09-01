@@ -165,7 +165,7 @@ function DetailsPopup({
               {interviewers.map((item, key) => (
                 <div
                   className=" p-0 inline-block cursor-pointer ml-1 mr-5 rounded-xl shrink-0 overflow-hidden"
-                  key={item.id}
+                  key={item._id || item.id}
                 >
                   <button
                     className="absolute ml-9"
@@ -178,12 +178,17 @@ function DetailsPopup({
                     <Info size={18} color="#4f46e5" strokeWidth={2.2} />
                   </button>
                   <div
-                    className={`w-[96px] overflow-hidden rounded-full ${
-                      selectedInterviewer === item.id
-                        ? "border-4 border-indigo-600"
-                        : ""
+                    className={`w-[96px] overflow-hidden rounded-full transition-all duration-200 ${
+                      selectedInterviewer === (item._id || item.id)
+                        ? "border-4 border-indigo-600 ring-2 ring-indigo-200 scale-105"
+                        : "border-2 border-gray-200 hover:border-gray-300"
                     }`}
-                    onClick={() => setSelectedInterviewer(item.id)}
+                    onClick={() => {
+                      const interviewerId = item._id || item.id;
+                      console.log(`Clicked interviewer: ${item.name}, _id: ${item._id}, id: ${item.id}, Current selection: ${selectedInterviewer}`);
+                      setSelectedInterviewer(interviewerId);
+                      console.log(`New selection set to: ${interviewerId}`);
+                    }}
                   >
                     <Image
                       src={item.image}
@@ -193,8 +198,13 @@ function DetailsPopup({
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <CardTitle className="mt-0 text-xs text-center">
+                  <CardTitle className={`mt-0 text-xs text-center ${
+                    selectedInterviewer === (item._id || item.id) ? "text-indigo-600 font-semibold" : "text-gray-700"
+                  }`}>
                     {item.name}
+                    {selectedInterviewer === (item._id || item.id) && (
+                      <span className="block text-xs text-indigo-500 mt-1">✓ Selected</span>
+                    )}
                   </CardTitle>
                 </div>
               ))}
@@ -216,6 +226,18 @@ function DetailsPopup({
               <></>
             )}
           </div>
+          
+          {/* Selection status */}
+          {selectedInterviewer && selectedInterviewer !== BigInt(0) ? (
+            <div className="mt-2 p-2 bg-indigo-50 border border-indigo-200 rounded text-xs text-indigo-700">
+              ✓ Interviewer selected: {interviewers.find(i => (i._id || i.id) === selectedInterviewer)?.name}
+            </div>
+          ) : (
+            <div className="mt-2 p-2 bg-gray-50 border border-gray-200 rounded text-xs text-gray-600">
+              Please select an interviewer to continue
+            </div>
+          )}
+          
           <h3 className="text-sm font-medium">Objective:</h3>
           <Textarea
             value={objective}

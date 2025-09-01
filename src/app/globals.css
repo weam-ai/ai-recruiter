@@ -10,6 +10,7 @@
     @apply bg-background text-foreground;
   }
 }
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -27,14 +28,20 @@
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
 
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
     --accent: 210 40% 96.1%;
     --accent-foreground: 222.2 47.4% 11.2%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
@@ -81,6 +88,34 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Grid Layout Styles */
+.grid-layout {
+  display: grid;
+  grid-template-columns: 256px 1fr;
+  height: 100vh;
+  padding-top: 64px;
+}
+
+.sidebar {
+  background-color: #f3f4f6;
+  border-right: 1px solid #e5e7eb;
+  width: 256px;
+  height: 100%;
+}
+
+.main-content {
+  background-color: white;
+  overflow-y: auto;
+  width: 100%;
+}
+
+/* Basic fallback styles to ensure visibility */
+.navbar {
+  background-color: white;
+  border-bottom: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
 }
 
 .cl-logoImage {
