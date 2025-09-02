@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
-import { useClerk, useOrganization } from "@clerk/nextjs";
+import { useClerk, useOrganization } from "@/contexts/auth.context";
 import { InterviewBase, Question } from "@/types/interview";
 import { useInterviews } from "@/contexts/interviews.context";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -75,7 +75,7 @@ function QuestionsPopup({ interviewData, setProceed, setOpen }: Props) {
       // Convert BigInts to strings if necessary
       const sanitizedInterviewData = {
         ...interviewData,
-        interviewer_id: interviewData.interviewer_id.toString(),
+        interviewer_id: interviewData.interviewer_id, // Already a string now
         response_count: interviewData.response_count.toString(),
         logo_url: organization?.imageUrl || "",
       };
@@ -85,7 +85,7 @@ function QuestionsPopup({ interviewData, setProceed, setOpen }: Props) {
         interviewData: sanitizedInterviewData,
       });
       setIsClicked(false);
-      fetchInterviews();
+      fetchInterviews(user?.id, organization?.id);
       setOpen(false);
     } catch (error) {
       console.error("Error creating interview:", error);

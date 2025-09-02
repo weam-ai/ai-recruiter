@@ -13,7 +13,7 @@ export interface InterviewBase {
   user_id: string;
   organization_id: string;
   name: string;
-  interviewer_id: bigint;
+  interviewer_id: string; // Changed from bigint to string for MongoDB ObjectId
   objective: string;
   question_count: number;
   time_duration: string;

@@ -27,10 +27,17 @@ const getInterviewById = async (id: string) => {
       interview = await db.collection("interview").findOne({ readable_slug: id });
     }
     
-    // Fix for test interviews with invalid interviewer_id
-    if (interview && (id === "weam-ricky" || interview.readable_slug === "weam-ricky")) {
-      interview.interviewer_id = 1; // Use Lisa's ID
-      interview.is_active = true; // Ensure it's active
+    if (interview) {
+      // Ensure is_active is set to true by default for all interviews
+      if (interview.is_active === undefined) {
+        interview.is_active = true;
+      }
+      
+      // Fix for test interviews with invalid interviewer_id
+      if (id === "weam-ricky" || interview.readable_slug === "weam-ricky") {
+        interview.interviewer_id = 1; // Use Lisa's ID
+        interview.is_active = true; // Ensure it's active
+      }
     }
     
     return interview;

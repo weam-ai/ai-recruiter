@@ -133,8 +133,11 @@ export const InterviewsProvider = ({ children }) => {
     }
   };
 
-  const fetchInterviews = () => {
-    console.log("fetchInterviews called");
+  const fetchInterviews = async (userId, organizationId) => {
+    console.log("fetchInterviews called with:", { userId, organizationId });
+    if (userId && organizationId) {
+      await getAllInterviews(userId, organizationId);
+    }
   };
 
   const value = {

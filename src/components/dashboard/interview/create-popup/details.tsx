@@ -131,7 +131,7 @@ function DetailsPopup({
   useEffect(() => {
     if (!open) {
       setName("");
-      setSelectedInterviewer(BigInt(0));
+      setSelectedInterviewer("68b716ba68f8519199d3afd7"); // Default to Lisa's MongoDB ObjectId
       setObjective("");
       setIsAnonymous(false);
       setNumQuestions("");

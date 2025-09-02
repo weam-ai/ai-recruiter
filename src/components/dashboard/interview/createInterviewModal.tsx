@@ -15,7 +15,7 @@ const CreateEmptyInterviewData = (): InterviewBase => ({
   user_id: "",
   organization_id: "",
   name: "",
-  interviewer_id: BigInt(0),
+  interviewer_id: "68b716ba68f8519199d3afd7", // Default to Lisa's MongoDB ObjectId
   objective: "",
   question_count: 0,
   time_duration: "",

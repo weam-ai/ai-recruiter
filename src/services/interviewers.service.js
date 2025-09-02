@@ -32,7 +32,11 @@ const createInterviewer = async (payload) => {
 const getInterviewerById = async (id) => {
   try {
     const db = await getDb();
-    const interviewer = await db.collection("interviewer").findOne({ id: id });
+    // Try to find by _id first (MongoDB ObjectId), then by id field
+    let interviewer = await db.collection("interviewer").findOne({ _id: id });
+    if (!interviewer) {
+      interviewer = await db.collection("interviewer").findOne({ id: id });
+    }
     return interviewer;
   } catch (error) {
     console.error("Error fetching interviewer:", error);

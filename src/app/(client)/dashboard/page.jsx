@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { useOrganization, useUser } from "@clerk/nextjs";
+import { useOrganization, useUser } from "@/contexts/auth.context";
 import { useInterviews } from "@/contexts/interviews.context";
 import CreateInterviewCard from "@/components/dashboard/interview/createInterviewCard";
 import InterviewCard from "@/components/dashboard/interview/interviewCard";
@@ -9,7 +9,7 @@ import CreateInterviewModal from "@/components/dashboard/interview/createIntervi
 
 function Interviews() {
   const { organization } = useOrganization();
-  const { user } = useUser();
+  const { user, isLoaded } = useUser();
   const { interviews, getAllInterviews, interviewsLoading } = useInterviews();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const hasLoadedInterviews = useRef(false);
@@ -24,6 +24,35 @@ function Interviews() {
       console.log("Missing organization or user:", { organization: organization?.id, user: user?.id });
     }
   }, [organization?.id, user?.id]); // Removed getAllInterviews from dependencies
+
+  // Show loading state while auth is loading
+  if (!isLoaded) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Redirect to sign-in if not authenticated
+  if (!user) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-center">
+          <p className="text-gray-600 mb-4">Please sign in to access the dashboard</p>
+          <button 
+            onClick={() => window.location.href = '/sign-in'}
+            className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
+          >
+            Sign In
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const handleCreateInterview = () => {
     console.log("Create interview clicked - handleCreateInterview called");

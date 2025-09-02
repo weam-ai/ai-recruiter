@@ -4,7 +4,7 @@ import { Inter } from "next/font/google";
 import { cn } from "../../lib/utils";
 import Navbar from "../../components/navbar";
 import Providers from "../../components/providers";
-import { ClerkProvider } from "@clerk/nextjs";
+import { AuthProvider } from "../../contexts/auth.context";
 import { Toaster } from "sonner";
 import SideMenu from "../../components/sideMenu";
 import { usePathname } from "next/navigation";
@@ -15,10 +15,7 @@ export default function ClientLayout({ children }) {
   const pathname = usePathname();
 
   return (
-    <ClerkProvider
-      signInFallbackRedirectUrl={"/dashboard"}
-      afterSignOutUrl={"/sign-in"}
-    >
+    <AuthProvider>
       <Providers>
         {!pathname.includes("/sign-in") &&
           !pathname.includes("/sign-up") && <Navbar />}
@@ -44,6 +41,6 @@ export default function ClientLayout({ children }) {
           }}
         />
       </Providers>
-    </ClerkProvider>
+    </AuthProvider>
   );
 }

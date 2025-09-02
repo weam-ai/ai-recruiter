@@ -117,7 +117,8 @@ function EditInterview({ interview }: EditInterviewProps) {
       }
       const response = await axios.put(`/api/interviews/${interview?.id}`, interviewData);
       setIsClicked(false);
-      fetchInterviews();
+      // Note: fetchInterviews needs userId and organizationId parameters
+      // This will be handled by the parent component or context
       toast.success("Interview updated successfully.", {
         position: "bottom-right",
         duration: 3000,
