@@ -218,25 +218,100 @@ function Call({ interview }: InterviewProps) {
         { dynamic_data: data, interviewer_id: interview?.interviewer_id },
       );
       if (registerCallResponse.data.registerCallResponse.access_token) {
-        await webClient
-          .startCall({
-            accessToken:
-              registerCallResponse.data.registerCallResponse.access_token,
-          })
-          .catch(console.error);
-        setIsCalling(true);
-        setIsStarted(true);
+        const accessToken = registerCallResponse.data.registerCallResponse.access_token;
+        const callId = registerCallResponse.data.registerCallResponse.call_id;
+        
+        // Check if this is a mock/fallback token (for development)
+        if (accessToken.includes('mock_') || accessToken.includes('fallback_')) {
+          console.log("Using mock/fallback token for development");
+          // Set up development conversation interface
+          setIsCalling(true);
+          setIsStarted(true);
+          setCallId(callId);
+          
+          // Create response record
+          const response = await createResponse({
+            interview_id: interview.id,
+            call_id: callId,
+            email: email,
+            name: name,
+          });
+          
+          // Simulate interview flow with actual questions for development
+          const questions = interview?.questions || [];
+          let currentQuestionIndex = 0;
+          
+          const runInterviewSimulation = () => {
+            // Initial greeting with first question
+            setTimeout(() => {
+              if (questions.length > 0) {
+                const firstQuestion = questions[currentQuestionIndex]?.question || "Can you tell me about yourself?";
+                setLastInterviewerResponse(`Hi! Welcome to this interview. I'm excited to chat with you today.\n\n${firstQuestion}\n\n[DEVELOPMENT MODE: Audio disabled. In production, voice AI would ask this question and wait for your spoken response.]`);
+              } else {
+                setLastInterviewerResponse("Hi! Welcome to this interview. I'm excited to chat with you today. Can you tell me about yourself and your background?\n\n[DEVELOPMENT MODE: Audio disabled. In production, voice AI would ask this question.]");
+              }
+              setActiveTurn("agent");
+            }, 1000);
+            
+            // User response simulation
+            setTimeout(() => {
+              setActiveTurn("user");
+              setLastUserResponse("Thank you for having me. I'm a software developer with 5 years of experience in full-stack development, specializing in React and Node.js...\n\n[DEVELOPMENT MODE: This simulates your spoken response being transcribed.]");
+            }, 4000);
+            
+            // Continue with next questions
+            const continueInterview = (questionIndex) => {
+              if (questions.length > questionIndex && questionIndex < 3) { // Limit to first 3 questions for demo
+                setTimeout(() => {
+                  const nextQuestion = questions[questionIndex]?.question;
+                  setLastInterviewerResponse(`Great! That's very insightful. Let me ask you this: ${nextQuestion}\n\n[DEVELOPMENT MODE: This is question ${questionIndex + 1} of ${questions.length}. Voice AI would speak this naturally.]`);
+                  setActiveTurn("agent");
+                  
+                  // Simulate user response to next question
+                  setTimeout(() => {
+                    setActiveTurn("user");
+                    const responses = [
+                      "I'm really passionate about this field and I believe my experience aligns well with your needs...",
+                      "In my previous role, I led a team of developers to successfully deliver a complex project...",
+                      "My key strengths include problem-solving, teamwork, and staying current with technology trends..."
+                    ];
+                    setLastUserResponse(`${responses[questionIndex - 1] || "This would be my detailed response..."}\n\n[DEVELOPMENT MODE: Your voice response would be transcribed here.]`);
+                  }, 3000);
+                  
+                  // Continue to next question
+                  continueInterview(questionIndex + 1);
+                }, 7000);
+              }
+            };
+            
+            continueInterview(1);
+          };
+          
+          runInterviewSimulation();
+        } else {
+          // Production flow with real Retell client
+          try {
+            await webClient.startCall({
+              accessToken: accessToken,
+            });
+            setIsCalling(true);
+            setIsStarted(true);
+            setCallId(callId);
 
-        setCallId(registerCallResponse?.data?.registerCallResponse?.call_id);
-
-        const response = await createResponse({
-          interview_id: interview.id,
-          call_id: registerCallResponse.data.registerCallResponse.call_id,
-          email: email,
-          name: name,
-        });
+            const response = await createResponse({
+              interview_id: interview.id,
+              call_id: callId,
+              email: email,
+              name: name,
+            });
+          } catch (error) {
+            console.error("Error starting call:", error);
+            alert("Error starting the call. Please try again.");
+          }
+        }
       } else {
         console.log("Failed to register call");
+        alert("Failed to register call. Please try again.");
       }
     }
 
@@ -330,6 +405,18 @@ function Call({ interview }: InterviewProps) {
                 </div>
               )}
             </CardHeader>
+            
+            {/* Voice Functionality Info Banner */}
+            {isStarted && !isEnded && !isOldUser && (
+              <div className="mx-4 mb-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                <div className="text-sm text-blue-800">
+                  <strong>🎤 Voice Functionality:</strong> Currently in development mode. 
+                  To enable voice AI in production, configure Retell API keys and agents. 
+                  Questions shown are from your interview database.
+                </div>
+              </div>
+            )}
+            
             {!isStarted && !isEnded && !isOldUser && (
               <div className="w-fit min-w-[400px] max-w-[400px] mx-auto mt-2  border border-indigo-200 rounded-md p-2 m-2 bg-slate-50">
                 <div>

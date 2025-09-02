@@ -97,7 +97,28 @@ export const InterviewsProvider = ({ children }) => {
           theme_color: "#4F46E5",
           url: `${window.location.origin}/call/weam-ricky`,
           readable_slug: "weam-ricky",
-          questions: [],
+          questions: [
+            {
+              id: 1,
+              question: "Can you tell me about yourself and your professional background?"
+            },
+            {
+              id: 2,
+              question: "What motivated you to apply for this position and what interests you most about it?"
+            },
+            {
+              id: 3,
+              question: "Describe a challenging project you've worked on. How did you approach it and what was the outcome?"
+            },
+            {
+              id: 4,
+              question: "What are your greatest strengths and how do they relate to this role?"
+            },
+            {
+              id: 5,
+              question: "Where do you see yourself in the next 3-5 years, and how does this position align with your career goals?"
+            }
+          ],
           quotes: [],
           insights: [],
           respondents: [],
