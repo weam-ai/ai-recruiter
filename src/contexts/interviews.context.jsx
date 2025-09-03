@@ -16,9 +16,9 @@ export const InterviewsProvider = ({ children }) => {
   const [interviews, setInterviews] = useState([]);
   const [interviewsLoading, setInterviewsLoading] = useState(false);
 
-  const getAllInterviews = async (userId, organizationId) => {
+  const getAllInterviews = async (companyId) => {
     try {
-      const response = await fetch(`/api/interviews?userId=${userId}&organizationId=${organizationId}`);
+      const response = await fetch(`/api/interviews?companyId=${companyId}`);
       const data = await response.json();
       setInterviews(data);
       return data;
@@ -133,10 +133,10 @@ export const InterviewsProvider = ({ children }) => {
     }
   };
 
-  const fetchInterviews = async (userId, organizationId) => {
-    console.log("fetchInterviews called with:", { userId, organizationId });
-    if (userId && organizationId) {
-      await getAllInterviews(userId, organizationId);
+  const fetchInterviews = async (companyId) => {
+    console.log("fetchInterviews called with:", { companyId });
+    if (companyId) {
+      await getAllInterviews(companyId);
     }
   };
 

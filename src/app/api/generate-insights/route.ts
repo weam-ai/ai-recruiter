@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const interview = await InterviewService.getInterviewById(response.interview_id || "");
+    const interview = await InterviewService.getInterviewById(response.interview_id || "", response.companyId);
     if (!interview) {
       return NextResponse.json({ error: "Interview not found" }, { status: 404 });
     }

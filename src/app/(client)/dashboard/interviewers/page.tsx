@@ -64,7 +64,7 @@ function Interviewers() {
               >
                 <div className="w-24 h-24 mb-4 flex items-center justify-center">
                   <Image
-                    src={interviewer.image || "/interviewers/Lisa.png"}
+                    src={interviewer.image || "/avatars/7.png"}
                     alt={interviewer.name}
                     width={96}
                     height={96}

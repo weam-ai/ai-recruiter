@@ -1,12 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import { InterviewService } from "@/services/interviews.service";
+import { getSession } from "@/config/withSession";
 
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const interview = await InterviewService.getInterviewById(params.id);
+    // Get user session data
+    const session = await getSession();
+    const user = session.user;
+    
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const interview = await InterviewService.getInterviewById(params.id, user.companyId || session.companyId);
     
     if (!interview) {
       return NextResponse.json({ error: 'Interview not found' }, { status: 404 });
@@ -24,8 +33,16 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
+    // Get user session data
+    const session = await getSession();
+    const user = session.user;
+    
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const body = await request.json();
-    const success = await InterviewService.updateInterview(params.id, body);
+    const success = await InterviewService.updateInterview(params.id, body, user.companyId || session.companyId);
     
     if (!success) {
       return NextResponse.json({ error: 'Failed to update interview' }, { status: 500 });
@@ -43,7 +60,15 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    const success = await InterviewService.deleteInterview(params.id);
+    // Get user session data
+    const session = await getSession();
+    const user = session.user;
+    
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const success = await InterviewService.deleteInterview(params.id, user.companyId || session.companyId);
     
     if (!success) {
       return NextResponse.json({ error: 'Failed to delete interview' }, { status: 500 });

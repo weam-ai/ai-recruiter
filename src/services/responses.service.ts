@@ -44,10 +44,17 @@ const saveResponse = async (payload: any, call_id: string) => {
   }
 };
 
-const getResponseByCallId = async (call_id: string) => {
+const getResponseByCallId = async (call_id: string, companyId?: string) => {
   try {
     const db = await getDb();
-    const response = await db.collection("response").findOne({ call_id });
+    
+    // Build query with companyId filter
+    const query: any = { call_id };
+    if (companyId) {
+      query.companyId = companyId;
+    }
+    
+    const response = await db.collection("response").findOne(query);
     return response;
   } catch (error) {
     console.log(error);
@@ -55,11 +62,18 @@ const getResponseByCallId = async (call_id: string) => {
   }
 };
 
-const getAllResponses = async (interviewId: string) => {
+const getAllResponses = async (interviewId: string, companyId?: string) => {
   try {
     const db = await getDb();
+    
+    // Build query with companyId filter
+    const query: any = { interview_id: interviewId };
+    if (companyId) {
+      query.companyId = companyId;
+    }
+    
     const responses = await db.collection("response")
-      .find({ interview_id: interviewId })
+      .find(query)
       .sort({ created_at: -1 })
       .toArray();
     

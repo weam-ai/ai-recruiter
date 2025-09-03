@@ -1,10 +1,11 @@
 import { getDb } from "@/lib/mongodb.js";
 
-const getAllInterviewers = async (clientId) => {
+const getAllInterviewers = async (companyId) => {
   try {
     const db = await getDb();
+    const query = companyId ? { companyId } : {};
     const interviewers = await db.collection("interviewer")
-      .find({})
+      .find(query)
       .sort({ created_at: -1 })
       .toArray();
     return interviewers;
@@ -29,10 +30,19 @@ const createInterviewer = async (payload) => {
   }
 };
 
-const getInterviewerById = async (id) => {
+const getInterviewerById = async (id, companyId) => {
   try {
     const db = await getDb();
     const { ObjectId } = require('mongodb');
+    
+    // Build query with companyId filter
+    const buildQuery = (idField, idValue) => {
+      const query = { [idField]: idValue };
+      if (companyId) {
+        query.companyId = companyId;
+      }
+      return query;
+    };
     
     // Try to find by _id first (MongoDB ObjectId), then by id field
     let interviewer = null;
@@ -40,17 +50,17 @@ const getInterviewerById = async (id) => {
     // If id looks like a MongoDB ObjectId string, try to convert it
     if (id && id.length === 24 && /^[0-9a-fA-F]{24}$/.test(id)) {
       try {
-        interviewer = await db.collection("interviewer").findOne({ _id: new ObjectId(id) });
+        interviewer = await db.collection("interviewer").findOne(buildQuery("_id", new ObjectId(id)));
       } catch (objectIdError) {
         console.log("Failed to convert to ObjectId, trying as string:", objectIdError.message);
-        interviewer = await db.collection("interviewer").findOne({ _id: id });
+        interviewer = await db.collection("interviewer").findOne(buildQuery("_id", id));
       }
     } else {
-      interviewer = await db.collection("interviewer").findOne({ _id: id });
+      interviewer = await db.collection("interviewer").findOne(buildQuery("_id", id));
     }
     
     if (!interviewer) {
-      interviewer = await db.collection("interviewer").findOne({ id: id });
+      interviewer = await db.collection("interviewer").findOne(buildQuery("id", id));
     }
     
     return interviewer;

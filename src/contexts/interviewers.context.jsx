@@ -5,7 +5,7 @@ import React, { createContext, useContext, useState, useCallback } from "react";
 const InterviewersContext = createContext({
   interviewers: [],
   setInterviewers: () => {},
-  getAllInterviewers: async (clientId) => {},
+  getAllInterviewers: async (companyId) => {},
   createInterviewer: async (payload) => {},
   interviewersLoading: false,
   setInterviewersLoading: () => {},
@@ -17,13 +17,13 @@ export const InterviewersProvider = ({ children }) => {
   const [interviewers, setInterviewers] = useState([]);
   const [interviewersLoading, setInterviewersLoading] = useState(false);
 
-  const getAllInterviewers = useCallback(async (clientId = "") => {
+  const getAllInterviewers = useCallback(async (companyId = "") => {
     try {
-      console.log("getAllInterviewers called with clientId:", clientId);
+      console.log("getAllInterviewers called with companyId:", companyId);
       setInterviewersLoading(true);
       
       const response = await fetch(
-        `/api/interviewers?clientId=${clientId}`
+        `/api/interviewers?companyId=${companyId}`
       );
       
       console.log("API response status:", response.status);

@@ -7,9 +7,9 @@ import { RETELL_AGENT_GENERAL_PROMPT } from "@/lib/constants";
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const clientId = searchParams.get('clientId') || '';
+    const companyId = searchParams.get('companyId') || '';
     
-    const interviewers = await InterviewerService.getAllInterviewers(clientId);
+    const interviewers = await InterviewerService.getAllInterviewers(companyId);
     return NextResponse.json(interviewers);
   } catch (error) {
     console.error('Error fetching interviewers:', error);

@@ -1,16 +1,11 @@
 import { getDb } from "@/lib/mongodb";
 import { Interview } from "@/types/database.types";
 
-const getAllInterviews = async (userId: string, organizationId: string) => {
+const getAllInterviews = async (companyId: string) => {
   try {
     const db = await getDb();
     const interviews = await db.collection("interview")
-      .find({ 
-        $or: [
-          { "user.id": userId, companyId: organizationId },
-          { user_id: userId, organization_id: organizationId } // Fallback for old records
-        ]
-      })
+      .find({ companyId })
       .sort({ created_at: -1 })
       .toArray();
     
@@ -21,15 +16,25 @@ const getAllInterviews = async (userId: string, organizationId: string) => {
   }
 };
 
-const getInterviewById = async (id: string) => {
+const getInterviewById = async (id: string, companyId?: string) => {
   try {
     const db = await getDb();
+    
+    // Build query with companyId filter
+    const buildQuery = (field: string, value: string) => {
+      const query: any = { [field]: value };
+      if (companyId) {
+        query.companyId = companyId;
+      }
+      return query;
+    };
+    
     // First try to find by id, then by readable_slug
-    let interview = await db.collection("interview").findOne({ id });
+    let interview = await db.collection("interview").findOne(buildQuery("id", id));
     
     if (!interview) {
       // If not found by id, try by readable_slug
-      interview = await db.collection("interview").findOne({ readable_slug: id });
+      interview = await db.collection("interview").findOne(buildQuery("readable_slug", id));
     }
     
     if (interview) {
@@ -75,21 +80,30 @@ const createInterview = async (payload: any) => {
   }
 };
 
-const updateInterview = async (id: string, updates: any) => {
+const updateInterview = async (id: string, updates: any, companyId?: string) => {
   try {
     const db = await getDb();
     const { ObjectId } = require('mongodb');
     
+    // Build query with companyId filter
+    const buildQuery = (field: string, value: string) => {
+      const query: any = { [field]: value };
+      if (companyId) {
+        query.companyId = companyId;
+      }
+      return query;
+    };
+    
     // Try to find by id first, then by readable_slug
     let result = await db.collection("interview").updateOne(
-      { id },
+      buildQuery("id", id),
       { $set: updates }
     );
     
     if (result.modifiedCount === 0) {
       // If not found by id, try by readable_slug
       result = await db.collection("interview").updateOne(
-        { readable_slug: id },
+        buildQuery("readable_slug", id),
         { $set: updates }
       );
     }
@@ -101,10 +115,26 @@ const updateInterview = async (id: string, updates: any) => {
   }
 };
 
-const deleteInterview = async (id: string) => {
+const deleteInterview = async (id: string, companyId?: string) => {
   try {
     const db = await getDb();
-    const result = await db.collection("interview").deleteOne({ id });
+    
+    // Build query with companyId filter
+    const buildQuery = (field: string, value: string) => {
+      const query: any = { [field]: value };
+      if (companyId) {
+        query.companyId = companyId;
+      }
+      return query;
+    };
+    
+    // Try to find by id first, then by readable_slug
+    let result = await db.collection("interview").deleteOne(buildQuery("id", id));
+    
+    if (result.deletedCount === 0) {
+      // If not found by id, try by readable_slug
+      result = await db.collection("interview").deleteOne(buildQuery("readable_slug", id));
+    }
     
     return result.deletedCount > 0;
   } catch (error) {

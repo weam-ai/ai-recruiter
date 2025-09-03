@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import React, { useState } from "react";
-import { ChevronDown, Building2, User, LogOut } from "lucide-react";
-import { useAuth, useOrganization } from "@/contexts/auth.context";
+import { ChevronDown, User, LogOut } from "lucide-react";
+import { useAuth } from "@/contexts/auth.context";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -14,7 +14,6 @@ import {
 
 function Navbar() {
   const { user, signOut } = useAuth();
-  const { organization } = useOrganization();
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
   const handleSignOut = () => {
@@ -31,14 +30,7 @@ function Navbar() {
             </p>
             <span className="text-sm font-normal text-gray-500">Beta</span>
           </Link>
-          <p className="my-auto text-xl text-gray-400">/</p>
-          <div className="my-auto flex items-center gap-2">
-            <Building2 className="w-4 h-4 text-purple-600" />
-            <span className="text-sm font-medium text-gray-700">
-              {organization?.name || "Organization"}
-            </span>
-            <ChevronDown className="w-4 h-4 text-gray-500" />
-          </div>
+
         </div>
         <div className="flex items-center">
           <DropdownMenu open={isUserMenuOpen} onOpenChange={setIsUserMenuOpen}>

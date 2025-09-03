@@ -5,14 +5,13 @@ import { getSession } from "@/config/withSession";
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const userId = searchParams.get('userId');
-    const organizationId = searchParams.get('organizationId');
+    const companyId = searchParams.get('companyId');
 
-    if (!userId || !organizationId) {
-      return NextResponse.json({ error: 'Missing userId or organizationId' }, { status: 400 });
+    if (!companyId) {
+      return NextResponse.json({ error: 'Missing companyId' }, { status: 400 });
     }
 
-    const interviews = await InterviewService.getAllInterviews(userId, organizationId);
+    const interviews = await InterviewService.getAllInterviews(companyId);
     return NextResponse.json(interviews);
   } catch (error) {
     console.error('Error fetching interviews:', error);

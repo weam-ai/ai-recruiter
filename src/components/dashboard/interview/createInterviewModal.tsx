@@ -5,6 +5,7 @@ import QuestionsPopup from "@/components/dashboard/interview/create-popup/questi
 import { InterviewBase } from "@/types/interview";
 import Modal from "@/components/dashboard/Modal";
 import { useInterviewers } from "@/contexts/interviewers.context";
+import { useClerk } from "@/contexts/auth.context";
 
 interface Props {
   open: boolean;
@@ -12,8 +13,6 @@ interface Props {
 }
 
 const CreateEmptyInterviewData = (): InterviewBase => ({
-  user_id: "",
-  organization_id: "",
   name: "",
   interviewer_id: "68b716ba68f8519199d3afd7", // Default to Lisa's MongoDB ObjectId
   objective: "",
@@ -23,6 +22,11 @@ const CreateEmptyInterviewData = (): InterviewBase => ({
   questions: [],
   description: "",
   response_count: BigInt(0),
+  user: {
+    id: "",
+    email: ""
+  },
+  companyId: "",
 });
 
 function CreateInterviewModal({ open, setOpen }: Props) {
@@ -32,6 +36,7 @@ function CreateInterviewModal({ open, setOpen }: Props) {
     CreateEmptyInterviewData(),
   );
   const { interviewers, getAllInterviewers } = useInterviewers();
+  const { user } = useClerk();
   const hasLoadedInterviewers = useRef(false);
 
   // Debug logging
@@ -43,12 +48,12 @@ function CreateInterviewModal({ open, setOpen }: Props) {
 
   // Load interviewers only once when modal opens
   useEffect(() => {
-    if (open && !hasLoadedInterviewers.current) {
-      console.log("Modal opened, loading interviewers...");
-      getAllInterviewers();
+    if (open && !hasLoadedInterviewers.current && user?.companyId) {
+      console.log("Modal opened, loading interviewers for companyId:", user.companyId);
+      getAllInterviewers(user.companyId);
       hasLoadedInterviewers.current = true;
     }
-  }, [open]); // Only depend on 'open', not 'getAllInterviewers'
+  }, [open, user?.companyId]); // Depend on 'open' and 'user.companyId'
 
   useEffect(() => {
     if (loading == true) {

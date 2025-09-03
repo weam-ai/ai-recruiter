@@ -1,5 +1,6 @@
 import { InterviewerService } from "@/services/interviewers.service";
 import { NextRequest, NextResponse } from "next/server";
+import { getSession } from "@/config/withSession";
 import Retell from "retell-sdk";
 
 const retellClient = new Retell({
@@ -8,6 +9,14 @@ const retellClient = new Retell({
 
 export async function POST(request: NextRequest) {
   try {
+    // Get user session data
+    const session = await getSession();
+    const user = session.user;
+    
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const body = await request.json();
     const interviewerId = body.interviewer_id;
     
@@ -22,7 +31,7 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    const interviewer = await InterviewerService.getInterviewerById(interviewerId);
+    const interviewer = await InterviewerService.getInterviewerById(interviewerId, user.companyId || session.companyId);
     console.log("Found interviewer:", interviewer ? "Yes" : "No");
     
     if (!interviewer || !interviewer.agent_id) {
