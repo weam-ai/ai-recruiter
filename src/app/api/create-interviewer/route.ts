@@ -3,6 +3,7 @@ import { InterviewerService } from "@/services/interviewers.service";
 import { NextResponse, NextRequest } from "next/server";
 import Retell from "retell-sdk";
 import { INTERVIEWERS, RETELL_AGENT_GENERAL_PROMPT } from "@/lib/constants";
+import { getSession } from "@/config/withSession";
 
 const retellClient = new Retell({
   apiKey: process.env.RETELL_API_KEY || "",
@@ -13,6 +14,13 @@ export async function GET(res: NextRequest) {
   console.log("create-interviewer request received");
 
   try {
+    // Get user session data
+    const session = await getSession();
+    const user = session.user;
+    
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     // Create the LLM model for the interviewers
     const newModel = await retellClient.llm.create({
       model: "gpt-4o",
@@ -41,6 +49,11 @@ export async function GET(res: NextRequest) {
     const newInterviewer = await InterviewerService.createInterviewer({
       agent_id: newFirstAgent.agent_id,
       ...INTERVIEWERS.LISA,
+      user: {
+        id: user._id,
+        email: user.email,
+      },
+      companyId: user.companyId || session.companyId,
     });
 
     console.log("Saved Lisa interviewer to database:", newInterviewer);
@@ -57,6 +70,11 @@ export async function GET(res: NextRequest) {
     const newSecondInterviewer = await InterviewerService.createInterviewer({
       agent_id: newSecondAgent.agent_id,
       ...INTERVIEWERS.BOB,
+      user: {
+        id: user._id,
+        email: user.email,
+      },
+      companyId: user.companyId || session.companyId,
     });
 
     console.log("Saved Bob interviewer to database:", newSecondInterviewer);

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { InterviewerService } from "@/services/interviewers.service";
+import { getSession } from "@/config/withSession";
 
 export async function GET(request: NextRequest) {
   try {
@@ -16,8 +17,25 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    // Get user session data
+    const session = await getSession();
+    const user = session.user;
+    
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const body = await request.json();
-    const interviewer = await InterviewerService.createInterviewer(body);
+    const interviewerData = {
+      ...body,
+      user: {
+        id: user._id,
+        email: user.email,
+      },
+      companyId: user.companyId || session.companyId,
+    };
+    
+    const interviewer = await InterviewerService.createInterviewer(interviewerData);
     
     if (!interviewer) {
       return NextResponse.json({ error: 'Failed to create interviewer' }, { status: 500 });

@@ -13,6 +13,11 @@ export interface Response {
   analytics: any;
   candidate_status: string;
   tab_switch_count: number;
+  user: {
+    id: string;
+    email: string;
+  };
+  companyId: string;
 }
 
 export interface Analytics {
@@ -32,6 +37,11 @@ export interface FeedbackData {
   satisfaction: number | null;
   feedback: string | null;
   email: string | null;
+  user: {
+    id: string;
+    email: string;
+  };
+  companyId: string;
 }
 
 export interface CallData {

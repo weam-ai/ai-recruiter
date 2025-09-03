@@ -55,7 +55,15 @@ db.createCollection("interviewer", {
         empathy: { bsonType: "int" },
         exploration: { bsonType: "int" },
         rapport: { bsonType: "int" },
-        speed: { bsonType: "int" }
+        speed: { bsonType: "int" },
+        user: { 
+          bsonType: ["object", "null"],
+          properties: {
+            id: { bsonType: "string" },
+            email: { bsonType: "string" }
+          }
+        },
+        companyId: { bsonType: ["string", "null"] }
       }
     }
   }
@@ -115,7 +123,15 @@ db.createCollection("response", {
         is_analysed: { bsonType: "bool" },
         is_ended: { bsonType: "bool" },
         is_viewed: { bsonType: "bool" },
-        tab_switch_count: { bsonType: ["int", "null"] }
+        tab_switch_count: { bsonType: ["int", "null"] },
+        user: { 
+          bsonType: ["object", "null"],
+          properties: {
+            id: { bsonType: "string" },
+            email: { bsonType: "string" }
+          }
+        },
+        companyId: { bsonType: ["string", "null"] }
       }
     }
   }
@@ -133,7 +149,15 @@ db.createCollection("feedback", {
         interview_id: { bsonType: ["string", "null"] },
         email: { bsonType: ["string", "null"] },
         feedback: { bsonType: ["string", "null"] },
-        satisfaction: { bsonType: ["int", "null"] }
+        satisfaction: { bsonType: ["int", "null"] },
+        user: { 
+          bsonType: ["object", "null"],
+          properties: {
+            id: { bsonType: "string" },
+            email: { bsonType: "string" }
+          }
+        },
+        companyId: { bsonType: ["string", "null"] }
       }
     }
   }
@@ -143,6 +167,8 @@ db.createCollection("feedback", {
 db.organization.createIndex({ "id": 1 }, { unique: true });
 db.user.createIndex({ "id": 1 }, { unique: true });
 db.interviewer.createIndex({ "id": 1 }, { unique: true });
+db.interviewer.createIndex({ "user.id": 1 });
+db.interviewer.createIndex({ "companyId": 1 });
 db.interview.createIndex({ "id": 1 }, { unique: true });
 db.interview.createIndex({ "readable_slug": 1 });
 db.interview.createIndex({ "organization_id": 1 });
@@ -150,7 +176,11 @@ db.interview.createIndex({ "user_id": 1 });
 db.response.createIndex({ "id": 1 }, { unique: true });
 db.response.createIndex({ "call_id": 1 });
 db.response.createIndex({ "interview_id": 1 });
+db.response.createIndex({ "user.id": 1 });
+db.response.createIndex({ "companyId": 1 });
 db.feedback.createIndex({ "id": 1 }, { unique: true });
 db.feedback.createIndex({ "interview_id": 1 });
+db.feedback.createIndex({ "user.id": 1 });
+db.feedback.createIndex({ "companyId": 1 });
 
 print("MongoDB collections and indexes created successfully!");

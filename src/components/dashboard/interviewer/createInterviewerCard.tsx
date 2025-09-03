@@ -44,7 +44,10 @@ const createInterviewerCard = () => {
       rapport: rapport * 10,
       exploration: exploration * 10,
       speed: speed * 10,
-      user_id: user?.id,
+      user: {
+        id: user?._id || "",
+        email: user?.email || "",
+      },
       image: image,
     });
     setIsClicked(false);

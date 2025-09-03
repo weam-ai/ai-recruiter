@@ -41,6 +41,11 @@ export interface Interviewer {
   exploration: number;
   rapport: number;
   speed: number;
+  user: {
+    id: string;
+    email: string;
+  } | null;
+  companyId: string | null;
 }
 
 export interface Interview {
@@ -85,6 +90,11 @@ export interface Response {
   is_ended: boolean;
   is_viewed: boolean;
           tab_switch_count: number | null;
+  user: {
+    id: string;
+    email: string;
+  } | null;
+  companyId: string | null;
 }
 
 export interface Feedback {
@@ -95,6 +105,11 @@ export interface Feedback {
   email: string | null;
   feedback: string | null;
   satisfaction: number | null;
+  user: {
+    id: string;
+    email: string;
+  } | null;
+  companyId: string | null;
 }
 
 export interface Database {

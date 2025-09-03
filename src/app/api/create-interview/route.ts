@@ -2,11 +2,20 @@ import { nanoid } from "nanoid";
 import { NextResponse } from "next/server";
 import { InterviewService } from "@/services/interviews.service";
 import { logger } from "@/lib/logger";
+import { getSession } from "@/config/withSession";
 
 const base_url = process.env.NEXT_PUBLIC_LIVE_URL;
 
 export async function POST(req: Request, res: Response) {
   try {
+    // Get user session data
+    const session = await getSession();
+    const user = session.user;
+    
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const url_id = nanoid();
     const url = `${base_url}/call/${url_id}`;
     const body = await req.json();
@@ -29,6 +38,8 @@ export async function POST(req: Request, res: Response) {
       url: url,
       id: url_id,
       readable_slug: readableSlug,
+      user_id: user._id,
+      organization_id: user.companyId || session.companyId,
     });
 
     logger.info("Interview created successfully");
