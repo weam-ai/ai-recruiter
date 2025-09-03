@@ -73,10 +73,21 @@ const createInterview = async (payload: any) => {
 const updateInterview = async (id: string, updates: any) => {
   try {
     const db = await getDb();
-    const result = await db.collection("interview").updateOne(
+    const { ObjectId } = require('mongodb');
+    
+    // Try to find by id first, then by readable_slug
+    let result = await db.collection("interview").updateOne(
       { id },
       { $set: updates }
     );
+    
+    if (result.modifiedCount === 0) {
+      // If not found by id, try by readable_slug
+      result = await db.collection("interview").updateOne(
+        { readable_slug: id },
+        { $set: updates }
+      );
+    }
     
     return result.modifiedCount > 0;
   } catch (error) {

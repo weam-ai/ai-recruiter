@@ -32,11 +32,27 @@ const createInterviewer = async (payload) => {
 const getInterviewerById = async (id) => {
   try {
     const db = await getDb();
+    const { ObjectId } = require('mongodb');
+    
     // Try to find by _id first (MongoDB ObjectId), then by id field
-    let interviewer = await db.collection("interviewer").findOne({ _id: id });
+    let interviewer = null;
+    
+    // If id looks like a MongoDB ObjectId string, try to convert it
+    if (id && id.length === 24 && /^[0-9a-fA-F]{24}$/.test(id)) {
+      try {
+        interviewer = await db.collection("interviewer").findOne({ _id: new ObjectId(id) });
+      } catch (objectIdError) {
+        console.log("Failed to convert to ObjectId, trying as string:", objectIdError.message);
+        interviewer = await db.collection("interviewer").findOne({ _id: id });
+      }
+    } else {
+      interviewer = await db.collection("interviewer").findOne({ _id: id });
+    }
+    
     if (!interviewer) {
       interviewer = await db.collection("interviewer").findOne({ id: id });
     }
+    
     return interviewer;
   } catch (error) {
     console.error("Error fetching interviewer:", error);
