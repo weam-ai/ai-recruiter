@@ -16,14 +16,14 @@ function Interviews() {
 
   // Fetch interviews when component mounts (only once)
   useEffect(() => {
-    if (organization?.id && user?.id && !hasLoadedInterviews.current) {
-      console.log("Fetching interviews for:", { userId: user.id, orgId: organization.id });
-      getAllInterviews(user.id, organization.id);
+    if (organization?.id && user?._id && !hasLoadedInterviews.current) {
+      console.log("Fetching interviews for:", { userId: user._id, orgId: organization.id });
+      getAllInterviews(user._id, organization.id);
       hasLoadedInterviews.current = true;
-    } else if (!organization?.id || !user?.id) {
-      console.log("Missing organization or user:", { organization: organization?.id, user: user?.id });
+    } else if (!organization?.id || !user?._id) {
+      console.log("Missing organization or user:", { organization: organization?.id, user: user?._id });
     }
-  }, [organization?.id, user?.id]); // Removed getAllInterviews from dependencies
+  }, [organization?.id, user?._id]); // Removed getAllInterviews from dependencies
 
   // Show loading state while auth is loading
   if (!isLoaded) {

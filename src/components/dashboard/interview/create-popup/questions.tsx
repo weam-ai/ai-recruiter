@@ -66,7 +66,7 @@ function QuestionsPopup({ interviewData, setProceed, setOpen }: Props) {
 
   const onSave = async () => {
     try {
-      interviewData.user_id = user?.id || "";
+      interviewData.user_id = user?._id || "";
       interviewData.organization_id = organization?.id || "";
 
       interviewData.questions = questions;
@@ -85,7 +85,7 @@ function QuestionsPopup({ interviewData, setProceed, setOpen }: Props) {
         interviewData: sanitizedInterviewData,
       });
       setIsClicked(false);
-      fetchInterviews(user?.id, organization?.id);
+      fetchInterviews(user?._id, organization?.id);
       setOpen(false);
     } catch (error) {
       console.error("Error creating interview:", error);

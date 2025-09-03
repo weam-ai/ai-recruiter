@@ -4,8 +4,6 @@ import type { NextRequest } from 'next/server';
 // Define public routes that don't require authentication
 const publicRoutes = [
   "/",
-  "/sign-in",
-  "/sign-up",
   "/interview",
   "/call",
   "/api/register-call",
@@ -13,6 +11,8 @@ const publicRoutes = [
   "/api/generate-interview-questions",
   "/api/create-interviewer",
   "/api/analyze-communication",
+  "/api/auth/session",
+  "/api/auth/logout",
 ];
 
 // Define protected routes that require authentication
@@ -54,17 +54,10 @@ export function middleware(request: NextRequest) {
   // Check for authentication on protected routes
   if (isProtectedRoute(pathname)) {
     // For page routes, let the client-side auth handle the checks
-    // The middleware will only redirect if there's no session cookie
+    // Don't redirect in middleware - let the client-side auth handle it
     if (!pathname.startsWith('/api/')) {
-      const sessionCookie = request.cookies.get('foloup_auth_session');
-      
-      // Only redirect if we're sure there's no session
-      // This allows the client-side auth to handle the initial load
-      if (!sessionCookie && !pathname.includes('sign-in') && !pathname.includes('sign-up')) {
-        const signInUrl = new URL('/sign-in', request.url);
-        signInUrl.searchParams.set('redirect_url', pathname);
-        return NextResponse.redirect(signInUrl);
-      }
+      // Always allow the request through - client-side will handle auth
+      return NextResponse.next();
     }
   }
 
