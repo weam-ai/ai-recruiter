@@ -39,7 +39,7 @@ function InterviewCard({ interview }) {
     <div className="bg-white relative p-0 mt-4 inline-block cursor-pointer h-60 w-56 ml-1 mr-3 rounded-xl shrink-0 overflow-hidden shadow-md">
       <div className="p-0" onClick={handleCardClick}>
         {/* Top purple section with interview name */}
-        <div className="w-full h-40 overflow-hidden bg-indigo-600 flex items-center text-center">
+        <div className="w-full h-40 overflow-hidden bg-brand flex items-center text-center">
           <h3 className="font-semibold tracking-tight w-full mt-3 mx-2 text-white text-lg">
             {interview.name || "Untitled Interview"}
           </h3>
@@ -65,13 +65,13 @@ function InterviewCard({ interview }) {
         {/* Top-right action buttons */}
         <div className="absolute top-2 right-2 flex gap-1">
           <Button 
-            className="inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-secondary shadow-sm hover:bg-secondary/80 py-2 text-xs text-indigo-600 px-1 h-6"
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-secondary shadow-sm hover:bg-secondary/80 py-2 text-xs text-brand px-1 h-6"
             onClick={handleShareClick}
           >
             <ArrowUpRight className="w-4 h-4" />
           </Button>
           <Button 
-            className="inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-secondary shadow-sm hover:bg-secondary/80 py-2 text-xs text-indigo-600 px-1 h-6"
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-secondary shadow-sm hover:bg-secondary/80 py-2 text-xs text-brand px-1 h-6"
             onClick={handleCopyClick}
           >
             <Copy className="w-4 h-4" />

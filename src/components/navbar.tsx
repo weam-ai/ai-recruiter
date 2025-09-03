@@ -26,7 +26,7 @@ function Navbar() {
         <div className="flex flex-row gap-3 justify-center items-center">
           <Link href={"/dashboard"} className="flex items-center gap-2">
             <p className="px-2 py-1 text-2xl font-bold text-black">
-              FoloUp
+              Weam AI
             </p>
             <span className="text-sm font-normal text-gray-500">Beta</span>
           </Link>
@@ -36,7 +36,7 @@ function Navbar() {
           <DropdownMenu open={isUserMenuOpen} onOpenChange={setIsUserMenuOpen}>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center">
+                <div className="w-8 h-8 bg-brand rounded-full flex items-center justify-center">
                   <User className="w-4 h-4 text-white" />
                 </div>
                 <span className="text-sm font-medium text-gray-700">
