@@ -135,6 +135,58 @@ function Call({ interview }: InterviewProps) {
     }
   }, [email]);
 
+  // Request microphone and audio permissions on component mount to show browser permissions
+  useEffect(() => {
+    const requestInitialPermissions = async () => {
+      try {
+        // Check if we already have microphone permission
+        const micPermissionStatus = await navigator.permissions.query({ name: 'microphone' as PermissionName });
+        
+        if (micPermissionStatus.state === 'granted') {
+          // We already have microphone permission, no need to request again
+        } else {
+          // Request microphone permission to show the browser microphone icon
+          const stream = await navigator.mediaDevices.getUserMedia({ 
+            audio: true,
+            video: false 
+          });
+          // Stop the stream immediately as we just needed permission
+          stream.getTracks().forEach(track => track.stop());
+        }
+
+        // Initialize audio context to trigger sound permissions
+        if (typeof window !== 'undefined' && window.AudioContext) {
+          const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+          
+          // Create a silent audio buffer to initialize the audio context
+          const buffer = audioContext.createBuffer(1, 1, 22050);
+          const source = audioContext.createBufferSource();
+          source.buffer = buffer;
+          source.connect(audioContext.destination);
+          source.start();
+          
+          // Resume audio context if it's suspended (required for user interaction)
+          if (audioContext.state === 'suspended') {
+            await audioContext.resume();
+          }
+          
+          // Close the audio context after initialization
+          setTimeout(() => {
+            audioContext.close();
+          }, 100);
+        }
+      } catch (error) {
+        // Permission denied or not available - this is expected in some cases
+        console.log('Permissions not granted initially:', error);
+      }
+    };
+
+    // Only request on secure contexts (HTTPS or localhost)
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      requestInitialPermissions();
+    }
+  }, []);
+
   useEffect(() => {
     webClient.on("call_started", () => {
       console.log("Call started");
@@ -195,6 +247,45 @@ function Call({ interview }: InterviewProps) {
     }
   };
 
+  const requestMicrophonePermission = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        audio: true,
+        video: false 
+      });
+      // Stop the stream immediately as we just needed permission
+      stream.getTracks().forEach(track => track.stop());
+      
+      // Initialize audio context on user interaction to trigger sound permissions
+      if (typeof window !== 'undefined' && window.AudioContext) {
+        const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+        
+        // Create a silent audio buffer to initialize the audio context
+        const buffer = audioContext.createBuffer(1, 1, 22050);
+        const source = audioContext.createBufferSource();
+        source.buffer = buffer;
+        source.connect(audioContext.destination);
+        source.start();
+        
+        // Resume audio context if it's suspended
+        if (audioContext.state === 'suspended') {
+          await audioContext.resume();
+        }
+        
+        // Close the audio context after initialization
+        setTimeout(() => {
+          audioContext.close();
+        }, 100);
+      }
+      
+      return true;
+    } catch (error) {
+      console.error('Microphone permission denied:', error);
+      toast.error('Microphone access is required for this interview. Please allow microphone access and try again.');
+      return false;
+    }
+  };
+
   const startConversation = async () => {
     const data = {
       mins: interview?.time_duration,
@@ -203,6 +294,13 @@ function Call({ interview }: InterviewProps) {
       name: name || "not provided",
     };
     setLoading(true);
+
+    // Request microphone permission first
+    const hasPermission = await requestMicrophonePermission();
+    if (!hasPermission) {
+      setLoading(false);
+      return;
+    }
 
     const emailsResponse = await axios.get(`/api/responses/emails?interviewId=${interview.id}`);
     const oldUserEmails: string[] = emailsResponse.data.map((item: any) => item.email);
@@ -221,98 +319,35 @@ function Call({ interview }: InterviewProps) {
         const accessToken = registerCallResponse.data.registerCallResponse.access_token;
         const callId = registerCallResponse.data.registerCallResponse.call_id;
         
-        // Check if this is a mock/fallback token (for development)
-        if (accessToken.includes('mock_') || accessToken.includes('fallback_')) {
-          console.log("Using mock/fallback token for development");
-          // Set up development conversation interface
+        // Production flow with real Retell client
+        try {
+          // Ensure microphone permission before starting call
+          const stream = await navigator.mediaDevices.getUserMedia({ 
+            audio: true,
+            video: false 
+          });
+          // Stop the stream as Retell will handle its own stream
+          stream.getTracks().forEach(track => track.stop());
+          
+          await webClient.startCall({
+            accessToken: accessToken,
+          });
           setIsCalling(true);
           setIsStarted(true);
           setCallId(callId);
-          
-          // Create response record
+
           const response = await createResponse({
             interview_id: interview.id,
             call_id: callId,
             email: email,
             name: name,
           });
-          
-          // Simulate interview flow with actual questions for development
-          const questions = interview?.questions || [];
-          let currentQuestionIndex = 0;
-          
-          console.log("Interview questions loaded:", questions);
-          console.log("Interview objective:", interview?.objective);
-          console.log("Interview duration:", interview?.time_duration);
-          
-          const runInterviewSimulation = () => {
-            // Initial greeting with first question
-            setTimeout(() => {
-              if (questions.length > 0) {
-                const firstQuestion = questions[currentQuestionIndex]?.question || "Can you tell me about yourself?";
-                const objective = interview?.objective || "general interview";
-                setLastInterviewerResponse(`Hi ${name || 'there'}! Thank you for joining me today. Let's dive right in with our ${objective} interview.\n\n**Interview Question 1:** ${firstQuestion}\n\n[DEVELOPMENT MODE: This is the actual interview question from your setup. In production, voice AI would ask this question and wait for your spoken response.]`);
-              } else {
-                const objective = interview?.objective || "general interview";
-                setLastInterviewerResponse(`Hi ${name || 'there'}! Thank you for joining me today. Let's dive right in with our ${objective} interview.\n\n**Interview Question 1:** Can you tell me about yourself and your background?\n\n[DEVELOPMENT MODE: No specific questions were found in the interview setup. Please check that questions were properly configured when creating the interview.]`);
-              }
-              setActiveTurn("agent");
-            }, 1000);
-            
-            // User response simulation
-            setTimeout(() => {
-              setActiveTurn("user");
-              setLastUserResponse("Thank you for having me. I'm a software developer with 5 years of experience in full-stack development, specializing in React and Node.js...\n\n[DEVELOPMENT MODE: This simulates your spoken response being transcribed.]");
-            }, 4000);
-            
-            // Continue with next questions
-            const continueInterview = (questionIndex) => {
-              if (questions.length > questionIndex && questionIndex < 3) { // Limit to first 3 questions for demo
-                setTimeout(() => {
-                  const nextQuestion = questions[questionIndex]?.question;
-                  setLastInterviewerResponse(`Great! That's very insightful. Let me ask you this:\n\n**Interview Question ${questionIndex + 1}:** ${nextQuestion}\n\n[DEVELOPMENT MODE: This is question ${questionIndex + 1} of ${questions.length} from your interview setup. Voice AI would speak this naturally.]`);
-                  setActiveTurn("agent");
-                  
-                  // Simulate user response to next question
-                  setTimeout(() => {
-                    setActiveTurn("user");
-                    const responses = [
-                      "I'm really passionate about this field and I believe my experience aligns well with your needs...",
-                      "In my previous role, I led a team of developers to successfully deliver a complex project...",
-                      "My key strengths include problem-solving, teamwork, and staying current with technology trends..."
-                    ];
-                    setLastUserResponse(`${responses[questionIndex - 1] || "This would be my detailed response..."}\n\n[DEVELOPMENT MODE: Your voice response would be transcribed here.]`);
-                  }, 3000);
-                  
-                  // Continue to next question
-                  continueInterview(questionIndex + 1);
-                }, 7000);
-              }
-            };
-            
-            continueInterview(1);
-          };
-          
-          runInterviewSimulation();
-        } else {
-          // Production flow with real Retell client
-          try {
-            await webClient.startCall({
-              accessToken: accessToken,
-            });
-            setIsCalling(true);
-            setIsStarted(true);
-            setCallId(callId);
-
-            const response = await createResponse({
-              interview_id: interview.id,
-              call_id: callId,
-              email: email,
-              name: name,
-            });
-          } catch (error) {
-            console.error("Error starting call:", error);
-            alert("Error starting the call. Please try again.");
+        } catch (error) {
+          console.error("Error starting call:", error);
+          if (error.name === 'NotAllowedError') {
+            toast.error('Microphone access is required for this interview. Please allow microphone access and try again.');
+          } else {
+            toast.error('Error starting the call. Please check your Retell API configuration and try again.');
           }
         }
       } else {
@@ -412,16 +447,7 @@ function Call({ interview }: InterviewProps) {
               )}
             </CardHeader>
             
-            {/* Voice Functionality Info Banner */}
-            {isStarted && !isEnded && !isOldUser && (
-              <div className="mx-4 mb-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                <div className="text-sm text-blue-800">
-                  <strong>🎤 Voice Functionality:</strong> Currently in development mode. 
-                  To enable voice AI in production, configure Retell API keys and agents. 
-                  Questions shown are from your interview database.
-                </div>
-              </div>
-            )}
+
             
             {!isStarted && !isEnded && !isOldUser && (
               <div className="w-fit min-w-[400px] max-w-[400px] mx-auto mt-2  border border-indigo-200 rounded-md p-2 m-2 bg-slate-50">
@@ -480,7 +506,21 @@ function Call({ interview }: InterviewProps) {
                       Loading ||
                       (!interview?.is_anonymous && (!isValidEmail || !name))
                     }
-                    onClick={startConversation}
+                    onClick={async () => {
+                      // Initialize audio context on user interaction
+                      if (typeof window !== 'undefined' && window.AudioContext) {
+                        try {
+                          const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+                          if (audioContext.state === 'suspended') {
+                            await audioContext.resume();
+                          }
+                          audioContext.close();
+                        } catch (error) {
+                          console.log('Audio context initialization:', error);
+                        }
+                      }
+                      await startConversation();
+                    }}
                   >
                     {!Loading ? "Start Interview" : <MiniLoader />}
                   </Button>

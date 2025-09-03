@@ -13,47 +13,40 @@ export async function POST(request: NextRequest) {
     
     console.log("Registering call for interviewer ID:", interviewerId);
     
+    // Check if Retell API key is configured
+    if (!process.env.RETELL_API_KEY) {
+      console.error("RETELL_API_KEY is not configured");
+      return NextResponse.json(
+        { error: "Retell API key is not configured. Please set RETELL_API_KEY in your environment variables." },
+        { status: 500 }
+      );
+    }
+    
     const interviewer = await InterviewerService.getInterviewerById(interviewerId);
     console.log("Found interviewer:", interviewer ? "Yes" : "No");
     
-    // If no interviewer found, use a default agent_id or create a mock response
-    let agent_id = interviewer?.agent_id;
-    
-    if (!agent_id) {
-      console.log("No interviewer found, using default agent");
-      // For development/testing, create a mock response
-      const mockResponse = {
-        call_id: `mock_call_${Date.now()}`,
-        access_token: `mock_token_${Date.now()}`,
-        agent_id: "default_agent",
-      };
-      
-      return NextResponse.json({
-        registerCallResponse: mockResponse
-      });
+    if (!interviewer || !interviewer.agent_id) {
+      console.error("No interviewer found or no agent_id configured");
+      return NextResponse.json(
+        { error: "Interviewer not found or not properly configured with Retell agent" },
+        { status: 404 }
+      );
     }
     
     const registerCallResponse = await retellClient.call.createWebCall({
-      agent_id: agent_id,
+      agent_id: interviewer.agent_id,
       retell_llm_dynamic_variables: body.dynamic_data || {},
     });
 
+    console.log("Successfully registered call with Retell:", registerCallResponse.call_id);
     return NextResponse.json({
       registerCallResponse: registerCallResponse
     });
   } catch (error) {
     console.error("Error registering call:", error);
-    
-    // Provide a fallback response for development
-    const fallbackResponse = {
-      call_id: `fallback_call_${Date.now()}`,
-      access_token: `fallback_token_${Date.now()}`,
-      agent_id: "fallback_agent",
-    };
-    
-    console.log("Providing fallback response for development");
-    return NextResponse.json({
-      registerCallResponse: fallbackResponse
-    });
+    return NextResponse.json(
+      { error: "Failed to register call with Retell API. Please check your configuration." },
+      { status: 500 }
+    );
   }
 }
