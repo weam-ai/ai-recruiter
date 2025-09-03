@@ -38,8 +38,11 @@ export async function POST(req: Request, res: Response) {
       url: url,
       id: url_id,
       readable_slug: readableSlug,
-      user_id: user._id,
-      organization_id: user.companyId || session.companyId,
+      user: {
+        id: user._id,
+        email: user.email || "unknown@example.com"
+      },
+      companyId: user.companyId || session.companyId,
     });
 
     logger.info("Interview created successfully");

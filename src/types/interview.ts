@@ -10,8 +10,6 @@ export interface Quote {
 }
 
 export interface InterviewBase {
-  user_id: string;
-  organization_id: string;
   name: string;
   interviewer_id: string; // Changed from bigint to string for MongoDB ObjectId
   objective: string;
@@ -21,6 +19,11 @@ export interface InterviewBase {
   questions: Question[];
   description: string;
   response_count: bigint;
+  user: {
+    id: string;
+    email: string;
+  };
+  companyId: string;
 }
 
 export interface InterviewDetails {

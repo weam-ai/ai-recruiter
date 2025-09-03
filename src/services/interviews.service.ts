@@ -5,7 +5,12 @@ const getAllInterviews = async (userId: string, organizationId: string) => {
   try {
     const db = await getDb();
     const interviews = await db.collection("interview")
-      .find({ user_id: userId, organization_id: organizationId })
+      .find({ 
+        $or: [
+          { "user.id": userId, companyId: organizationId },
+          { user_id: userId, organization_id: organizationId } // Fallback for old records
+        ]
+      })
       .sort({ created_at: -1 })
       .toArray();
     
@@ -112,7 +117,12 @@ const getInterviewsByOrganization = async (organizationId: string) => {
   try {
     const db = await getDb();
     const interviews = await db.collection("interview")
-      .find({ organization_id: organizationId })
+      .find({ 
+        $or: [
+          { companyId: organizationId },
+          { organization_id: organizationId } // Fallback for old records
+        ]
+      })
       .sort({ created_at: -1 })
       .toArray();
     
@@ -127,7 +137,12 @@ const deactivateInterviewsByOrgId = async (organizationId: string) => {
   try {
     const db = await getDb();
     const result = await db.collection("interview").updateMany(
-      { organization_id: organizationId },
+      { 
+        $or: [
+          { companyId: organizationId },
+          { organization_id: organizationId } // Fallback for old records
+        ]
+      },
       { $set: { is_active: false } }
     );
     

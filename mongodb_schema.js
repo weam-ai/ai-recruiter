@@ -81,8 +81,6 @@ db.createCollection("interview", {
         name: { bsonType: ["string", "null"] },
         description: { bsonType: ["string", "null"] },
         objective: { bsonType: ["string", "null"] },
-        organization_id: { bsonType: ["string", "null"] },
-        user_id: { bsonType: ["string", "null"] },
         interviewer_id: { bsonType: ["int", "null"] },
         is_active: { bsonType: "bool" },
         is_anonymous: { bsonType: "bool" },
@@ -97,7 +95,15 @@ db.createCollection("interview", {
         respondents: { bsonType: ["array", "null"] },
         question_count: { bsonType: ["int", "null"] },
         response_count: { bsonType: ["int", "null"] },
-        time_duration: { bsonType: ["string", "null"] }
+        time_duration: { bsonType: ["string", "null"] },
+        user: { 
+          bsonType: ["object", "null"],
+          properties: {
+            id: { bsonType: "string" },
+            email: { bsonType: "string" }
+          }
+        },
+        companyId: { bsonType: ["string", "null"] }
       }
     }
   }
@@ -171,8 +177,8 @@ db.interviewer.createIndex({ "user.id": 1 });
 db.interviewer.createIndex({ "companyId": 1 });
 db.interview.createIndex({ "id": 1 }, { unique: true });
 db.interview.createIndex({ "readable_slug": 1 });
-db.interview.createIndex({ "organization_id": 1 });
-db.interview.createIndex({ "user_id": 1 });
+db.interview.createIndex({ "user.id": 1 });
+db.interview.createIndex({ "companyId": 1 });
 db.response.createIndex({ "id": 1 }, { unique: true });
 db.response.createIndex({ "call_id": 1 });
 db.response.createIndex({ "interview_id": 1 });

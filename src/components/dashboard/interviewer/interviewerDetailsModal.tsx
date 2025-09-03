@@ -3,14 +3,20 @@ import { CardTitle } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import ReactAudioPlayer from "react-audio-player";
 import { Interviewer } from "@/types/interviewer";
+import Modal from "@/components/dashboard/Modal";
 
 interface Props {
   interviewer: Interviewer | undefined;
+  isOpen?: boolean;
+  onClose?: () => void;
 }
 
-function InterviewerDetailsModal({ interviewer }: Props) {
+function InterviewerDetailsModal({ interviewer, isOpen = true, onClose }: Props) {
+  if (!isOpen || !interviewer) return null;
+
   return (
-    <div className="text-center w-[40rem]">
+    <Modal open={isOpen} onClose={onClose || (() => {})}>
+      <div className="text-center w-[40rem]">
       <CardTitle className="text-3xl text mt-0 p-0 font-semibold ">
         {interviewer?.name}
       </CardTitle>
@@ -96,7 +102,8 @@ function InterviewerDetailsModal({ interviewer }: Props) {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </Modal>
   );
 }
 
