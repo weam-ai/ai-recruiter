@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --port 3002",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -73,7 +73,8 @@
     "tailwindcss-animate": "^1.0.7",
     "uuid": "^10.0.0",
     "yarn": "^1.22.22",
-    "zod": "^3.22.4"
+    "zod": "^3.22.4",
+    "iron-session": "^8.0.4"
   },
   "devDependencies": {
     "@types/node": "^20",
