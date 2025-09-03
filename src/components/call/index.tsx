@@ -241,14 +241,20 @@ function Call({ interview }: InterviewProps) {
           const questions = interview?.questions || [];
           let currentQuestionIndex = 0;
           
+          console.log("Interview questions loaded:", questions);
+          console.log("Interview objective:", interview?.objective);
+          console.log("Interview duration:", interview?.time_duration);
+          
           const runInterviewSimulation = () => {
             // Initial greeting with first question
             setTimeout(() => {
               if (questions.length > 0) {
                 const firstQuestion = questions[currentQuestionIndex]?.question || "Can you tell me about yourself?";
-                setLastInterviewerResponse(`Hi! Welcome to this interview. I'm excited to chat with you today.\n\n${firstQuestion}\n\n[DEVELOPMENT MODE: Audio disabled. In production, voice AI would ask this question and wait for your spoken response.]`);
+                const objective = interview?.objective || "general interview";
+                setLastInterviewerResponse(`Hi ${name || 'there'}! Thank you for joining me today. Let's dive right in with our ${objective} interview.\n\n**Interview Question 1:** ${firstQuestion}\n\n[DEVELOPMENT MODE: This is the actual interview question from your setup. In production, voice AI would ask this question and wait for your spoken response.]`);
               } else {
-                setLastInterviewerResponse("Hi! Welcome to this interview. I'm excited to chat with you today. Can you tell me about yourself and your background?\n\n[DEVELOPMENT MODE: Audio disabled. In production, voice AI would ask this question.]");
+                const objective = interview?.objective || "general interview";
+                setLastInterviewerResponse(`Hi ${name || 'there'}! Thank you for joining me today. Let's dive right in with our ${objective} interview.\n\n**Interview Question 1:** Can you tell me about yourself and your background?\n\n[DEVELOPMENT MODE: No specific questions were found in the interview setup. Please check that questions were properly configured when creating the interview.]`);
               }
               setActiveTurn("agent");
             }, 1000);
@@ -264,7 +270,7 @@ function Call({ interview }: InterviewProps) {
               if (questions.length > questionIndex && questionIndex < 3) { // Limit to first 3 questions for demo
                 setTimeout(() => {
                   const nextQuestion = questions[questionIndex]?.question;
-                  setLastInterviewerResponse(`Great! That's very insightful. Let me ask you this: ${nextQuestion}\n\n[DEVELOPMENT MODE: This is question ${questionIndex + 1} of ${questions.length}. Voice AI would speak this naturally.]`);
+                  setLastInterviewerResponse(`Great! That's very insightful. Let me ask you this:\n\n**Interview Question ${questionIndex + 1}:** ${nextQuestion}\n\n[DEVELOPMENT MODE: This is question ${questionIndex + 1} of ${questions.length} from your interview setup. Voice AI would speak this naturally.]`);
                   setActiveTurn("agent");
                   
                   // Simulate user response to next question
