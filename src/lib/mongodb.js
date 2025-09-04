@@ -7,7 +7,7 @@ if (typeof window !== 'undefined') {
 }
 
 if (!config.DATABASE.MONGODB_URI) {
-  throw new Error('Please add your Mongo URI to .env.local');
+  throw new Error('Please configure MongoDB connection. Either set MONGODB_URI or provide DB_CONNECTION, DB_HOST, DB_DATABASE, DB_USERNAME, and DB_PASSWORD in your environment variables.');
 }
 
 const uri = config.DATABASE.MONGODB_URI;

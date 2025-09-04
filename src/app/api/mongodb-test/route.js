@@ -8,7 +8,7 @@ export async function GET() {
       return NextResponse.json({
         success: false,
         message: "MongoDB URI not configured",
-        error: "Please add your Mongo URI to .env.local"
+        error: "Please configure MongoDB connection. Either set MONGODB_URI or provide DB_CONNECTION, DB_HOST, DB_DATABASE, DB_USERNAME, and DB_PASSWORD in your environment variables."
       }, { status: 500 });
     }
 
