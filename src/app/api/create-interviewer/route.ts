@@ -6,6 +6,9 @@ import { INTERVIEWERS, RETELL_AGENT_GENERAL_PROMPT } from "@/lib/constants";
 import { getSession } from "@/config/withSession";
 const config = require('../../../config/config');
 
+// Force dynamic rendering for this route
+export const dynamic = 'force-dynamic';
+
 const retellClient = new Retell({
   apiKey: config.RETELL.API_KEY,
 });

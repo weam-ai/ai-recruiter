@@ -5,6 +5,9 @@ import Retell from "retell-sdk";
 import { RETELL_AGENT_GENERAL_PROMPT } from "@/lib/constants";
 const config = require('../../../config/config');
 
+// Force dynamic rendering for this route
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);

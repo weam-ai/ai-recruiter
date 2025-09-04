@@ -5,6 +5,9 @@ import { logger } from "@/lib/logger";
 import { getSession } from "@/config/withSession";
 const config = require('../../../config/config');
 
+// Force dynamic rendering for this route
+export const dynamic = 'force-dynamic';
+
 const base_url = config.APP.LIVE_URL;
 
 export async function POST(req: Request, res: Response) {

@@ -4,6 +4,9 @@ import { getSession } from "@/config/withSession";
 import Retell from "retell-sdk";
 const config = require('../../../config/config');
 
+// Force dynamic rendering for this route
+export const dynamic = 'force-dynamic';
+
 const retellClient = new Retell({
   apiKey: config.RETELL.API_KEY,
 });
