@@ -56,7 +56,7 @@ Ensure the output is in valid JSON format with the following structure:
   "overallFeedback": string,
   "communication": { "score": number, "feedback": string },
   "questionSummaries": [{ "question": string, "summary": string }],
-  "softSkillSummary: string
+  "softSkillSummary": string
 }
 
 IMPORTANT: Only use the main questions provided. Do not generate or infer additional questions such as follow-up questions.`;
