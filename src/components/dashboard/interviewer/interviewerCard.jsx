@@ -3,6 +3,7 @@ import Image from "next/image";
 import { Card, CardContent, CardTitle } from "../../../ui/card.jsx";
 import Modal from "../../Modal";
 import InterviewerDetailsModal from "./interviewerDetailsModal";
+import { getImageUrl } from "@/lib/utils";
 
 const interviewerCard = ({ interviewer }) => {
   // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -17,7 +18,7 @@ const interviewerCard = ({ interviewer }) => {
         <CardContent className="p-0">
           <div className="w-full h-28 overflow-hidden">
             <Image
-              src={interviewer.image}
+              src={interviewer.image || getImageUrl("/avatars/7.png")}
               alt="Picture of the interviewer"
               width={200}
               height={40}

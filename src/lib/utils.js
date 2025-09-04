@@ -59,3 +59,12 @@ export function getApiUrl(endpoint) {
   const basePath = config.APP.API_BASE_PATH || '';
   return `${basePath}${endpoint}`;
 }
+
+export function getImageUrl(imagePath) {
+  const basePath = config.APP.API_BASE_PATH || '';
+  // Ensure imagePath starts with / if it doesn't already
+  const normalizedImagePath = imagePath.startsWith('/') ? imagePath : `/${imagePath}`;
+  const result = `${basePath}${normalizedImagePath}`;
+  console.log('getImageUrl - basePath:', basePath, 'imagePath:', imagePath, 'result:', result);
+  return result;
+}

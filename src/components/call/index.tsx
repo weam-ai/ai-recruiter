@@ -15,7 +15,7 @@ import axios from "axios";
 import { RetellWebClient } from "retell-client-js-sdk";
 import MiniLoader from "../loaders/mini-loader/miniLoader";
 import { toast } from "sonner";
-import { isLightColor, testEmail, getApiUrl } from "@/lib/utils";
+import { isLightColor, testEmail, getApiUrl, getImageUrl } from "@/lib/utils";
 
 import { Interview } from "@/types/interview";
 import { FeedbackData } from "@/types/response";
@@ -565,7 +565,7 @@ function Call({ interview }: InterviewProps) {
                     </div>
                     <div className="flex flex-col mx-auto justify-center items-center align-middle">
                       <Image
-                        src={interviewerImg}
+                        src={interviewerImg || getImageUrl("/interviewers/Lisa.png")}
                         alt="Image of the interviewer"
                         width={120}
                         height={120}
