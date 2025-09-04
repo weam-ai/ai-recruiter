@@ -10,7 +10,7 @@ enum SatisfactionLevel {
 }
 
 interface FeedbackFormProps {
-  onSubmit: (data: Omit<FeedbackData, "interview_id">) => void;
+  onSubmit: (data: Omit<FeedbackData, "interview_id" | "user" | "companyId">) => void;
   email: string;
 }
 

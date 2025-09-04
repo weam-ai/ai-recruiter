@@ -228,7 +228,7 @@ function DetailsPopup({
           </div>
           
           {/* Selection status */}
-          {selectedInterviewer && selectedInterviewer !== BigInt(0) ? (
+          {selectedInterviewer && selectedInterviewer !== "0" ? (
             <div className="mt-2 p-2 bg-indigo-50 border border-indigo-200 rounded text-xs text-indigo-700">
               ✓ Interviewer selected: {interviewers.find(i => (i._id || i.id) === selectedInterviewer)?.name}
             </div>
@@ -332,7 +332,7 @@ function DetailsPopup({
                 objective &&
                 numQuestions &&
                 duration &&
-                selectedInterviewer != BigInt(0)
+                selectedInterviewer != "0"
                   ? false
                   : true) || isClicked
               }
@@ -350,7 +350,7 @@ function DetailsPopup({
                 objective &&
                 numQuestions &&
                 duration &&
-                selectedInterviewer != BigInt(0)
+                selectedInterviewer != "0"
                   ? false
                   : true) || isClicked
               }

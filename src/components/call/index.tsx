@@ -85,7 +85,7 @@ function Call({ interview }: InterviewProps) {
   const lastUserResponseRef = useRef<HTMLDivElement | null>(null);
 
   const handleFeedbackSubmit = async (
-    formData: Omit<FeedbackData, "interview_id">,
+    formData: Omit<FeedbackData, "interview_id" | "user" | "companyId">,
   ) => {
     try {
       const response = await axios.post('/api/feedback', {
