@@ -5,7 +5,14 @@ import Image from "next/image";
 import { Image as LucideImage } from "lucide-react";
 import { Plus } from "lucide-react";
 import { CardTitle } from "@/components/ui/card";
-import Modal from "@/components/dashboard/Modal";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 import { avatars } from "@/components/dashboard/interviewer/avatars";
@@ -56,36 +63,24 @@ const createInterviewerCard = () => {
 
   return (
     <>
-      {/* <Card
-        
-        className="border-dashed border-gray-700 border-4 p-0 inline-block cursor-pointer hover:scale-105 ease-in-out duration-300 h-5 w-5 ml-1 mr-3 rounded-xl shrink-0 overflow-hidden shadow-md"
-      >
-        <CardContent className="p-0">
-          <div className="flex flex-col justify-center items-center w-full p-4 pb-0 mt-8 overflow-hidden">
-            
-          </div>
-          {/* <CardTitle className="p-0 m-2 mx-0 text-xs text-center">
-            Add Interviewer
-          </CardTitle> 
-        </CardContent>
-      </Card> */}
-      <Plus
-        size={30}
-        strokeWidth={2}
-        className="cursor-pointer bg-indigo-600 rounded-full text-white"
-        onClick={() => setOpen(true)}
-      />
-      <Modal
-        open={open}
-        closeOnOutsideClick={true}
-        onClose={() => {
-          setOpen(false);
-        }}
-      >
-        <div className="text-center w-[35rem]">
-          <CardTitle className="text-2xl text mt-0 mb-4 p-0 font-semibold ">
-            Create an interviewer yourself!
-          </CardTitle>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild>
+          <Plus
+            size={30}
+            strokeWidth={2}
+            className="cursor-pointer bg-indigo-600 rounded-full text-white"
+          />
+        </DialogTrigger>
+        <DialogContent className="max-w-[35rem]">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-semibold text-center">
+              Create an interviewer yourself!
+            </DialogTitle>
+            <DialogDescription className="text-center">
+              Customize your interviewer's personality and appearance
+            </DialogDescription>
+          </DialogHeader>
+          <div className="text-center">
           <div className="mt-3 p-2 flex flex-row justify-center space-x-10 items-center">
             <div
               className=" flex flex-col items-center justify-center overflow-hidden border-4 border-gray-500 rounded-xl h-56 w-52"
@@ -176,37 +171,38 @@ const createInterviewerCard = () => {
               </div>
             </div>
           </div>
-          <div className="flex flex-row justify-end mr-4">
-            <Button
-              disabled={(name && image ? false : true) || isClicked}
-              className="bg-indigo-600  hover:bg-indigo-800"
-              onClick={() => {
-                setIsClicked(true);
-                onSave();
-              }}
-            >
-              Save
-            </Button>
+            <div className="flex flex-row justify-end mr-4">
+              <Button
+                disabled={(name && image ? false : true) || isClicked}
+                className="bg-indigo-600  hover:bg-indigo-800"
+                onClick={() => {
+                  setIsClicked(true);
+                  onSave();
+                }}
+              >
+                Save
+              </Button>
+            </div>
           </div>
-        </div>
-      </Modal>
-      <Modal
-        open={gallery}
-        closeOnOutsideClick={true}
-        onClose={() => {
-          setGallery(false);
-        }}
-      >
-        <div className="text-left w-[20rem]">
-          <CardTitle className="text-xl text mt-0 p-0 font-semibold ">
-            Select an Avatar
-          </CardTitle>
+        </DialogContent>
+      </Dialog>
+      
+      <Dialog open={gallery} onOpenChange={setGallery}>
+        <DialogContent className="max-w-[20rem]">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-semibold">
+              Select an Avatar
+            </DialogTitle>
+            <DialogDescription>
+              Choose an avatar for your interviewer
+            </DialogDescription>
+          </DialogHeader>
           <ScrollArea className="mt-3 h-96">
             <div className="flex flex-row flex-wrap justify-center items-center">
               {avatars.map((item, key) => (
                 <div
                   key={item.id}
-                  className="flex flex-col items-center justify-center border-2 border-gray-500 rounded-xl overflow-hidden m-2 cursor-pointer"
+                  className="flex flex-col items-center justify-center border-2 border-gray-500 rounded-xl overflow-hidden m-2 cursor-pointer hover:border-indigo-500 transition-colors"
                   onClick={() => {
                     setImage(item.img);
                     setGallery(false);
@@ -217,8 +213,8 @@ const createInterviewerCard = () => {
               ))}
             </div>
           </ScrollArea>
-        </div>
-      </Modal>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };
