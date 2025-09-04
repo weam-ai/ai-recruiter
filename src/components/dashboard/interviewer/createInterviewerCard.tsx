@@ -81,24 +81,24 @@ const createInterviewerCard = () => {
             </DialogDescription>
           </DialogHeader>
           <div className="text-center">
-          <div className="mt-3 p-2 flex flex-row justify-center space-x-10 items-center">
+          <div className="mt-3 p-2 flex flex-row justify-center space-x-8 items-center">
             <div
-              className=" flex flex-col items-center justify-center overflow-hidden border-4 border-gray-500 rounded-xl h-56 w-52"
+              className=" flex flex-col items-center justify-center overflow-hidden border-4 border-gray-500 rounded-xl h-36 w-36"
               onClick={() => setGallery(true)}
             >
               {image ? (
                 <Image
                   src={image}
                   alt="Picture of the interviewer"
-                  width={200}
-                  height={40}
+                  width={140}
+                  height={140}
                   className="w-full h-full object-cover object-center"
                 />
               ) : (
                 <div>
                   <LucideImage
-                    className="mt-3 text-gray-300"
-                    size={100}
+                    className="mt-2 text-gray-300"
+                    size={70}
                     strokeWidth={0.7}
                   />
                   <h4 className="text-xs text-center font-medium text-gray-400">
@@ -188,27 +188,27 @@ const createInterviewerCard = () => {
       </Dialog>
       
       <Dialog open={gallery} onOpenChange={setGallery}>
-        <DialogContent className="max-w-[20rem]">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-semibold">
+        <DialogContent className="max-w-[28rem] max-h-[20rem]">
+          <DialogHeader className="pb-2">
+            <DialogTitle className="text-lg font-semibold">
               Select an Avatar
             </DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="text-sm">
               Choose an avatar for your interviewer
             </DialogDescription>
           </DialogHeader>
-          <ScrollArea className="mt-3 h-96">
-            <div className="flex flex-row flex-wrap justify-center items-center">
+          <ScrollArea className="h-48">
+            <div className="grid grid-cols-5 gap-2 p-2">
               {avatars.map((item, key) => (
                 <div
                   key={item.id}
-                  className="flex flex-col items-center justify-center border-2 border-gray-500 rounded-xl overflow-hidden m-2 cursor-pointer hover:border-indigo-500 transition-colors"
+                  className="flex flex-col items-center justify-center border-2 border-gray-300 rounded-lg overflow-hidden cursor-pointer hover:border-indigo-500 transition-colors p-1"
                   onClick={() => {
                     setImage(item.img);
                     setGallery(false);
                   }}
                 >
-                  <Image alt="avatar" width={125} height={100} src={item.img} />
+                  <Image alt="avatar" width={60} height={45} src={item.img} className="object-cover" />
                 </div>
               ))}
             </div>
