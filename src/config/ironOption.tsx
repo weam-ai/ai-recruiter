@@ -1,6 +1,8 @@
+const config = require('./config');
+
 const ironOption = {
-    cookieName: process.env.NEXT_PUBLIC_COOKIE_NAME,
-    password: process.env.NEXT_PUBLIC_COOKIE_PASSWORD,
+    cookieName: config.SESSION.COOKIE_NAME,
+    password: config.SESSION.COOKIE_PASSWORD,
     cookieOptions: {
         httpOnly: true,
         secure: false,

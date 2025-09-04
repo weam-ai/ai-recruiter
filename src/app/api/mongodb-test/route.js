@@ -1,9 +1,10 @@
 import { MongoClient } from 'mongodb';
 import { NextResponse } from "next/server";
+const config = require('../../../config/config');
 
 export async function GET() {
   try {
-    if (!process.env.MONGODB_URI) {
+    if (!config.DATABASE.MONGODB_URI) {
       return NextResponse.json({
         success: false,
         message: "MongoDB URI not configured",
@@ -11,11 +12,11 @@ export async function GET() {
       }, { status: 500 });
     }
 
-    const uri = process.env.MONGODB_URI;
+    const uri = config.DATABASE.MONGODB_URI;
     const client = new MongoClient(uri);
     
     await client.connect();
-    const db = client.db(process.env.MONGODB_DB_NAME || 'foloup');
+    const db = client.db();
     
     const result = await db.collection("interviewer").find({}).limit(1).toArray();
     

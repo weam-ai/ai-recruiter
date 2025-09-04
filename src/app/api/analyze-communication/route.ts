@@ -5,6 +5,7 @@ import {
   SYSTEM_PROMPT,
   getCommunicationAnalysisPrompt,
 } from "@/lib/prompts/communication-analysis";
+const config = require('../../../config/config');
 
 export async function POST(req: Request) {
   logger.info("analyze-communication request received");
@@ -21,7 +22,7 @@ export async function POST(req: Request) {
     }
 
     const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
+      apiKey: config.OPENAI.API_KEY,
       maxRetries: 5,
       dangerouslyAllowBrowser: true,
     });

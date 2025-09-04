@@ -2,9 +2,10 @@ import { InterviewerService } from "@/services/interviewers.service";
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/config/withSession";
 import Retell from "retell-sdk";
+const config = require('../../../config/config');
 
 const retellClient = new Retell({
-  apiKey: process.env.RETELL_API_KEY || "",
+  apiKey: config.RETELL.API_KEY,
 });
 
 export async function POST(request: NextRequest) {
@@ -23,7 +24,7 @@ export async function POST(request: NextRequest) {
     console.log("Registering call for interviewer ID:", interviewerId);
     
     // Check if Retell API key is configured
-    if (!process.env.RETELL_API_KEY) {
+    if (!config.RETELL.API_KEY) {
       console.error("RETELL_API_KEY is not configured");
       return NextResponse.json(
         { error: "Retell API key is not configured. Please set RETELL_API_KEY in your environment variables." },

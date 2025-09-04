@@ -3,6 +3,7 @@ import { InterviewerService } from "@/services/interviewers.service";
 import { getSession } from "@/config/withSession";
 import Retell from "retell-sdk";
 import { RETELL_AGENT_GENERAL_PROMPT } from "@/lib/constants";
+const config = require('../../../config/config');
 
 export async function GET(request: NextRequest) {
   try {
@@ -30,7 +31,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     
     // Check if Retell API key is configured
-    if (!process.env.RETELL_API_KEY) {
+    if (!config.RETELL.API_KEY) {
       console.error("RETELL_API_KEY is not configured");
       return NextResponse.json(
         { error: "Retell API key is not configured. Please set RETELL_API_KEY in your environment variables." },
@@ -39,7 +40,7 @@ export async function POST(request: NextRequest) {
     }
 
     const retellClient = new Retell({
-      apiKey: process.env.RETELL_API_KEY,
+      apiKey: config.RETELL.API_KEY,
     });
 
     // Create the LLM model for the interviewer

@@ -4,9 +4,10 @@ import { NextResponse, NextRequest } from "next/server";
 import Retell from "retell-sdk";
 import { INTERVIEWERS, RETELL_AGENT_GENERAL_PROMPT } from "@/lib/constants";
 import { getSession } from "@/config/withSession";
+const config = require('../../../config/config');
 
 const retellClient = new Retell({
-  apiKey: process.env.RETELL_API_KEY || "",
+  apiKey: config.RETELL.API_KEY,
 });
 
 export async function GET(res: NextRequest) {
@@ -108,7 +109,7 @@ export async function GET(res: NextRequest) {
       { 
         error: "Failed to create interviewers", 
         details: error.message,
-        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+        stack: config.SERVER.NODE_ENV === 'development' ? error.stack : undefined
       },
       { status: 500 },
     );

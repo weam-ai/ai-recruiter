@@ -3,8 +3,9 @@ import { NextResponse } from "next/server";
 import { InterviewService } from "@/services/interviews.service";
 import { logger } from "@/lib/logger";
 import { getSession } from "@/config/withSession";
+const config = require('../../../config/config');
 
-const base_url = process.env.NEXT_PUBLIC_LIVE_URL;
+const base_url = config.APP.LIVE_URL;
 
 export async function POST(req: Request, res: Response) {
   try {

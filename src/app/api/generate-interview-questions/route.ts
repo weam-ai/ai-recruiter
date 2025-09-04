@@ -5,6 +5,7 @@ import {
   generateQuestionsPrompt,
 } from "@/lib/prompts/generate-questions";
 import { logger } from "@/lib/logger";
+const config = require('../../../config/config');
 
 export const maxDuration = 60;
 
@@ -13,7 +14,7 @@ export async function POST(req: Request, res: Response) {
   const body = await req.json();
 
   const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
+    apiKey: config.OPENAI.API_KEY,
     maxRetries: 5,
     dangerouslyAllowBrowser: true,
   });

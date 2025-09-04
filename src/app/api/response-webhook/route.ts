@@ -1,8 +1,9 @@
 import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
 import { Retell } from "retell-sdk";
+const config = require('../../../config/config');
 
-const apiKey = process.env.RETELL_API_KEY || "";
+const apiKey = config.RETELL.API_KEY;
 
 export async function POST(req: NextRequest, res: NextResponse) {
   if (req.method !== "POST") {

@@ -1,21 +1,22 @@
 import { MongoClient } from 'mongodb';
+const config = require('../config/config');
 
 // Ensure this only runs on the server side
 if (typeof window !== 'undefined') {
   throw new Error('MongoDB client cannot be used in the browser');
 }
 
-if (!process.env.MONGODB_URI) {
+if (!config.DATABASE.MONGODB_URI) {
   throw new Error('Please add your Mongo URI to .env.local');
 }
 
-const uri = process.env.MONGODB_URI;
+const uri = config.DATABASE.MONGODB_URI;
 const options = {};
 
 let client;
 let clientPromise;
 
-if (process.env.NODE_ENV === 'development') {
+if (config.SERVER.NODE_ENV === 'development') {
   // In development mode, use a global variable so that the value
   // is preserved across module reloads caused by HMR (Hot Module Replacement).
   if (!global._mongoClientPromise) {
@@ -33,5 +34,5 @@ export default clientPromise;
 
 export async function getDb() {
   const client = await clientPromise;
-  return client.db(process.env.MONGODB_DB_NAME || 'foloup');
+  return client.db();
 }
