@@ -188,7 +188,7 @@ const createInterviewerCard = () => {
       </Dialog>
       
       <Dialog open={gallery} onOpenChange={setGallery}>
-        <DialogContent className="max-w-[28rem] max-h-[20rem]">
+        <DialogContent className="max-w-[24rem] max-h-[20rem]">
           <DialogHeader className="pb-2">
             <DialogTitle className="text-lg font-semibold">
               Select an Avatar
@@ -198,17 +198,17 @@ const createInterviewerCard = () => {
             </DialogDescription>
           </DialogHeader>
           <ScrollArea className="h-48">
-            <div className="grid grid-cols-5 gap-2 p-2">
+            <div className="grid grid-cols-4 gap-3 p-2">
               {avatars.map((item, key) => (
                 <div
                   key={item.id}
-                  className="flex flex-col items-center justify-center border-2 border-gray-300 rounded-lg overflow-hidden cursor-pointer hover:border-indigo-500 transition-colors p-1"
+                  className="flex flex-col items-center justify-center border-2 border-gray-300 rounded-lg overflow-hidden cursor-pointer hover:border-indigo-500 transition-colors p-2"
                   onClick={() => {
                     setImage(item.img);
                     setGallery(false);
                   }}
                 >
-                  <Image alt="avatar" width={60} height={45} src={item.img} className="object-cover" />
+                  <Image alt="avatar" width={70} height={70} src={item.img} className="object-cover" />
                 </div>
               ))}
             </div>
