@@ -1,5 +1,6 @@
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+const config = require('../config/config');
 
 export function cn(...inputs) {
   return twMerge(clsx(inputs));
@@ -52,4 +53,9 @@ export function isLightColor(color) {
   const brightness = (r * 299 + g * 587 + b * 114) / 1000;
 
   return brightness > 155;
+}
+
+export function getApiUrl(endpoint) {
+  const basePath = config.APP.API_BASE_PATH || '';
+  return `${basePath}${endpoint}`;
 }

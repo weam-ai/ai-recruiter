@@ -1,5 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  assetPrefix: process.env.NEXT_PUBLIC_API_BASE_PATH,
+  basePath: process.env.NEXT_PUBLIC_API_BASE_PATH,
+  trailingSlash: false,
+  output: "standalone",
+  reactStrictMode: true,
   eslint: {
     // Warning: This allows production builds to successfully complete even if
     // your project has ESLint errors.
@@ -10,6 +15,8 @@ const nextConfig = {
     typedRoutes: false,
   },
   images: {
+    domains: ['localhost'],
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',

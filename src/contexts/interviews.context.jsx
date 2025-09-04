@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { getApiUrl } from "@/lib/utils";
 
 const InterviewsContext = createContext();
 
@@ -18,7 +19,7 @@ export const InterviewsProvider = ({ children }) => {
 
   const getAllInterviews = async (companyId) => {
     try {
-      const response = await fetch(`/api/interviews?companyId=${companyId}`);
+      const response = await fetch(getApiUrl(`/api/interviews?companyId=${companyId}`));
       const data = await response.json();
       setInterviews(data);
       return data;
@@ -30,7 +31,7 @@ export const InterviewsProvider = ({ children }) => {
 
   const createInterview = async (interviewData) => {
     try {
-      const response = await fetch("/api/interviews", {
+      const response = await fetch(getApiUrl("/api/interviews"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(interviewData),
@@ -46,7 +47,7 @@ export const InterviewsProvider = ({ children }) => {
 
   const updateInterview = async (id, updates) => {
     try {
-      const response = await fetch(`/api/interviews/${id}`, {
+      const response = await fetch(getApiUrl(`/api/interviews/${id}`), {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updates),
@@ -64,7 +65,7 @@ export const InterviewsProvider = ({ children }) => {
 
   const deleteInterview = async (id) => {
     try {
-      await fetch(`/api/interviews/${id}`, { method: "DELETE" });
+      await fetch(getApiUrl(`/api/interviews/${id}`), { method: "DELETE" });
       setInterviews(prev => prev.filter(interview => interview.id !== id));
       return true;
     } catch (error) {
@@ -75,7 +76,7 @@ export const InterviewsProvider = ({ children }) => {
 
   const getInterviewById = async (id) => {
     try {
-      const response = await fetch(`/api/interviews/${id}`);
+      const response = await fetch(getApiUrl(`/api/interviews/${id}`));
       const data = await response.json();
       return data;
     } catch (error) {

@@ -9,6 +9,7 @@ import QuestionCard from "@/components/dashboard/interview/create-popup/question
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { ChevronLeft } from "lucide-react";
+import { getApiUrl } from "@/lib/utils";
 
 interface Props {
   interviewData: InterviewBase;
@@ -83,7 +84,7 @@ function QuestionsPopup({ interviewData, setProceed, setOpen }: Props) {
         logo_url: organization?.imageUrl || "",
       };
 
-      const response = await axios.post("/api/create-interview", {
+      const response = await axios.post(getApiUrl("/api/create-interview"), {
         organizationName: organization?.name,
         interviewData: sanitizedInterviewData,
       });
