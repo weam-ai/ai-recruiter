@@ -204,11 +204,25 @@ function CallInfo({
                     <Select
                       value={candidateStatus}
                       onValueChange={async (newValue: string) => {
-                        setCandidateStatus(newValue);
-                        await axios.put(`/api/responses/call/${call_id}`, {
-                          candidate_status: newValue,
-                        });
-                        onCandidateStatusChange(call_id, newValue);
+                        try {
+                          console.log("Updating candidate status to:", newValue);
+                          
+                          const response = await axios.put(`/api/responses/call/${call_id}`, {
+                            candidate_status: newValue,
+                          });
+                          
+                          if (response.data.success) {
+                            setCandidateStatus(newValue);
+                            onCandidateStatusChange(call_id, newValue);
+                            console.log("Status updated successfully");
+                          } else {
+                            console.error("Failed to update status:", response.data);
+                          }
+                        } catch (error) {
+                          console.error("Error updating candidate status:", error);
+                          // Revert the UI state on error
+                          setCandidateStatus(candidateStatus);
+                        }
                       }}
                     >
                       <SelectTrigger className="w-[180px]  bg-slate-50 rounded-2xl">

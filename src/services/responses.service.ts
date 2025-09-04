@@ -26,11 +26,22 @@ const createResponse = async (payload: any) => {
 
 const saveResponse = async (payload: any, call_id: string) => {
   try {
+    console.log("ResponseService.saveResponse - Updating response:", {
+      call_id,
+      payload
+    });
+    
     const db = await getDb();
     const result = await db.collection("response").updateOne(
       { call_id },
       { $set: { ...payload } }
     );
+    
+    console.log("Database update result:", {
+      matchedCount: result.matchedCount,
+      modifiedCount: result.modifiedCount,
+      acknowledged: result.acknowledged
+    });
     
     if (result.matchedCount === 0) {
       console.log("Response not found for call_id:", call_id);
@@ -39,7 +50,7 @@ const saveResponse = async (payload: any, call_id: string) => {
     
     return result.modifiedCount > 0;
   } catch (error) {
-    console.log(error);
+    console.error("Error in saveResponse:", error);
     return null;
   }
 };

@@ -66,6 +66,12 @@ export async function POST(request: NextRequest) {
       console.error("Response not found for call ID:", callId);
       return NextResponse.json({ error: "Response not found" }, { status: 404 });
     }
+    
+    console.log("Fetched response record:", {
+      call_id: response.call_id,
+      candidate_status: response.candidate_status,
+      is_analysed: response.is_analysed
+    });
 
     // Get call details from Retell API
     const callResponse = await retellClient.call.retrieve(callId);
@@ -114,13 +120,27 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Fetch the latest response record to get the most current status
+    const latestResponse = await ResponseService.getResponseByCallId(callId);
+    
     // Update response record with complete call data and analytics
+    // Only set candidate_status to "completed" if no meaningful status is already set
+    const meaningfulStatuses = ["SELECTED", "NOT_SELECTED", "POTENTIAL", "NO_STATUS"];
+    const shouldPreserveStatus = latestResponse.candidate_status && meaningfulStatuses.includes(latestResponse.candidate_status);
+    
+    console.log("Status preservation check:", {
+      originalStatus: response.candidate_status,
+      latestStatus: latestResponse.candidate_status,
+      isMeaningful: meaningfulStatuses.includes(latestResponse.candidate_status),
+      shouldPreserve: shouldPreserveStatus
+    });
+    
     const updateData = {
       duration,
       details: callResponse,
       analytics,
       is_analysed: true,
-      candidate_status: "completed",
+      ...(shouldPreserveStatus ? {} : { candidate_status: "completed" }),
     };
 
     console.log("Updating response record with data:", {
@@ -128,7 +148,9 @@ export async function POST(request: NextRequest) {
       hasDetails: !!callResponse,
       hasAnalytics: !!analytics,
       is_analysed: true,
-      candidate_status: "completed"
+      currentStatus: response.candidate_status,
+      shouldPreserveStatus: shouldPreserveStatus,
+      willSetStatus: !shouldPreserveStatus
     });
 
     const updated = await ResponseService.saveResponse(updateData, callId);
