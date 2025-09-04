@@ -1,8 +1,8 @@
 // Common function to generate MongoDB URI
 function getMongoUri() {
     // If MONGODB_URI is provided, use it directly
-    if (process.env.MONGODB_URI) {
-        return process.env.MONGODB_URI;
+    if (process.env.MONOGODB_URI) {
+        return process.env.MONOGODB_URI;
     }
     
     // Otherwise, construct URI from individual components
