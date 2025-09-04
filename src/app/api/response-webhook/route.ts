@@ -38,7 +38,8 @@ export async function POST(req: NextRequest, res: NextResponse) {
         
         // Make absolute URL call to get-call endpoint
         const protocol = baseUrl?.includes("localhost") ? "http" : "https";
-        const fullUrl = `${protocol}://${baseUrl}/api/get-call`;
+        const apiBasePath = config.APP.API_BASE_PATH || '';
+        const fullUrl = `${protocol}://${baseUrl}${apiBasePath}/api/get-call`;
         
         console.log("Calling get-call endpoint:", fullUrl);
         

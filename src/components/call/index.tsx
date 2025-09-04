@@ -15,7 +15,7 @@ import axios from "axios";
 import { RetellWebClient } from "retell-client-js-sdk";
 import MiniLoader from "../loaders/mini-loader/miniLoader";
 import { toast } from "sonner";
-import { isLightColor, testEmail } from "@/lib/utils";
+import { isLightColor, testEmail, getApiUrl, getImageUrl } from "@/lib/utils";
 
 import { Interview } from "@/types/interview";
 import { FeedbackData } from "@/types/response";
@@ -88,7 +88,7 @@ function Call({ interview }: InterviewProps) {
     formData: Omit<FeedbackData, "interview_id" | "user" | "companyId">,
   ) => {
     try {
-      const response = await axios.post('/api/feedback', {
+      const response = await axios.post(getApiUrl('/api/feedback'), {
         ...formData,
         interview_id: interview.id,
       });
@@ -302,7 +302,7 @@ function Call({ interview }: InterviewProps) {
       return;
     }
 
-    const emailsResponse = await axios.get(`/api/responses/emails?interviewId=${interview.id}`);
+    const emailsResponse = await axios.get(getApiUrl(`/api/responses/emails?interviewId=${interview.id}`));
     const oldUserEmails: string[] = emailsResponse.data.map((item: any) => item.email);
     const OldUser =
       oldUserEmails.includes(email) ||
@@ -312,7 +312,7 @@ function Call({ interview }: InterviewProps) {
       setIsOldUser(true);
     } else {
       const registerCallResponse: registerCallResponseType = await axios.post(
-        "/api/register-call",
+        getApiUrl("/api/register-call"),
         { dynamic_data: data, interviewer_id: interview?.interviewer_id },
       );
       if (registerCallResponse.data.registerCallResponse.access_token) {
@@ -368,7 +368,7 @@ function Call({ interview }: InterviewProps) {
   useEffect(() => {
     const fetchInterviewer = async () => {
       try {
-        const response = await axios.get(`/api/interviewers/${interview.interviewer_id}`);
+        const response = await axios.get(getApiUrl(`/api/interviewers/${interview.interviewer_id}`));
         const interviewer = response.data;
         setInterviewerImg(interviewer.image);
       } catch (error) {
@@ -390,7 +390,7 @@ function Call({ interview }: InterviewProps) {
   useEffect(() => {
     if (isEnded) {
       const updateInterview = async () => {
-        await axios.put(`/api/responses/call/${callId}`, {
+        await axios.put(getApiUrl(`/api/responses/call/${callId}`), {
           is_ended: true,
           tab_switch_count: tabSwitchCount,
         });
@@ -565,7 +565,7 @@ function Call({ interview }: InterviewProps) {
                     </div>
                     <div className="flex flex-col mx-auto justify-center items-center align-middle">
                       <Image
-                        src={interviewerImg}
+                        src={interviewerImg || getImageUrl("/interviewers/Lisa.png")}
                         alt="Image of the interviewer"
                         width={120}
                         height={120}

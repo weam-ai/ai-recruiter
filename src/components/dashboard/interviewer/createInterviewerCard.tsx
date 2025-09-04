@@ -19,6 +19,7 @@ import { avatars } from "@/components/dashboard/interviewer/avatars";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useInterviewers } from "@/contexts/interviewers.context";
 import { useClerk } from "@/contexts/auth.context";
+import { getImageUrl } from "@/lib/utils";
 
 const createInterviewerCard = () => {
   const [open, setOpen] = useState(false);

@@ -13,6 +13,7 @@ import FileUpload from "../fileUpload";
 import Modal from "@/components/dashboard/Modal";
 import InterviewerDetailsModal from "@/components/dashboard/interviewer/interviewerDetailsModal";
 import { Interviewer } from "@/types/interviewer";
+import { getApiUrl, getImageUrl } from "@/lib/utils";
 
 interface Props {
   open: boolean;
@@ -81,7 +82,7 @@ function DetailsPopup({
     };
 
     const generatedQuestions = (await axios.post(
-      "/api/generate-interview-questions",
+      getApiUrl("/api/generate-interview-questions"),
       data,
     )) as any;
 
@@ -191,7 +192,7 @@ function DetailsPopup({
                     }}
                   >
                     <Image
-                      src={item.image}
+                      src={item.image || getImageUrl("/avatars/7.png")}
                       alt="Picture of the interviewer"
                       width={70}
                       height={70}

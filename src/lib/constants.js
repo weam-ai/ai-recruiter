@@ -1,3 +1,5 @@
+import { getImageUrl } from "./utils";
+
 export const RETELL_AGENT_GENERAL_PROMPT = `You are an interviewer who is an expert in asking follow up questions to uncover deeper insights. You have to keep the interview for {{mins}} or short. 
 
 The name of the person you are interviewing is {{name}}. 
@@ -27,7 +29,7 @@ export const INTERVIEWERS = {
     exploration: 10,
     empathy: 7,
     speed: 5,
-    image: "/interviewers/Lisa.png",
+    image: getImageUrl("/interviewers/Lisa.png"),
     description:
       "Hi! I'm Lisa, an enthusiastic and empathetic interviewer who loves to explore. With a perfect balance of empathy and rapport, I delve deep into conversations while maintaining a steady pace. Let's embark on this journey together and uncover meaningful insights!",
     audio: "Lisa.wav",
@@ -38,7 +40,7 @@ export const INTERVIEWERS = {
     exploration: 7,
     empathy: 10,
     speed: 5,
-    image: "/interviewers/Bob.png",
+    image: getImageUrl("/interviewers/Bob.png"),
     description:
       "Hi! I'm Bob, your go-to empathetic interviewer. I excel at understanding and connecting with people on a deeper level, ensuring every conversation is insightful and meaningful. With a focus on empathy, I'm here to listen and learn from you. Let's create a genuine connection!",
     audio: "Bob.wav",

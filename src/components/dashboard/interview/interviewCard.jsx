@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { ArrowUpRight, Copy } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import { getImageUrl } from "@/lib/utils";
 
 function InterviewCard({ interview }) {
   const router = useRouter();
@@ -53,7 +54,7 @@ function InterviewCard({ interview }) {
               width={70}
               height={70}
               className="object-cover object-center"
-              src="/interviewers/Lisa.png"
+              src={interview.interviewer?.image || getImageUrl("/interviewers/Lisa.png")}
               loading="lazy"
             />
           </div>

@@ -7,6 +7,7 @@ import { useClerk } from "@/contexts/auth.context";
 import createInterviewerCard from "@/components/dashboard/interviewer/createInterviewerCard";
 import { default as InterviewerDetailsModal } from "@/components/dashboard/interviewer/interviewerDetailsModal";
 import { Interviewer } from "@/types/interviewer";
+import { getImageUrl } from "@/lib/utils";
 
 function Interviewers() {
   const { interviewers, getAllInterviewers, interviewersLoading } = useInterviewers();
@@ -64,7 +65,7 @@ function Interviewers() {
               >
                 <div className="w-24 h-24 mb-4 flex items-center justify-center">
                   <Image
-                    src={interviewer.image || "/avatars/7.png"}
+                    src={interviewer.image || getImageUrl("/avatars/7.png")}
                     alt={interviewer.name}
                     width={96}
                     height={96}

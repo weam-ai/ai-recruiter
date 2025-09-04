@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { IronSessionData } from '@/types/weamuser';
+import { getApiUrl } from '@/lib/utils';
 
 interface User {
   _id: string;
@@ -37,7 +38,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setIsLoaded(false);
       
       // Fetch user data from session API
-      const response = await fetch('/api/auth/session', {
+      const response = await fetch(getApiUrl('/api/auth/session'), {
         method: 'GET',
         credentials: 'include',
       });
@@ -83,7 +84,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signOut = async () => {
     try {
       // Call logout API to clear server-side session
-      await fetch('/api/auth/logout', {
+      await fetch(getApiUrl('/api/auth/logout'), {
         method: 'POST',
         credentials: 'include',
       });

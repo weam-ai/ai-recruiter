@@ -1,34 +1,36 @@
+import { getImageUrl } from "@/lib/utils";
+
 export const avatars = [
   {
     id: 1,
-    img: "/avatars/1.png",
+    img: getImageUrl("/avatars/1.png"),
   },
   {
     id: 2,
-    img: "/avatars/2.png",
+    img: getImageUrl("/avatars/2.png"),
   },
   {
     id: 3,
-    img: "/avatars/3.png",
+    img: getImageUrl("/avatars/3.png"),
   },
   {
     id: 4,
-    img: "/avatars/4.png",
+    img: getImageUrl("/avatars/4.png"),
   },
   {
     id: 5,
-    img: "/avatars/5.png",
+    img: getImageUrl("/avatars/5.png"),
   },
   {
     id: 6,
-    img: "/avatars/6.png",
+    img: getImageUrl("/avatars/6.png"),
   },
   {
     id: 7,
-    img: "/avatars/7.png",
+    img: getImageUrl("/avatars/7.png"),
   },
   {
     id: 8,
-    img: "/avatars/8.png",
+    img: getImageUrl("/avatars/8.png"),
   },
 ];

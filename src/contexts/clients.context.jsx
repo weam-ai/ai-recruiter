@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState } from "react";
+import { getApiUrl } from "@/lib/utils";
 
 const ClientsContext = createContext({
   user: null,
@@ -28,7 +29,7 @@ export const ClientsProvider = ({ children }) => {
       if (email) params.append('email', email);
       if (organizationId) params.append('organizationId', organizationId);
       
-      const response = await fetch(`/api/clients?${params.toString()}`);
+      const response = await fetch(getApiUrl(`/api/clients?${params.toString()}`));
       if (response.ok) {
         const data = await response.json();
         setUser(data);
@@ -47,7 +48,7 @@ export const ClientsProvider = ({ children }) => {
       if (organizationId) params.append('organizationId', organizationId);
       if (organizationName) params.append('organizationName', organizationName);
       
-      const response = await fetch(`/api/clients?${params.toString()}`, {
+      const response = await fetch(getApiUrl(`/api/clients?${params.toString()}`), {
         method: 'POST'
       });
       if (response.ok) {
@@ -63,7 +64,7 @@ export const ClientsProvider = ({ children }) => {
 
   const updateOrganization = async (id, updates) => {
     try {
-      const response = await fetch(`/api/organizations/${id}`, {
+      const response = await fetch(getApiUrl(`/api/organizations/${id}`), {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
