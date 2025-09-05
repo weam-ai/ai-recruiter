@@ -6,6 +6,7 @@ import { ArrowUpRight, Copy } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { getImageUrl } from "@/lib/utils";
+const config = require('../../../config/config');
 
 function InterviewCard({ interview }) {
   const router = useRouter();
@@ -17,9 +18,11 @@ function InterviewCard({ interview }) {
   const handleShareClick = (e) => {
     e.stopPropagation();
     // Navigate to the call/interview page
-    const callUrl = interview?.readable_slug 
-      ? `/call/${interview.readable_slug}`
-      : `/call/${interview.id || interview._id}`;
+    // const callUrl = interview?.readable_slug 
+    //   ? config.APP.API_BASE_PATH + `/call/${interview.readable_slug}`
+    //   : config.APP.API_BASE_PATH + `/call/${interview.id || interview._id}`;
+
+    const callUrl = config.APP.API_BASE_PATH + `/call/${interview.id || interview._id}`; 
     
     window.open(callUrl, '_blank');
   };
