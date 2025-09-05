@@ -101,7 +101,7 @@ export async function POST(request: NextRequest) {
       analytics: analytics,
       is_analysed: true,
       candidate_status: "completed",
-      call_quality_score: callResponse.call_quality_score || 0,
+      call_quality_score: 0, // Default value since call_quality_score is not available in Retell SDK
       end_timestamp: callResponse.end_timestamp,
       start_timestamp: callResponse.start_timestamp,
     };
@@ -121,7 +121,7 @@ export async function POST(request: NextRequest) {
         call_id: callId,
         transcript: callResponse.transcript || "",
         duration: duration,
-        call_quality_score: callResponse.call_quality_score || 0,
+        call_quality_score: 0, // Default value since call_quality_score is not available in Retell SDK
         end_timestamp: callResponse.end_timestamp,
         start_timestamp: callResponse.start_timestamp,
       },
