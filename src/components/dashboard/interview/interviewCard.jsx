@@ -71,13 +71,13 @@ function InterviewCard({ interview }) {
         {/* Top-right action buttons */}
         <div className="absolute top-2 right-2 flex gap-1">
           <Button 
-            className="inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-white/20 hover:bg-white/30 text-white border-0 shadow-sm py-1 px-1 h-6 w-6"
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-white hover:bg-gray-50 text-gray-700 border-0 shadow-sm py-1 px-1 h-6 w-6"
             onClick={handleShareClick}
           >
             <ArrowUpRight className="w-3 h-3" />
           </Button>
           <Button 
-            className="inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-white/20 hover:bg-white/30 text-white border-0 shadow-sm py-1 px-1 h-6 w-6"
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-white hover:bg-gray-50 text-gray-700 border-0 shadow-sm py-1 px-1 h-6 w-6"
             onClick={handleCopyClick}
           >
             <Copy className="w-3 h-3" />
