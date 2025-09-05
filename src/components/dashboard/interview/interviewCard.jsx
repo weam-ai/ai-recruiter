@@ -31,9 +31,11 @@ function InterviewCard({ interview }) {
     e.stopPropagation();
     // Copy the call URL to clipboard
     const baseUrl = window.location.origin;
-    const callUrl = interview?.readable_slug 
-      ? `${baseUrl}/call/${interview.readable_slug}`
-      : `${baseUrl}/call/${interview.id || interview._id}`;
+    // const callUrl = interview?.readable_slug 
+    //   ? `${baseUrl}/call/${interview.readable_slug}`
+    //   : `${baseUrl}/call/${interview.id || interview._id}`;
+
+    const callUrl = `${baseUrl}` + config.APP.API_BASE_PATH + `/call/${interview.id || interview._id}`;
     
     navigator.clipboard.writeText(callUrl);
     console.log("Interview URL copied to clipboard:", callUrl);
@@ -41,27 +43,27 @@ function InterviewCard({ interview }) {
 
   return (
     <div className="bg-white relative p-0 mt-4 inline-block cursor-pointer h-60 w-56 ml-1 mr-3 rounded-xl shrink-0 overflow-hidden shadow-md">
-      <div className="p-0" onClick={handleCardClick}>
+      <div className="p-0 h-full" onClick={handleCardClick}>
         {/* Top purple section with interview name */}
-        <div className="w-full h-40 overflow-hidden bg-brand flex items-center text-center">
-          <h3 className="font-semibold tracking-tight w-full mt-3 mx-2 text-white text-lg">
+        <div className="w-full h-36 bg-brand flex items-center justify-center relative">
+          <h3 className="font-semibold tracking-tight text-white text-lg px-2 text-center">
             {interview.name || "Untitled Interview"}
           </h3>
         </div>
         
-        {/* Bottom section with avatar and response count */}
-        <div className="flex flex-row items-center mx-4">
-          <div className="w-full overflow-hidden">
+        {/* Bottom white section with avatar and response count */}
+        <div className="flex flex-row items-center justify-between p-4 h-15">
+          <div className="flex-shrink-0">
             <Image
               alt="Picture of the interviewer"
-              width={70}
-              height={70}
-              className="object-cover object-center"
+              width={60}
+              height={60}
+              className="object-cover object-center rounded-full"
               src={interview.interviewer?.image || getImageUrl("/interviewers/Lisa.png")}
               loading="lazy"
             />
           </div>
-          <div className="text-black text-sm font-semibold mt-2 mr-2 whitespace-nowrap">
+          <div className="text-black text-sm font-semibold ml-3">
             Responses: <span className="font-normal">{interview.response_count || 0}</span>
           </div>
         </div>
@@ -69,16 +71,16 @@ function InterviewCard({ interview }) {
         {/* Top-right action buttons */}
         <div className="absolute top-2 right-2 flex gap-1">
           <Button 
-            className="inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-secondary shadow-sm hover:bg-secondary/80 py-2 text-xs text-brand px-1 h-6"
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-white/20 hover:bg-white/30 text-white border-0 shadow-sm py-1 px-1 h-6 w-6"
             onClick={handleShareClick}
           >
-            <ArrowUpRight className="w-4 h-4" />
+            <ArrowUpRight className="w-3 h-3" />
           </Button>
           <Button 
-            className="inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-secondary shadow-sm hover:bg-secondary/80 py-2 text-xs text-brand px-1 h-6"
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-white/20 hover:bg-white/30 text-white border-0 shadow-sm py-1 px-1 h-6 w-6"
             onClick={handleCopyClick}
           >
-            <Copy className="w-4 h-4" />
+            <Copy className="w-3 h-3" />
           </Button>
         </div>
       </div>
