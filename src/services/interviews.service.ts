@@ -1,10 +1,11 @@
 import { getDb } from "@/lib/mongodb";
 import { Interview } from "@/types/database.types";
+import { COLLECTIONS } from "@/lib/collection-constants";
 
 const getAllInterviews = async (companyId: string) => {
   try {
     const db = await getDb();
-    const interviews = await db.collection("interview")
+    const interviews = await db.collection(COLLECTIONS.INTERVIEW)
       .find({ companyId })
       .sort({ created_at: -1 })
       .toArray();
@@ -13,7 +14,7 @@ const getAllInterviews = async (companyId: string) => {
     const interviewsWithResponseCount = await Promise.all(
       interviews.map(async (interview) => {
         try {
-          const responseCount = await db.collection("response")
+          const responseCount = await db.collection(COLLECTIONS.RESPONSE)
             .countDocuments({ interview_id: interview.id || interview._id });
           
           return {
@@ -51,11 +52,11 @@ const getInterviewById = async (id: string, companyId?: string) => {
     };
     
     // First try to find by id, then by readable_slug
-    let interview = await db.collection("interview").findOne(buildQuery("id", id));
+    let interview = await db.collection(COLLECTIONS.INTERVIEW).findOne(buildQuery("id", id));
     
     if (!interview) {
       // If not found by id, try by readable_slug
-      interview = await db.collection("interview").findOne(buildQuery("readable_slug", id));
+      interview = await db.collection(COLLECTIONS.INTERVIEW).findOne(buildQuery("readable_slug", id));
     }
     
     if (interview) {
@@ -64,15 +65,10 @@ const getInterviewById = async (id: string, companyId?: string) => {
         interview.is_active = true;
       }
       
-      // Fix for test interviews with invalid interviewer_id
-      if (id === "weam-ricky" || interview.readable_slug === "weam-ricky") {
-        interview.interviewer_id = 1; // Use Lisa's ID
-        interview.is_active = true; // Ensure it's active
-      }
       
       // Add response count
       try {
-        const responseCount = await db.collection("response")
+        const responseCount = await db.collection(COLLECTIONS.RESPONSE)
           .countDocuments({ interview_id: interview.id || interview._id });
         interview.response_count = responseCount;
       } catch (error) {
@@ -96,14 +92,14 @@ const createInterview = async (payload: any) => {
       created_at: new Date(),
     };
     
-    const result = await db.collection("interview").insertOne(newInterview);
+    const result = await db.collection(COLLECTIONS.INTERVIEW).insertOne(newInterview);
     
     if (!result.acknowledged) {
       console.log("Failed to create interview");
       return null;
     }
     
-    const insertedInterview = await db.collection("interview").findOne({ _id: result.insertedId });
+    const insertedInterview = await db.collection(COLLECTIONS.INTERVIEW).findOne({ _id: result.insertedId });
     return insertedInterview;
   } catch (error) {
     console.log(error);
@@ -126,14 +122,14 @@ const updateInterview = async (id: string, updates: any, companyId?: string) => 
     };
     
     // Try to find by id first, then by readable_slug
-    let result = await db.collection("interview").updateOne(
+    let result = await db.collection(COLLECTIONS.INTERVIEW).updateOne(
       buildQuery("id", id),
       { $set: updates }
     );
     
     if (result.modifiedCount === 0) {
       // If not found by id, try by readable_slug
-      result = await db.collection("interview").updateOne(
+      result = await db.collection(COLLECTIONS.INTERVIEW).updateOne(
         buildQuery("readable_slug", id),
         { $set: updates }
       );
@@ -160,11 +156,11 @@ const deleteInterview = async (id: string, companyId?: string) => {
     };
     
     // Try to find by id first, then by readable_slug
-    let result = await db.collection("interview").deleteOne(buildQuery("id", id));
+    let result = await db.collection(COLLECTIONS.INTERVIEW).deleteOne(buildQuery("id", id));
     
     if (result.deletedCount === 0) {
       // If not found by id, try by readable_slug
-      result = await db.collection("interview").deleteOne(buildQuery("readable_slug", id));
+      result = await db.collection(COLLECTIONS.INTERVIEW).deleteOne(buildQuery("readable_slug", id));
     }
     
     return result.deletedCount > 0;
@@ -177,7 +173,7 @@ const deleteInterview = async (id: string, companyId?: string) => {
 const getInterviewsByOrganization = async (organizationId: string) => {
   try {
     const db = await getDb();
-    const interviews = await db.collection("interview")
+    const interviews = await db.collection(COLLECTIONS.INTERVIEW)
       .find({ 
         $or: [
           { companyId: organizationId },
@@ -191,7 +187,7 @@ const getInterviewsByOrganization = async (organizationId: string) => {
     const interviewsWithResponseCount = await Promise.all(
       interviews.map(async (interview) => {
         try {
-          const responseCount = await db.collection("response")
+          const responseCount = await db.collection(COLLECTIONS.RESPONSE)
             .countDocuments({ interview_id: interview.id || interview._id });
           
           return {
@@ -218,7 +214,7 @@ const getInterviewsByOrganization = async (organizationId: string) => {
 const deactivateInterviewsByOrgId = async (organizationId: string) => {
   try {
     const db = await getDb();
-    const result = await db.collection("interview").updateMany(
+    const result = await db.collection(COLLECTIONS.INTERVIEW).updateMany(
       { 
         $or: [
           { companyId: organizationId },
