@@ -452,17 +452,6 @@ function Call({ interview }: InterviewProps) {
             {!isStarted && !isEnded && !isOldUser && (
               <div className="w-fit min-w-[400px] max-w-[400px] mx-auto mt-2  border border-indigo-200 rounded-md p-2 m-2 bg-slate-50">
                 <div>
-                  {interview?.logo_url && (
-                    <div className="p-1 flex justify-center">
-                      <Image
-                        src={interview?.logo_url}
-                        alt="Logo"
-                        className="h-10 w-auto"
-                        width={100}
-                        height={100}
-                      />
-                    </div>
-                  )}
                   <div className="p-2 font-normal text-sm mb-4 whitespace-pre-line">
                     {interview?.description}
                     <p className="font-bold text-sm">
@@ -565,7 +554,7 @@ function Call({ interview }: InterviewProps) {
                     </div>
                     <div className="flex flex-col mx-auto justify-center items-center align-middle">
                       <Image
-                        src={interviewerImg || getImageUrl("/interviewers/Lisa.png")}
+                        src={getImageUrl("/interviewers/Lisa.png")}
                         alt="Image of the interviewer"
                         width={120}
                         height={120}
@@ -589,7 +578,7 @@ function Call({ interview }: InterviewProps) {
                   </div>
                   <div className="flex flex-col mx-auto justify-center items-center align-middle">
                     <Image
-                      src={`/user-icon.png`}
+                      src={getImageUrl("/user-icon.png")}
                       alt="Picture of the user"
                       width={120}
                       height={120}
@@ -699,19 +688,6 @@ function Call({ interview }: InterviewProps) {
             )}
           </div>
         </Card>
-        <a
-          className="flex flex-row justify-center align-middle mt-3"
-          href="https://folo-up.co/"
-          target="_blank"
-        >
-          <div className="text-center text-md font-semibold mr-2  ">
-            Powered by{" "}
-            <span className="font-bold">
-              Folo<span className="text-indigo-600">Up</span>
-            </span>
-          </div>
-          <ArrowUpRightSquareIcon className="h-[1.5rem] w-[1.5rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 text-indigo-500 " />
-        </a>
       </div>
     </div>
   );

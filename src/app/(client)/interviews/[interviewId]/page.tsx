@@ -35,6 +35,7 @@ import {
 } from "@/components/ui/select";
 import { CandidateStatus } from "@/lib/enum";
 import LoaderWithText from "@/components/loaders/loader-with-text/loaderWithText";
+import { getApiUrl } from "@/lib/utils";
 
 interface Props {
   params: {
@@ -109,7 +110,7 @@ function InterviewHome({ params, searchParams }: Props) {
     const fetchOrganizationData = async () => {
       try {
         if (organization?.id) {
-          const response = await axios.post(`/api/clients?organizationId=${organization.id}&organizationName=${organization.name}`);
+          const response = await axios.post(getApiUrl(`/api/clients?organizationId=${organization.id}&organizationName=${organization.name}`));
           const data = response.data;
           if (data?.plan) {
             setCurrentPlan(data.plan);
@@ -125,7 +126,7 @@ function InterviewHome({ params, searchParams }: Props) {
   useEffect(() => {
     const fetchResponses = async () => {
       try {
-        const response = await axios.get(`/api/responses?interviewId=${params.interviewId}`);
+        const response = await axios.get(getApiUrl(`/api/responses?interviewId=${params.interviewId}`));
         setResponses(response.data);
         setLoading(true);
       } catch (error) {
