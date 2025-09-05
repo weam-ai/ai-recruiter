@@ -76,9 +76,21 @@ export const InterviewsProvider = ({ children }) => {
 
   const getInterviewById = async (id) => {
     try {
-      const response = await fetch(getApiUrl(`/api/interviews/${id}`));
-      const data = await response.json();
-      return data;
+      // First try the public API route (no authentication required)
+      const response = await fetch(getApiUrl(`/api/public/interviews/${id}`));
+      if (response.ok) {
+        const data = await response.json();
+        return data;
+      }
+      
+      // If public route fails, try the authenticated route
+      const authResponse = await fetch(getApiUrl(`/api/interviews/${id}`));
+      if (authResponse.ok) {
+        const data = await authResponse.json();
+        return data;
+      }
+      
+      return null;
     } catch (error) {
       console.error("Error fetching interview by ID:", error);
       

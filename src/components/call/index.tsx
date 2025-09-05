@@ -311,10 +311,22 @@ function Call({ interview }: InterviewProps) {
     if (OldUser) {
       setIsOldUser(true);
     } else {
-      const registerCallResponse: registerCallResponseType = await axios.post(
-        getApiUrl("/api/register-call"),
-        { dynamic_data: data, interviewer_id: interview?.interviewer_id },
-      );
+      let registerCallResponse: registerCallResponseType;
+      
+      try {
+        // First try the public API route (no authentication required)
+        registerCallResponse = await axios.post(
+          getApiUrl("/api/public/register-call"),
+          { dynamic_data: data, interviewer_id: interview?.interviewer_id },
+        );
+      } catch (publicError) {
+        console.log("Public register-call failed, trying authenticated route:", publicError);
+        // If public route fails, try the authenticated route
+        registerCallResponse = await axios.post(
+          getApiUrl("/api/register-call"),
+          { dynamic_data: data, interviewer_id: interview?.interviewer_id },
+        );
+      }
       if (registerCallResponse.data.registerCallResponse.access_token) {
         const accessToken = registerCallResponse.data.registerCallResponse.access_token;
         const callId = registerCallResponse.data.registerCallResponse.call_id;
