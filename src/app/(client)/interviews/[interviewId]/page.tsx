@@ -264,17 +264,17 @@ function InterviewHome({ params, searchParams }: Props) {
           <div className="flex flex-row p-3 pt-4 justify-center gap-6 items-center sticky top-2 bg-white">
             <div className="font-bold text-md">{interview?.name}</div>
 
-            <div
+            {/* <div
               className="w-5 h-5 rounded-full border-2 border-white shadow"
               style={{ backgroundColor: iconColor }}
-            />
+            /> */}
 
             <div className="flex flex-row gap-3 my-auto">
               <UserIcon className="my-auto" size={16} />:{" "}
               {String(responses?.length)}
             </div>
 
-            <TooltipProvider>
+            {/* <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
@@ -298,8 +298,8 @@ function InterviewHome({ params, searchParams }: Props) {
                   <span className="text-black flex flex-row gap-4">Share</span>
                 </TooltipContent>
               </Tooltip>
-            </TooltipProvider>
-            <TooltipProvider>
+            </TooltipProvider> */}
+            {/* <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
@@ -322,8 +322,8 @@ function InterviewHome({ params, searchParams }: Props) {
                   </span>
                 </TooltipContent>
               </Tooltip>
-            </TooltipProvider>
-            <TooltipProvider>
+            </TooltipProvider> */}
+            {/* <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
@@ -346,7 +346,7 @@ function InterviewHome({ params, searchParams }: Props) {
                   </span>
                 </TooltipContent>
               </Tooltip>
-            </TooltipProvider>
+            </TooltipProvider> */}
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>

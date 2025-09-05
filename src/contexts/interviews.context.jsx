@@ -76,59 +76,25 @@ export const InterviewsProvider = ({ children }) => {
 
   const getInterviewById = async (id) => {
     try {
-      const response = await fetch(getApiUrl(`/api/interviews/${id}`));
-      const data = await response.json();
-      return data;
+      // First try the public API route (no authentication required)
+      const response = await fetch(getApiUrl(`/api/public/interviews/${id}`));
+      if (response.ok) {
+        const data = await response.json();
+        return data;
+      }
+      
+      // If public route fails, try the authenticated route
+      const authResponse = await fetch(getApiUrl(`/api/interviews/${id}`));
+      if (authResponse.ok) {
+        const data = await authResponse.json();
+        return data;
+      }
+      
+      return null;
     } catch (error) {
       console.error("Error fetching interview by ID:", error);
       
-      // Fallback for test cases when API is not available
-      if (id === "weam-ricky" || id === "weam-similique-beatae-nih") {
-        return {
-          id: "weam-ricky",
-          name: "Ricky Sample Interview",
-          description: "Assess your technical expertise and project experience in tackling complex challenges. Showcase your problem-solving skills and demonstrate how you successfully navigate technical issues and collaborate effectively on projects.",
-          objective: "Technical Assessment",
-          organization_id: "sample_org_1",
-          user_id: "sample_user_1",
-          interviewer_id: 1,
-          is_active: true,
-          is_anonymous: false,
-          is_archived: false,
-          theme_color: "#4F46E5",
-          url: `${window.location.origin}/call/weam-ricky`,
-          readable_slug: "weam-ricky",
-          questions: [
-            {
-              id: 1,
-              question: "Can you tell me about yourself and your professional background?"
-            },
-            {
-              id: 2,
-              question: "What motivated you to apply for this position and what interests you most about it?"
-            },
-            {
-              id: 3,
-              question: "Describe a challenging project you've worked on. How did you approach it and what was the outcome?"
-            },
-            {
-              id: 4,
-              question: "What are your greatest strengths and how do they relate to this role?"
-            },
-            {
-              id: 5,
-              question: "Where do you see yourself in the next 3-5 years, and how does this position align with your career goals?"
-            }
-          ],
-          quotes: [],
-          insights: [],
-          respondents: [],
-          question_count: 5,
-          response_count: 0,
-          time_duration: "5 mins or less",
-          created_at: new Date().toISOString()
-        };
-      }
+      // No fallback data - return null if interview not found
       
       return null;
     }

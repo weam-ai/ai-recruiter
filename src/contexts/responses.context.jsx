@@ -49,13 +49,26 @@ export const ResponsesProvider = ({ children }) => {
 
   const createResponse = async (payload) => {
     try {
-      const response = await fetch(getApiUrl("/api/responses"), {
+      // First try the public API route (no authentication required)
+      let response = await fetch(getApiUrl("/api/public/responses"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(payload),
       });
+      
+      if (!response.ok) {
+        // If public route fails, try the authenticated route
+        response = await fetch(getApiUrl("/api/responses"), {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
+      }
+      
       if (response.ok) {
         const data = await response.json();
         return data.id;

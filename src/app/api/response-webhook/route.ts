@@ -39,13 +39,26 @@ export async function POST(req: NextRequest, res: NextResponse) {
         // Make absolute URL call to get-call endpoint
         const protocol = baseUrl?.includes("localhost") ? "http" : "https";
         const apiBasePath = config.APP.API_BASE_PATH || '';
-        const fullUrl = `${protocol}://${baseUrl}${apiBasePath}/api/get-call`;
         
-        console.log("Calling get-call endpoint:", fullUrl);
+        // Try public get-call endpoint first
+        let fullUrl = `${protocol}://${baseUrl}${apiBasePath}/api/public/get-call`;
+        console.log("Trying public get-call endpoint:", fullUrl);
         
-        const result = await axios.post(fullUrl, {
-          id: call.call_id,
-        });
+        let result;
+        try {
+          result = await axios.post(fullUrl, {
+            id: call.call_id,
+          });
+        } catch (publicError) {
+          console.log("Public get-call failed, trying authenticated endpoint:", publicError.message);
+          // If public route fails, try the authenticated route
+          fullUrl = `${protocol}://${baseUrl}${apiBasePath}/api/get-call`;
+          console.log("Trying authenticated get-call endpoint:", fullUrl);
+          
+          result = await axios.post(fullUrl, {
+            id: call.call_id,
+          });
+        }
         
         console.log("Call analyzed event processed successfully", call.call_id, result.data);
       } catch (error) {

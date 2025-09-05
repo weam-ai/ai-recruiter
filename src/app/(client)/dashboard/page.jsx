@@ -64,16 +64,6 @@ function Interviews() {
   console.log("Dashboard render - modal state:", isCreateModalOpen);
   console.log("Interviews data:", { interviews, interviewsLoading, count: interviews?.length });
 
-  // Sample interview for demonstration (remove this in production)
-  const sampleInterview = {
-    id: "weam-ricky",
-    name: "Ricky Sample Interview",
-    response_count: 1,
-    readable_slug: "weam-ricky",
-    interviewer_id: 1, // Lisa's ID from constants
-    is_active: true,
-    description: "Assess your technical expertise and project experience in tackling complex challenges."
-  };
 
 
 
@@ -92,7 +82,7 @@ function Interviews() {
       {/* Cards Section */}
       <div className="flex flex-wrap gap-0">
         {/* Create Interview Card */}
-        <div onClick={handleCreateInterview} style={{ cursor: 'pointer' }} className="mr-4">
+        <div onClick={handleCreateInterview} style={{ cursor: 'pointer' }} className="">
           <CreateInterviewCard />
         </div>
         
@@ -106,8 +96,10 @@ function Interviews() {
             <InterviewCard key={interview.id || interview._id} interview={interview} />
           ))
         ) : (
-          // Show sample interview for demonstration
-          <InterviewCard interview={sampleInterview} />
+          // No interviews found
+          <div className="h-60 w-56 rounded-xl bg-gray-100 flex items-center justify-center ml-1 mr-3">
+            <p className="text-gray-500 text-center">No interviews yet.<br/>Create your first interview!</p>
+          </div>
         )}
       </div>
       

@@ -4,6 +4,7 @@ export const SYSTEM_PROMPT =
 export const getInterviewAnalyticsPrompt = (
   interviewTranscript: string,
   mainInterviewQuestions: string,
+  objective?: string
 ) => `Analyse the following interview transcript and provide structured feedback:
 
 ###

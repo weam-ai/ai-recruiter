@@ -2,7 +2,7 @@
 // This file contains the MongoDB collection schemas and indexes
 
 // Organization Collection
-db.createCollection("organization", {
+db.createCollection("solution_foloup_organization", {
   validator: {
     $jsonSchema: {
       bsonType: "object",
@@ -23,7 +23,7 @@ db.createCollection("organization", {
 });
 
 // User Collection
-db.createCollection("user", {
+db.createCollection("solution_foloup_user", {
   validator: {
     $jsonSchema: {
       bsonType: "object",
@@ -39,7 +39,7 @@ db.createCollection("user", {
 });
 
 // Interviewer Collection
-db.createCollection("interviewer", {
+db.createCollection("solution_foloup_interviewer", {
   validator: {
     $jsonSchema: {
       bsonType: "object",
@@ -70,7 +70,7 @@ db.createCollection("interviewer", {
 });
 
 // Interview Collection
-db.createCollection("interview", {
+db.createCollection("solution_foloup_interview", {
   validator: {
     $jsonSchema: {
       bsonType: "object",
@@ -110,7 +110,7 @@ db.createCollection("interview", {
 });
 
 // Response Collection
-db.createCollection("response", {
+db.createCollection("solution_foloup_response", {
   validator: {
     $jsonSchema: {
       bsonType: "object",
@@ -144,7 +144,7 @@ db.createCollection("response", {
 });
 
 // Feedback Collection
-db.createCollection("feedback", {
+db.createCollection("solution_foloup_feedback", {
   validator: {
     $jsonSchema: {
       bsonType: "object",
