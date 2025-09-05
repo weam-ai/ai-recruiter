@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
 import { getDb } from "@/lib/mongodb.js";
+import { COLLECTIONS } from "@/lib/collection-constants";
 
 export async function GET() {
   try {
     const db = await getDb();
-    const result = await db.collection("interviewer").find({}).limit(1).toArray();
+    const result = await db.collection(COLLECTIONS.INTERVIEWER).find({}).limit(1).toArray();
     
     return NextResponse.json({
       success: true,

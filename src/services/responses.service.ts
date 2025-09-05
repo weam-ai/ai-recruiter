@@ -1,6 +1,7 @@
 import { getDb } from "@/lib/mongodb";
 import { Response } from "@/types/database.types";
 import { ObjectId } from "mongodb";
+import { COLLECTIONS } from "@/lib/collection-constants";
 
 const createResponse = async (payload: any) => {
   try {
@@ -10,7 +11,7 @@ const createResponse = async (payload: any) => {
       created_at: new Date(),
     };
     
-    const result = await db.collection("response").insertOne(newResponse);
+    const result = await db.collection(COLLECTIONS.RESPONSE).insertOne(newResponse);
     
     if (!result.acknowledged) {
       console.log("Failed to create response");
@@ -32,7 +33,7 @@ const saveResponse = async (payload: any, call_id: string) => {
     });
     
     const db = await getDb();
-    const result = await db.collection("response").updateOne(
+    const result = await db.collection(COLLECTIONS.RESPONSE).updateOne(
       { call_id },
       { $set: { ...payload } }
     );
@@ -65,7 +66,7 @@ const getResponseByCallId = async (call_id: string, companyId?: string) => {
       query.companyId = companyId;
     }
     
-    const response = await db.collection("response").findOne(query);
+    const response = await db.collection(COLLECTIONS.RESPONSE).findOne(query);
     return response;
   } catch (error) {
     console.log(error);
@@ -83,7 +84,7 @@ const getAllResponses = async (interviewId: string, companyId?: string) => {
       query.companyId = companyId;
     }
     
-    const responses = await db.collection("response")
+    const responses = await db.collection(COLLECTIONS.RESPONSE)
       .find(query)
       .sort({ created_at: -1 })
       .toArray();
@@ -98,7 +99,7 @@ const getAllResponses = async (interviewId: string, companyId?: string) => {
 const updateResponse = async (id: string, updates: any) => {
   try {
     const db = await getDb();
-    const result = await db.collection("response").updateOne(
+    const result = await db.collection(COLLECTIONS.RESPONSE).updateOne(
       { _id: new ObjectId(id) },
       { $set: updates }
     );
@@ -114,11 +115,11 @@ const getResponseCountByOrganizationId = async (organizationId: string): Promise
   try {
     const db = await getDb();
     // First get all interviews for the organization
-    const interviews = await db.collection("interview").find({ organization_id: organizationId }).toArray();
+    const interviews = await db.collection(COLLECTIONS.INTERVIEW).find({ organization_id: organizationId }).toArray();
     const interviewIds = interviews.map((interview: any) => interview.id);
     
     // Then count responses for those interviews
-    const count = await db.collection("response").countDocuments({ 
+    const count = await db.collection(COLLECTIONS.RESPONSE).countDocuments({ 
       interview_id: { $in: interviewIds } 
     });
     
@@ -132,7 +133,7 @@ const getResponseCountByOrganizationId = async (organizationId: string): Promise
 const getAllEmailAddressesForInterview = async (interviewId: string) => {
   try {
     const db = await getDb();
-    const responses = await db.collection("response")
+    const responses = await db.collection(COLLECTIONS.RESPONSE)
       .find({ interview_id: interviewId })
       .project({ email: 1 })
       .toArray();

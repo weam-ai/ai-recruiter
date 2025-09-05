@@ -1,5 +1,6 @@
 import { MongoClient } from 'mongodb';
 import { NextResponse } from "next/server";
+import { COLLECTIONS } from "@/lib/collection-constants";
 const config = require('../../../config/config');
 
 export async function GET() {
@@ -18,7 +19,7 @@ export async function GET() {
     await client.connect();
     const db = client.db();
     
-    const result = await db.collection("interviewer").find({}).limit(1).toArray();
+    const result = await db.collection(COLLECTIONS.INTERVIEWER).find({}).limit(1).toArray();
     
     await client.close();
     

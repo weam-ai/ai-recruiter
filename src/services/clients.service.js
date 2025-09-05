@@ -1,9 +1,10 @@
 import { getDb } from "../lib/mongodb.js";
+import { COLLECTIONS } from "../lib/collection-constants";
 
 const updateOrganization = async (payload, id) => {
   try {
     const db = await getDb();
-    const result = await db.collection("organization").updateOne(
+    const result = await db.collection(COLLECTIONS.ORGANIZATION).updateOne(
       { id },
       { $set: { ...payload } }
     );
@@ -13,7 +14,7 @@ const updateOrganization = async (payload, id) => {
       return [];
     }
     
-    const updatedOrg = await db.collection("organization").findOne({ id });
+    const updatedOrg = await db.collection(COLLECTIONS.ORGANIZATION).findOne({ id });
     return updatedOrg ? [updatedOrg] : [];
   } catch (error) {
     console.log(error);
@@ -28,7 +29,7 @@ const getClientById = async (
 ) => {
   try {
     const db = await getDb();
-    let user = await db.collection("user").findOne({ id });
+    let user = await db.collection(COLLECTIONS.USER).findOne({ id });
 
     if (!user && email) {
       const newUser = {
@@ -38,14 +39,14 @@ const getClientById = async (
         created_at: new Date(),
       };
       
-      const result = await db.collection("user").insertOne(newUser);
+      const result = await db.collection(COLLECTIONS.USER).insertOne(newUser);
       if (result.acknowledged) {
         user = { ...newUser, _id: result.insertedId };
       }
     }
 
     if (user && organization_id && user.organization_id !== organization_id) {
-      const result = await db.collection("user").updateOne(
+      const result = await db.collection(COLLECTIONS.USER).updateOne(
         { id },
         { $set: { organization_id } }
       );
@@ -68,7 +69,7 @@ const getOrganizationById = async (
 ) => {
   try {
     const db = await getDb();
-    let organization = await db.collection("organization").findOne({ id: organization_id });
+    let organization = await db.collection(COLLECTIONS.ORGANIZATION).findOne({ id: organization_id });
 
     if (!organization && organization_id) {
       const newOrg = {
@@ -80,14 +81,14 @@ const getOrganizationById = async (
         plan: null,
       };
       
-      const result = await db.collection("organization").insertOne(newOrg);
+      const result = await db.collection(COLLECTIONS.ORGANIZATION).insertOne(newOrg);
       if (result.acknowledged) {
         organization = { ...newOrg, _id: result.insertedId };
       }
     }
 
     if (organization && organization_name && organization.name !== organization_name) {
-      const result = await db.collection("organization").updateOne(
+      const result = await db.collection(COLLECTIONS.ORGANIZATION).updateOne(
         { id: organization_id },
         { $set: { name: organization_name } }
       );
