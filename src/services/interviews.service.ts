@@ -9,7 +9,28 @@ const getAllInterviews = async (companyId: string) => {
       .sort({ created_at: -1 })
       .toArray();
     
-    return interviews;
+    // Add response count for each interview
+    const interviewsWithResponseCount = await Promise.all(
+      interviews.map(async (interview) => {
+        try {
+          const responseCount = await db.collection("response")
+            .countDocuments({ interview_id: interview.id || interview._id });
+          
+          return {
+            ...interview,
+            response_count: responseCount
+          };
+        } catch (error) {
+          console.log(`Error counting responses for interview ${interview.id}:`, error);
+          return {
+            ...interview,
+            response_count: 0
+          };
+        }
+      })
+    );
+    
+    return interviewsWithResponseCount;
   } catch (error) {
     console.log(error);
     return [];
@@ -47,6 +68,16 @@ const getInterviewById = async (id: string, companyId?: string) => {
       if (id === "weam-ricky" || interview.readable_slug === "weam-ricky") {
         interview.interviewer_id = 1; // Use Lisa's ID
         interview.is_active = true; // Ensure it's active
+      }
+      
+      // Add response count
+      try {
+        const responseCount = await db.collection("response")
+          .countDocuments({ interview_id: interview.id || interview._id });
+        interview.response_count = responseCount;
+      } catch (error) {
+        console.log(`Error counting responses for interview ${interview.id}:`, error);
+        interview.response_count = 0;
       }
     }
     
@@ -156,7 +187,28 @@ const getInterviewsByOrganization = async (organizationId: string) => {
       .sort({ created_at: -1 })
       .toArray();
     
-    return interviews;
+    // Add response count for each interview
+    const interviewsWithResponseCount = await Promise.all(
+      interviews.map(async (interview) => {
+        try {
+          const responseCount = await db.collection("response")
+            .countDocuments({ interview_id: interview.id || interview._id });
+          
+          return {
+            ...interview,
+            response_count: responseCount
+          };
+        } catch (error) {
+          console.log(`Error counting responses for interview ${interview.id}:`, error);
+          return {
+            ...interview,
+            response_count: 0
+          };
+        }
+      })
+    );
+    
+    return interviewsWithResponseCount;
   } catch (error) {
     console.log(error);
     return [];
