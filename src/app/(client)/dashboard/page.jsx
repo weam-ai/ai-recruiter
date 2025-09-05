@@ -92,7 +92,7 @@ function Interviews() {
       {/* Cards Section */}
       <div className="flex flex-wrap gap-0">
         {/* Create Interview Card */}
-        <div onClick={handleCreateInterview} style={{ cursor: 'pointer' }} className="mr-4">
+        <div onClick={handleCreateInterview} style={{ cursor: 'pointer' }} className="">
           <CreateInterviewCard />
         </div>
         
