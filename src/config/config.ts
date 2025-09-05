@@ -51,7 +51,8 @@ module.exports = {
         API_KEY: process.env.OPENAI_API_KEY
     },
     APP: {
-        LIVE_URL: process.env.NEXT_PUBLIC_LIVE_URL
+        LIVE_URL: process.env.NEXT_PUBLIC_LIVE_URL,
+        API_BASE_PATH: process.env.NEXT_PUBLIC_API_BASE_PATH
     },
     SESSION: {
         COOKIE_NAME: process.env.NEXT_PUBLIC_COOKIE_NAME,

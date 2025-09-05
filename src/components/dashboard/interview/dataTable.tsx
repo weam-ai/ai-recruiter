@@ -88,7 +88,7 @@ function DataTable({ data, interviewId }: DataTableProps) {
       },
       cell: ({ row }) => (
         <div className="flex items-center justify-left min-h-[2.6em]">
-          <TooltipProvider>
+          {/* <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
                 <span className="cursor-pointer mr-2 flex-shrink-0">
@@ -112,7 +112,7 @@ function DataTable({ data, interviewId }: DataTableProps) {
                 View Response
               </TooltipContent>
             </Tooltip>
-          </TooltipProvider>
+          </TooltipProvider> */}
           <span className="truncate">{row.getValue("name")}</span>
         </div>
       ),

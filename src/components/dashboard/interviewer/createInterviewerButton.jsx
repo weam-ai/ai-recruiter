@@ -5,6 +5,7 @@ import axios from "axios";
 import { Plus, Loader2, CheckCircle } from "lucide-react";
 import { useState } from "react";
 import { useInterviewers } from "../../../contexts/interviewers.context.jsx";
+import { getApiUrl } from "@/lib/utils";
 
 function CreateInterviewerButton() {
   const [isLoading, setIsLoading] = useState(false);
@@ -18,7 +19,7 @@ function CreateInterviewerButton() {
     setCreatedData(null);
     
     try {
-      const response = await axios.get("/api/create-interviewer", {});
+      const response = await axios.get(getApiUrl("/api/create-interviewer"), {});
       console.log("Interviewers created:", response.data);
       
       if (response.status === 200) {

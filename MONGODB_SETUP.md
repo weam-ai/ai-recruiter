@@ -118,12 +118,12 @@ yarn add mongodb
 
 The application uses the following collections:
 
-- **organization**: Stores organization information and plans
-- **user**: Stores user information linked to organizations
-- **interviewer**: Stores AI interviewer configurations
-- **interview**: Stores interview configurations and metadata
-- **response**: Stores interview responses and analytics
-- **feedback**: Stores user feedback
+- **solution_foloup_organization**: Stores organization information and plans
+- **solution_foloup_user**: Stores user information linked to organizations
+- **solution_foloup_interviewer**: Stores AI interviewer configurations
+- **solution_foloup_interview**: Stores interview configurations and metadata
+- **solution_foloup_response**: Stores interview responses and analytics
+- **solution_foloup_feedback**: Stores user feedback
 
 ## Migration from Supabase
 

@@ -21,7 +21,8 @@ export async function POST(req: Request, res: Response) {
     }
 
     const url_id = nanoid();
-    const url = `${base_url}/call/${url_id}`;
+    const apiBasePath = config.APP.API_BASE_PATH || '';
+    const url = `${base_url}${apiBasePath}/call/${url_id}`;
     const body = await req.json();
 
     logger.info("create-interview request received");

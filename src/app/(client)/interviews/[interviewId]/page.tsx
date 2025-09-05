@@ -35,6 +35,7 @@ import {
 } from "@/components/ui/select";
 import { CandidateStatus } from "@/lib/enum";
 import LoaderWithText from "@/components/loaders/loader-with-text/loaderWithText";
+import { getApiUrl } from "@/lib/utils";
 
 interface Props {
   params: {
@@ -109,7 +110,7 @@ function InterviewHome({ params, searchParams }: Props) {
     const fetchOrganizationData = async () => {
       try {
         if (organization?.id) {
-          const response = await axios.post(`/api/clients?organizationId=${organization.id}&organizationName=${organization.name}`);
+          const response = await axios.post(getApiUrl(`/api/clients?organizationId=${organization.id}&organizationName=${organization.name}`));
           const data = response.data;
           if (data?.plan) {
             setCurrentPlan(data.plan);
@@ -125,7 +126,7 @@ function InterviewHome({ params, searchParams }: Props) {
   useEffect(() => {
     const fetchResponses = async () => {
       try {
-        const response = await axios.get(`/api/responses?interviewId=${params.interviewId}`);
+        const response = await axios.get(getApiUrl(`/api/responses?interviewId=${params.interviewId}`));
         setResponses(response.data);
         setLoading(true);
       } catch (error) {
@@ -263,17 +264,17 @@ function InterviewHome({ params, searchParams }: Props) {
           <div className="flex flex-row p-3 pt-4 justify-center gap-6 items-center sticky top-2 bg-white">
             <div className="font-bold text-md">{interview?.name}</div>
 
-            <div
+            {/* <div
               className="w-5 h-5 rounded-full border-2 border-white shadow"
               style={{ backgroundColor: iconColor }}
-            />
+            /> */}
 
             <div className="flex flex-row gap-3 my-auto">
               <UserIcon className="my-auto" size={16} />:{" "}
               {String(responses?.length)}
             </div>
 
-            <TooltipProvider>
+            {/* <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
@@ -297,8 +298,8 @@ function InterviewHome({ params, searchParams }: Props) {
                   <span className="text-black flex flex-row gap-4">Share</span>
                 </TooltipContent>
               </Tooltip>
-            </TooltipProvider>
-            <TooltipProvider>
+            </TooltipProvider> */}
+            {/* <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
@@ -321,8 +322,8 @@ function InterviewHome({ params, searchParams }: Props) {
                   </span>
                 </TooltipContent>
               </Tooltip>
-            </TooltipProvider>
-            <TooltipProvider>
+            </TooltipProvider> */}
+            {/* <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
@@ -345,7 +346,7 @@ function InterviewHome({ params, searchParams }: Props) {
                   </span>
                 </TooltipContent>
               </Tooltip>
-            </TooltipProvider>
+            </TooltipProvider> */}
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>

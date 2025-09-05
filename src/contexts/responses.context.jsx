@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState } from "react";
+import { getApiUrl } from "@/lib/utils";
 
 const ResponsesContext = createContext({
   responses: [],
@@ -21,7 +22,7 @@ export const ResponsesProvider = ({ children }) => {
   const getAllResponses = async (interviewId) => {
     try {
       const response = await fetch(
-        `/api/responses?interviewId=${interviewId}`
+        getApiUrl(`/api/responses?interviewId=${interviewId}`)
       );
       if (response.ok) {
         const data = await response.json();
@@ -34,7 +35,7 @@ export const ResponsesProvider = ({ children }) => {
 
   const getResponseByCallId = async (callId) => {
     try {
-      const response = await fetch(`/api/responses/call/${callId}`);
+      const response = await fetch(getApiUrl(`/api/responses/call/${callId}`));
       if (response.ok) {
         const data = await response.json();
         return data;
@@ -48,13 +49,26 @@ export const ResponsesProvider = ({ children }) => {
 
   const createResponse = async (payload) => {
     try {
-      const response = await fetch("/api/responses", {
+      // First try the public API route (no authentication required)
+      let response = await fetch(getApiUrl("/api/public/responses"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(payload),
       });
+      
+      if (!response.ok) {
+        // If public route fails, try the authenticated route
+        response = await fetch(getApiUrl("/api/responses"), {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
+      }
+      
       if (response.ok) {
         const data = await response.json();
         return data.id;
@@ -68,7 +82,7 @@ export const ResponsesProvider = ({ children }) => {
 
   const saveResponse = async (payload, callId) => {
     try {
-      const response = await fetch(`/api/responses/call/${callId}`, {
+      const response = await fetch(getApiUrl(`/api/responses/call/${callId}`), {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -88,7 +102,7 @@ export const ResponsesProvider = ({ children }) => {
 
   const updateResponse = async (id, updates) => {
     try {
-      const response = await fetch(`/api/responses/${id}`, {
+      const response = await fetch(getApiUrl(`/api/responses/${id}`), {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -104,7 +118,7 @@ export const ResponsesProvider = ({ children }) => {
 
   const deleteResponse = async (id) => {
     try {
-      const response = await fetch(`/api/responses/${id}`, {
+      const response = await fetch(getApiUrl(`/api/responses/${id}`), {
         method: "DELETE",
       });
       return response.ok;

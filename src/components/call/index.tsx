@@ -15,7 +15,7 @@ import axios from "axios";
 import { RetellWebClient } from "retell-client-js-sdk";
 import MiniLoader from "../loaders/mini-loader/miniLoader";
 import { toast } from "sonner";
-import { isLightColor, testEmail } from "@/lib/utils";
+import { isLightColor, testEmail, getApiUrl, getImageUrl } from "@/lib/utils";
 
 import { Interview } from "@/types/interview";
 import { FeedbackData } from "@/types/response";
@@ -88,7 +88,7 @@ function Call({ interview }: InterviewProps) {
     formData: Omit<FeedbackData, "interview_id" | "user" | "companyId">,
   ) => {
     try {
-      const response = await axios.post('/api/feedback', {
+      const response = await axios.post(getApiUrl('/api/feedback'), {
         ...formData,
         interview_id: interview.id,
       });
@@ -302,7 +302,7 @@ function Call({ interview }: InterviewProps) {
       return;
     }
 
-    const emailsResponse = await axios.get(`/api/responses/emails?interviewId=${interview.id}`);
+    const emailsResponse = await axios.get(getApiUrl(`/api/responses/emails?interviewId=${interview.id}`));
     const oldUserEmails: string[] = emailsResponse.data.map((item: any) => item.email);
     const OldUser =
       oldUserEmails.includes(email) ||
@@ -311,10 +311,22 @@ function Call({ interview }: InterviewProps) {
     if (OldUser) {
       setIsOldUser(true);
     } else {
-      const registerCallResponse: registerCallResponseType = await axios.post(
-        "/api/register-call",
-        { dynamic_data: data, interviewer_id: interview?.interviewer_id },
-      );
+      let registerCallResponse: registerCallResponseType;
+      
+      try {
+        // First try the public API route (no authentication required)
+        registerCallResponse = await axios.post(
+          getApiUrl("/api/public/register-call"),
+          { dynamic_data: data, interviewer_id: interview?.interviewer_id },
+        );
+      } catch (publicError) {
+        console.log("Public register-call failed, trying authenticated route:", publicError);
+        // If public route fails, try the authenticated route
+        registerCallResponse = await axios.post(
+          getApiUrl("/api/register-call"),
+          { dynamic_data: data, interviewer_id: interview?.interviewer_id },
+        );
+      }
       if (registerCallResponse.data.registerCallResponse.access_token) {
         const accessToken = registerCallResponse.data.registerCallResponse.access_token;
         const callId = registerCallResponse.data.registerCallResponse.call_id;
@@ -368,7 +380,7 @@ function Call({ interview }: InterviewProps) {
   useEffect(() => {
     const fetchInterviewer = async () => {
       try {
-        const response = await axios.get(`/api/interviewers/${interview.interviewer_id}`);
+        const response = await axios.get(getApiUrl(`/api/interviewers/${interview.interviewer_id}`));
         const interviewer = response.data;
         setInterviewerImg(interviewer.image);
       } catch (error) {
@@ -390,7 +402,7 @@ function Call({ interview }: InterviewProps) {
   useEffect(() => {
     if (isEnded) {
       const updateInterview = async () => {
-        await axios.put(`/api/responses/call/${callId}`, {
+        await axios.put(getApiUrl(`/api/responses/call/${callId}`), {
           is_ended: true,
           tab_switch_count: tabSwitchCount,
         });
@@ -452,17 +464,6 @@ function Call({ interview }: InterviewProps) {
             {!isStarted && !isEnded && !isOldUser && (
               <div className="w-fit min-w-[400px] max-w-[400px] mx-auto mt-2  border border-indigo-200 rounded-md p-2 m-2 bg-slate-50">
                 <div>
-                  {interview?.logo_url && (
-                    <div className="p-1 flex justify-center">
-                      <Image
-                        src={interview?.logo_url}
-                        alt="Logo"
-                        className="h-10 w-auto"
-                        width={100}
-                        height={100}
-                      />
-                    </div>
-                  )}
                   <div className="p-2 font-normal text-sm mb-4 whitespace-pre-line">
                     {interview?.description}
                     <p className="font-bold text-sm">
@@ -565,7 +566,7 @@ function Call({ interview }: InterviewProps) {
                     </div>
                     <div className="flex flex-col mx-auto justify-center items-center align-middle">
                       <Image
-                        src={interviewerImg}
+                        src={getImageUrl("/interviewers/Lisa.png")}
                         alt="Image of the interviewer"
                         width={120}
                         height={120}
@@ -589,7 +590,7 @@ function Call({ interview }: InterviewProps) {
                   </div>
                   <div className="flex flex-col mx-auto justify-center items-center align-middle">
                     <Image
-                      src={`/user-icon.png`}
+                      src={getImageUrl("/user-icon.png")}
                       alt="Picture of the user"
                       width={120}
                       height={120}
@@ -699,19 +700,6 @@ function Call({ interview }: InterviewProps) {
             )}
           </div>
         </Card>
-        <a
-          className="flex flex-row justify-center align-middle mt-3"
-          href="https://folo-up.co/"
-          target="_blank"
-        >
-          <div className="text-center text-md font-semibold mr-2  ">
-            Powered by{" "}
-            <span className="font-bold">
-              Folo<span className="text-indigo-600">Up</span>
-            </span>
-          </div>
-          <ArrowUpRightSquareIcon className="h-[1.5rem] w-[1.5rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 text-indigo-500 " />
-        </a>
       </div>
     </div>
   );

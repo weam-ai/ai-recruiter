@@ -16,6 +16,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { CircularProgress } from "@nextui-org/react";
 import QuestionAnswerCard from "@/components/dashboard/interview/questionAnswerCard";
 import { marked } from "marked";
+import { getApiUrl } from "@/lib/utils";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -68,7 +69,7 @@ function CallInfo({
       setName("");
 
       try {
-        const response = await axios.post("/api/get-call", { id: call_id });
+        const response = await axios.post(getApiUrl("/api/get-call"), { id: call_id });
         setCall(response.data.callResponse);
         setAnalytics(response.data.analytics);
       } catch (error) {
@@ -86,7 +87,7 @@ function CallInfo({
     const fetchEmail = async () => {
       setIsLoading(true);
       try {
-        const response = await axios.get(`/api/responses/call/${call_id}`);
+        const response = await axios.get(getApiUrl(`/api/responses/call/${call_id}`));
         const data = response.data;
         setEmail(data.email);
         setName(data.name);
@@ -127,13 +128,13 @@ function CallInfo({
 
   const onDeleteResponseClick = async () => {
     try {
-      const response = await axios.get(`/api/responses/call/${call_id}`);
+      const response = await axios.get(getApiUrl(`/api/responses/call/${call_id}`));
       const data = response.data;
 
       if (data) {
         const interview_id = data.interview_id;
 
-        await axios.put(`/api/responses/call/${call_id}`, { is_deleted: true });
+        await axios.put(getApiUrl(`/api/responses/call/${call_id}`), { is_deleted: true });
 
         router.push(`/interviews/${interview_id}`);
 
@@ -207,7 +208,7 @@ function CallInfo({
                         try {
                           console.log("Updating candidate status to:", newValue);
                           
-                          const response = await axios.put(`/api/responses/call/${call_id}`, {
+                          const response = await axios.put(getApiUrl(`/api/responses/call/${call_id}`), {
                             candidate_status: newValue,
                           });
                           

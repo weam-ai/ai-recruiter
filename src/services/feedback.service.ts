@@ -1,6 +1,7 @@
 import { getDb } from "@/lib/mongodb";
 import { FeedbackData } from "@/types/response";
 import { Feedback } from "@/types/database.types";
+import { COLLECTIONS } from "@/lib/collection-constants";
 
 const submitFeedback = async (feedbackData: FeedbackData) => {
   try {
@@ -10,13 +11,13 @@ const submitFeedback = async (feedbackData: FeedbackData) => {
       created_at: new Date(),
     };
     
-    const result = await db.collection("feedback").insertOne(newFeedback);
+    const result = await db.collection(COLLECTIONS.FEEDBACK).insertOne(newFeedback);
     
     if (!result.acknowledged) {
       throw new Error("Failed to insert feedback");
     }
     
-    const insertedFeedback = await db.collection("feedback").findOne({ _id: result.insertedId });
+    const insertedFeedback = await db.collection(COLLECTIONS.FEEDBACK).findOne({ _id: result.insertedId });
     return insertedFeedback ? [insertedFeedback] : [];
   } catch (error) {
     console.error("Error submitting feedback:", error);

@@ -4,6 +4,7 @@ import { Slider } from "@/components/ui/slider";
 import ReactAudioPlayer from "react-audio-player";
 import { Interviewer } from "@/types/interviewer";
 import Modal from "@/components/dashboard/Modal";
+import { getImageUrl } from "@/lib/utils";
 
 interface Props {
   interviewer: Interviewer | undefined;
@@ -24,7 +25,7 @@ function InterviewerDetailsModal({ interviewer, isOpen = true, onClose }: Props)
         <div className="flex flex-row justify-center space-x-10 items-center">
           <div className=" flex items-center justify-center border-4 overflow-hidden border-gray-500 rounded-xl h-48 w-44">
             <Image
-              src={interviewer?.image || ""}
+              src={interviewer?.image || getImageUrl("/avatars/7.png")}
               alt="Picture of the interviewer"
               width={180}
               height={30}

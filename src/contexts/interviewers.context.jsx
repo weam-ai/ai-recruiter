@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useCallback } from "react";
+import { getApiUrl } from "@/lib/utils";
 
 const InterviewersContext = createContext({
   interviewers: [],
@@ -23,7 +24,7 @@ export const InterviewersProvider = ({ children }) => {
       setInterviewersLoading(true);
       
       const response = await fetch(
-        `/api/interviewers?companyId=${companyId}`
+        getApiUrl(`/api/interviewers?companyId=${companyId}`)
       );
       
       console.log("API response status:", response.status);
@@ -48,7 +49,7 @@ export const InterviewersProvider = ({ children }) => {
 
   const createInterviewer = useCallback(async (payload) => {
     try {
-      const response = await fetch("/api/interviewers", {
+      const response = await fetch(getApiUrl("/api/interviewers"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
