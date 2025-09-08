@@ -59,9 +59,15 @@ export const InterviewersProvider = ({ children }) => {
       if (response.ok) {
         const newInterviewer = await response.json();
         setInterviewers((prev) => [newInterviewer, ...prev]);
+        return newInterviewer;
+      } else {
+        const errorData = await response.json();
+        console.error('Error creating interviewer:', errorData);
+        throw new Error(errorData.error || 'Failed to create interviewer');
       }
     } catch (error) {
       console.error("Error creating interviewer:", error);
+      throw error;
     }
   }, []); // Empty dependency array
 

@@ -21,6 +21,13 @@ function Interviewers() {
     }
   }, [user, getAllInterviewers]);
 
+  // Refresh interviewers when the context changes
+  useEffect(() => {
+    if (user && interviewers.length === 0 && !interviewersLoading) {
+      getAllInterviewers(user.companyId || "");
+    }
+  }, [user, interviewers.length, interviewersLoading, getAllInterviewers]);
+
   const handleInterviewerClick = (interviewer: Interviewer) => {
     setSelectedInterviewer(interviewer);
     setIsModalOpen(true);
@@ -65,7 +72,7 @@ function Interviewers() {
               >
                 <div className="w-24 h-24 mb-4 flex items-center justify-center">
                   <Image
-                    src={getImageUrl("/avatars/7.png")}
+                    src={interviewer.image || getImageUrl("/avatars/7.png")}
                     alt={interviewer.name}
                     width={96}
                     height={96}

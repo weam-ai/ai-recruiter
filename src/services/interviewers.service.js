@@ -24,7 +24,12 @@ const createInterviewer = async (payload) => {
       created_at: new Date(),
     };
     const result = await db.collection(COLLECTIONS.INTERVIEWER).insertOne(newInterviewer);
-    return result;
+    
+    // Return the created interviewer with the inserted ID
+    return {
+      ...newInterviewer,
+      _id: result.insertedId,
+    };
   } catch (error) {
     console.error("Error creating interviewer:", error);
     throw error;
