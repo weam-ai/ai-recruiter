@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { ResponseService } from "@/services/responses.service";
 import { getSession } from "@/config/withSession";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request: NextRequest) {
   try {
     // Get user session data

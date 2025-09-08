@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { InterviewService } from "@/services/interviews.service";
 
+export const dynamic = "force-dynamic";
+
 export async function POST(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
