@@ -27,10 +27,10 @@ const createResponse = async (payload: any) => {
 
 const saveResponse = async (payload: any, call_id: string) => {
   try {
-    console.log("ResponseService.saveResponse - Updating response:", {
-      call_id,
-      payload
-    });
+    // console.log("ResponseService.saveResponse - Updating response:", {
+    //   call_id,
+    //   payload
+    // });
     
     const db = await getDb();
     const result = await db.collection(COLLECTIONS.RESPONSE).updateOne(
