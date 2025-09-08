@@ -48,13 +48,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (sessionData.user) {
           setUser(sessionData.user);
         } else {
-          console.log('No user data in session');
+          // console.log('No user data in session');
           setUser(null);
           // Clear any old cookies that might be causing issues
           clearOldCookies();
         }
       } else {
-        console.log('No active session found');
+        // console.log('No active session found');
         setUser(null);
         // Clear any old cookies that might be causing issues
         clearOldCookies();

@@ -177,7 +177,7 @@ function Call({ interview }: InterviewProps) {
         }
       } catch (error) {
         // Permission denied or not available - this is expected in some cases
-        console.log('Permissions not granted initially:', error);
+        // console.log('Permissions not granted initially:', error);
       }
     };
 
@@ -189,12 +189,12 @@ function Call({ interview }: InterviewProps) {
 
   useEffect(() => {
     webClient.on("call_started", () => {
-      console.log("Call started");
+      // console.log("Call started");
       setIsCalling(true);
     });
 
     webClient.on("call_ended", () => {
-      console.log("Call ended");
+      // console.log("Call ended");
       setIsCalling(false);
       setIsEnded(true);
     });
@@ -320,7 +320,7 @@ function Call({ interview }: InterviewProps) {
           { dynamic_data: data, interviewer_id: interview?.interviewer_id },
         );
       } catch (publicError) {
-        console.log("Public register-call failed, trying authenticated route:", publicError);
+        // console.log("Public register-call failed, trying authenticated route:", publicError);
         // If public route fails, try the authenticated route
         registerCallResponse = await axios.post(
           getApiUrl("/api/register-call"),
@@ -363,7 +363,7 @@ function Call({ interview }: InterviewProps) {
           }
         }
       } else {
-        console.log("Failed to register call");
+        // console.log("Failed to register call");
         alert("Failed to register call. Please try again.");
       }
     }
@@ -517,7 +517,7 @@ function Call({ interview }: InterviewProps) {
                           }
                           audioContext.close();
                         } catch (error) {
-                          console.log('Audio context initialization:', error);
+                          // console.log('Audio context initialization:', error);
                         }
                       }
                       await startConversation();

@@ -17,11 +17,11 @@ function Interviews() {
   // Fetch interviews when component mounts (only once)
   useEffect(() => {
     if (user?.companyId && !hasLoadedInterviews.current) {
-      console.log("Fetching interviews for companyId:", user.companyId);
+      // console.log("Fetching interviews for companyId:", user.companyId);
       getAllInterviews(user.companyId);
       hasLoadedInterviews.current = true;
     } else if (!user?.companyId) {
-      console.log("Missing companyId:", { companyId: user?.companyId });
+      // console.log("Missing companyId:", { companyId: user?.companyId });
     }
   }, [user?.companyId]); // Removed getAllInterviews from dependencies
 
@@ -55,14 +55,14 @@ function Interviews() {
   }
 
   const handleCreateInterview = () => {
-    console.log("Create interview clicked - handleCreateInterview called");
-    console.log("Current modal state:", isCreateModalOpen);
+    // console.log("Create interview clicked - handleCreateInterview called");
+    // console.log("Current modal state:", isCreateModalOpen);
     setIsCreateModalOpen(true);
-    console.log("Modal state set to true");
+    // console.log("Modal state set to true");
   };
 
-  console.log("Dashboard render - modal state:", isCreateModalOpen);
-  console.log("Interviews data:", { interviews, interviewsLoading, count: interviews?.length });
+  // console.log("Dashboard render - modal state:", isCreateModalOpen);
+  // console.log("Interviews data:", { interviews, interviewsLoading, count: interviews?.length });
 
 
 

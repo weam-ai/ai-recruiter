@@ -22,7 +22,7 @@ const getAllInterviews = async (companyId: string) => {
             response_count: responseCount
           };
         } catch (error) {
-          console.log(`Error counting responses for interview ${interview.id}:`, error);
+          // console.log(`Error counting responses for interview ${interview.id}:`, error);
           return {
             ...interview,
             response_count: 0
@@ -33,7 +33,7 @@ const getAllInterviews = async (companyId: string) => {
     
     return interviewsWithResponseCount;
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return [];
   }
 };
@@ -79,7 +79,7 @@ const getInterviewById = async (id: string, companyId?: string) => {
     
     return interview;
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return null;
   }
 };
@@ -95,14 +95,14 @@ const createInterview = async (payload: any) => {
     const result = await db.collection(COLLECTIONS.INTERVIEW).insertOne(newInterview);
     
     if (!result.acknowledged) {
-      console.log("Failed to create interview");
+      // console.log("Failed to create interview");
       return null;
     }
     
     const insertedInterview = await db.collection(COLLECTIONS.INTERVIEW).findOne({ _id: result.insertedId });
     return insertedInterview;
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return null;
   }
 };
@@ -137,7 +137,7 @@ const updateInterview = async (id: string, updates: any, companyId?: string) => 
     
     return result.modifiedCount > 0;
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return false;
   }
 };
@@ -165,7 +165,7 @@ const deleteInterview = async (id: string, companyId?: string) => {
     
     return result.deletedCount > 0;
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return false;
   }
 };
@@ -195,7 +195,7 @@ const getInterviewsByOrganization = async (organizationId: string) => {
             response_count: responseCount
           };
         } catch (error) {
-          console.log(`Error counting responses for interview ${interview.id}:`, error);
+          // console.log(`Error counting responses for interview ${interview.id}:`, error);
           return {
             ...interview,
             response_count: 0
@@ -206,7 +206,7 @@ const getInterviewsByOrganization = async (organizationId: string) => {
     
     return interviewsWithResponseCount;
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return [];
   }
 };
@@ -226,7 +226,7 @@ const deactivateInterviewsByOrgId = async (organizationId: string) => {
     
     return result.modifiedCount > 0;
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return false;
   }
 };

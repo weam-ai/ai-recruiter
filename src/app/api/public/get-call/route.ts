@@ -23,14 +23,14 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { id: callId } = body;
 
-    console.log("POST /api/public/get-call received with body:", body);
+    // console.log("POST /api/public/get-call received with body:", body);
 
     if (!callId) {
       console.error("No call ID provided in request body");
       return NextResponse.json({ error: "Call ID is required" }, { status: 400 });
     }
 
-    console.log("Processing public call analysis for call ID:", callId);
+    // console.log("Processing public call analysis for call ID:", callId);
 
     // Get the response record to find interview details
     const response = await ResponseService.getResponseByCallId(callId);
@@ -39,15 +39,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Response not found" }, { status: 404 });
     }
     
-    console.log("Fetched response record:", {
-      call_id: response.call_id,
-      candidate_status: response.candidate_status,
-      is_analysed: response.is_analysed
-    });
+    // console.log("Fetched response record:", {
+    //   call_id: response.call_id,
+    //   candidate_status: response.candidate_status,
+    //   is_analysed: response.is_analysed
+    // });
 
     // Get call details from Retell API
     const callResponse = await retellClient.call.retrieve(callId);
-    console.log("Retrieved call details from Retell");
+    // console.log("Retrieved call details from Retell");
 
     // Calculate duration
     const duration = callResponse.end_timestamp 
@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
         });
 
         analytics = JSON.parse(completion.choices[0].message.content || "{}");
-        console.log("Generated analytics successfully");
+        // console.log("Generated analytics successfully");
       } catch (error) {
         console.error("Error generating analytics:", error);
         analytics = {
@@ -106,7 +106,7 @@ export async function POST(request: NextRequest) {
       start_timestamp: callResponse.start_timestamp,
     };
 
-    console.log("Updating response with call details:", updateData);
+    // console.log("Updating response with call details:", updateData);
     const updateSuccess = await ResponseService.saveResponse(updateData, callId);
     
     if (!updateSuccess) {
@@ -114,7 +114,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Failed to update response" }, { status: 500 });
     }
 
-    console.log("Successfully processed call analysis for call ID:", callId);
+    // console.log("Successfully processed call analysis for call ID:", callId);
 
     return NextResponse.json({
       callResponse: {
