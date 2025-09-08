@@ -1,9 +1,8 @@
 "use client";
 
 import React from "react";
-import { PlayCircle, Headphones, ArrowLeft } from "lucide-react";
+import { PlayCircle, Headphones } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
 
 function SideMenu() {
   const pathname = usePathname();
@@ -52,24 +51,6 @@ function SideMenu() {
             }`}>
               Interviewers
             </span>
-          </div>
-          
-          {/* Back to App Button */}
-          <div className="mt-4">
-            <Button 
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                const currentUrl = window.location.href;
-                const url = new URL(currentUrl);
-                const mainDomain = `${url.protocol}//${url.hostname}${url.port ? ':' + url.port : ''}`;
-                window.location.href = mainDomain;
-              }}
-              className="w-full text-xs"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to App
-            </Button>
           </div>
         </div>
       </div>
