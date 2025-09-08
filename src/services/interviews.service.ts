@@ -15,7 +15,13 @@ const getAllInterviews = async (companyId: string) => {
       interviews.map(async (interview) => {
         try {
           const responseCount = await db.collection(COLLECTIONS.RESPONSE)
-            .countDocuments({ interview_id: interview.id || interview._id });
+            .countDocuments({ 
+              interview_id: interview.id || interview._id,
+              $or: [
+                { is_deleted: { $exists: false } }, // Records without is_deleted field (legacy)
+                { is_deleted: { $ne: true } }       // Records where is_deleted is not true
+              ]
+            });
           
           return {
             ...interview,
@@ -69,7 +75,13 @@ const getInterviewById = async (id: string, companyId?: string) => {
       // Add response count
       try {
         const responseCount = await db.collection(COLLECTIONS.RESPONSE)
-          .countDocuments({ interview_id: interview.id || interview._id });
+          .countDocuments({ 
+            interview_id: interview.id || interview._id,
+            $or: [
+              { is_deleted: { $exists: false } }, // Records without is_deleted field (legacy)
+              { is_deleted: { $ne: true } }       // Records where is_deleted is not true
+            ]
+          });
         interview.response_count = responseCount;
       } catch (error) {
         console.log(`Error counting responses for interview ${interview.id}:`, error);
@@ -188,7 +200,13 @@ const getInterviewsByOrganization = async (organizationId: string) => {
       interviews.map(async (interview) => {
         try {
           const responseCount = await db.collection(COLLECTIONS.RESPONSE)
-            .countDocuments({ interview_id: interview.id || interview._id });
+            .countDocuments({ 
+              interview_id: interview.id || interview._id,
+              $or: [
+                { is_deleted: { $exists: false } }, // Records without is_deleted field (legacy)
+                { is_deleted: { $ne: true } }       // Records where is_deleted is not true
+              ]
+            });
           
           return {
             ...interview,
