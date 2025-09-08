@@ -89,6 +89,7 @@ export interface Response {
   is_analysed: boolean;
   is_ended: boolean;
   is_viewed: boolean;
+  is_deleted: boolean;
           tab_switch_count: number | null;
   user: {
     id: string;

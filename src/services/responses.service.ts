@@ -78,8 +78,14 @@ const getAllResponses = async (interviewId: string, companyId?: string) => {
   try {
     const db = await getDb();
     
-    // Build query with companyId filter
-    const query: any = { interview_id: interviewId };
+    // Build query with companyId filter and exclude deleted records
+    const query: any = { 
+      interview_id: interviewId,
+      $or: [
+        { is_deleted: { $exists: false } }, // Records without is_deleted field (legacy)
+        { is_deleted: { $ne: true } }       // Records where is_deleted is not true
+      ]
+    };
     if (companyId) {
       query.companyId = companyId;
     }
@@ -118,9 +124,13 @@ const getResponseCountByOrganizationId = async (organizationId: string): Promise
     const interviews = await db.collection(COLLECTIONS.INTERVIEW).find({ organization_id: organizationId }).toArray();
     const interviewIds = interviews.map((interview: any) => interview.id);
     
-    // Then count responses for those interviews
+    // Then count responses for those interviews, excluding deleted records
     const count = await db.collection(COLLECTIONS.RESPONSE).countDocuments({ 
-      interview_id: { $in: interviewIds } 
+      interview_id: { $in: interviewIds },
+      $or: [
+        { is_deleted: { $exists: false } }, // Records without is_deleted field (legacy)
+        { is_deleted: { $ne: true } }       // Records where is_deleted is not true
+      ]
     });
     
     return count;
@@ -134,7 +144,13 @@ const getAllEmailAddressesForInterview = async (interviewId: string) => {
   try {
     const db = await getDb();
     const responses = await db.collection(COLLECTIONS.RESPONSE)
-      .find({ interview_id: interviewId })
+      .find({ 
+        interview_id: interviewId,
+        $or: [
+          { is_deleted: { $exists: false } }, // Records without is_deleted field (legacy)
+          { is_deleted: { $ne: true } }       // Records where is_deleted is not true
+        ]
+      })
       .project({ email: 1 })
       .toArray();
     

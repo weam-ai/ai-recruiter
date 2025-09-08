@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import React, { useState } from "react";
-import { ChevronDown, User, LogOut } from "lucide-react";
+import { ChevronDown, User, LogOut, ArrowLeft } from "lucide-react";
 import { useAuth } from "@/contexts/auth.context";
 import { Button } from "@/components/ui/button";
 import {
@@ -51,33 +51,23 @@ function Navbar() {
           </Link>
 
         </div>
+        
+        {/* Back to App Button */}
         <div className="flex items-center">
-          <DropdownMenu open={isUserMenuOpen} onOpenChange={setIsUserMenuOpen}>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-brand rounded-full flex items-center justify-center">
-                  <User className="w-4 h-4 text-white" />
-                </div>
-                <span className="text-sm font-medium text-gray-700">
-                  {user?.name || "User"}
-                </span>
-                <ChevronDown className="w-4 h-4 text-gray-500" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuItem className="flex items-center gap-2">
-                <User className="w-4 h-4" />
-                <span>{user?.email}</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                onClick={handleSignOut}
-                className="flex items-center gap-2 text-red-600"
-              >
-                <LogOut className="w-4 h-4" />
-                <span>Sign out</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <Button 
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              const currentUrl = window.location.href;
+              const url = new URL(currentUrl);
+              const mainDomain = `${url.protocol}//${url.hostname}${url.port ? ':' + url.port : ''}`;
+              window.location.href = mainDomain;
+            }}
+            className="flex items-center gap-2"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to App
+          </Button>
         </div>
       </div>
     </div>
