@@ -15,7 +15,7 @@ const retellClient = new Retell({
 
 export async function GET(res: NextRequest) {
   logger.info("create-interviewer request received");
-  console.log("create-interviewer request received");
+  // console.log("create-interviewer request received");
 
   try {
     // Get user session data
@@ -39,7 +39,7 @@ export async function GET(res: NextRequest) {
       ],
     });
 
-    console.log("Created LLM model:", newModel.llm_id);
+    // console.log("Created LLM model:", newModel.llm_id);
 
     // Create Lisa (Explorer Lisa)
     const newFirstAgent = await retellClient.agent.create({
@@ -48,7 +48,7 @@ export async function GET(res: NextRequest) {
       agent_name: "Lisa",
     });
 
-    console.log("Created Lisa agent:", newFirstAgent.agent_id);
+    // console.log("Created Lisa agent:", newFirstAgent.agent_id);
 
     const newInterviewer = await InterviewerService.createInterviewer({
       agent_id: newFirstAgent.agent_id,
@@ -60,7 +60,7 @@ export async function GET(res: NextRequest) {
       companyId: user.companyId || session.companyId,
     });
 
-    console.log("Saved Lisa interviewer to database:", newInterviewer);
+    // console.log("Saved Lisa interviewer to database:", newInterviewer);
 
     // Create Bob (Empathetic Bob)
     const newSecondAgent = await retellClient.agent.create({
@@ -69,7 +69,7 @@ export async function GET(res: NextRequest) {
       agent_name: "Bob",
     });
 
-    console.log("Created Bob agent:", newSecondAgent.agent_id);
+    // console.log("Created Bob agent:", newSecondAgent.agent_id);
 
     const newSecondInterviewer = await InterviewerService.createInterviewer({
       agent_id: newSecondAgent.agent_id,
@@ -81,10 +81,10 @@ export async function GET(res: NextRequest) {
       companyId: user.companyId || session.companyId,
     });
 
-    console.log("Saved Bob interviewer to database:", newSecondInterviewer);
+    // console.log("Saved Bob interviewer to database:", newSecondInterviewer);
 
     logger.info("Successfully created two default interviewers with Retell agents");
-    console.log("Successfully created two default interviewers with Retell agents");
+    // console.log("Successfully created two default interviewers with Retell agents");
 
     return NextResponse.json(
       {

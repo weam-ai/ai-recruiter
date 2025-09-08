@@ -8,7 +8,7 @@ export default function TestCreateButton() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   const handleCreateInterview = () => {
-    console.log("Create interview clicked");
+    // console.log("Create interview clicked");
     setIsCreateModalOpen(true);
   };
 

@@ -186,9 +186,9 @@ function DetailsPopup({
                     }`}
                     onClick={() => {
                       const interviewerId = item._id || item.id;
-                      console.log(`Clicked interviewer: ${item.name}, _id: ${item._id}, id: ${item.id}, Current selection: ${selectedInterviewer}`);
+                      // console.log(`Clicked interviewer: ${item.name}, _id: ${item._id}, id: ${item.id}, Current selection: ${selectedInterviewer}`);
                       setSelectedInterviewer(interviewerId);
-                      console.log(`New selection set to: ${interviewerId}`);
+                      // console.log(`New selection set to: ${interviewerId}`);
                     }}
                   >
                     <Image

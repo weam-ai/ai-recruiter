@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Call ID is required" }, { status: 400 });
     }
 
-    console.log("Manual analysis triggered for call ID:", callId);
+    // console.log("Manual analysis triggered for call ID:", callId);
 
     // Get the response record
     const response = await ResponseService.getResponseByCallId(callId);
@@ -36,19 +36,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Response not found" }, { status: 404 });
     }
 
-    console.log("Found response:", {
-      call_id: response.call_id,
-      interview_id: response.interview_id,
-      is_analysed: response.is_analysed
-    });
+    // console.log("Found response:", {
+    //   call_id: response.call_id,
+    //   interview_id: response.interview_id,
+    //   is_analysed: response.is_analysed
+    // });
 
     // Get call details from Retell API
     const callResponse = await retellClient.call.retrieve(callId);
-    console.log("Retrieved call details from Retell:", {
-      call_id: callResponse.call_id,
-      transcript_length: callResponse.transcript?.length || 0,
-      has_transcript: !!callResponse.transcript
-    });
+    // console.log("Retrieved call details from Retell:", {
+    //   call_id: callResponse.call_id,
+    //   transcript_length: callResponse.transcript?.length || 0,
+    //   has_transcript: !!callResponse.transcript
+    // });
 
     // Calculate duration
     const duration = callResponse.end_timestamp 
@@ -62,11 +62,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Interview not found" }, { status: 404 });
     }
 
-    console.log("Found interview:", {
-      id: interview.id,
-      name: interview.name,
-      questions_count: interview.questions?.length || 0
-    });
+    // console.log("Found interview:", {
+    //   id: interview.id,
+    //   name: interview.name,
+    //   questions_count: interview.questions?.length || 0
+    // });
 
     // Generate analytics using OpenAI
     let analytics = null;
@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
           interview.objective || "General interview assessment"
         );
 
-        console.log("Generating analytics with prompt length:", prompt.length);
+        // console.log("Generating analytics with prompt length:", prompt.length);
 
         const completion = await openai.chat.completions.create({
           model: "gpt-4o-mini",
@@ -91,7 +91,7 @@ export async function POST(request: NextRequest) {
         });
 
         analytics = JSON.parse(completion.choices[0].message.content || "{}");
-        console.log("Generated analytics successfully:", analytics);
+        // console.log("Generated analytics successfully:", analytics);
       } catch (error) {
         console.error("Error generating analytics:", error);
         analytics = {
@@ -102,7 +102,7 @@ export async function POST(request: NextRequest) {
         };
       }
     } else {
-      console.log("No transcript available for analysis");
+      // console.log("No transcript available for analysis");
       analytics = {
         overall_score: 0,
         strengths: ["No transcript available"],
@@ -134,7 +134,7 @@ export async function POST(request: NextRequest) {
       }
     };
 
-    console.log("Updating response with analysis data:", updateData);
+    // console.log("Updating response with analysis data:", updateData);
     const updateSuccess = await ResponseService.saveResponse(updateData, callId);
     
     if (!updateSuccess) {
@@ -142,7 +142,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Failed to update response" }, { status: 500 });
     }
 
-    console.log("Successfully completed manual analysis for call ID:", callId);
+    // console.log("Successfully completed manual analysis for call ID:", callId);
 
     return NextResponse.json({
       success: true,

@@ -206,7 +206,7 @@ function CallInfo({
                       value={candidateStatus}
                       onValueChange={async (newValue: string) => {
                         try {
-                          console.log("Updating candidate status to:", newValue);
+                          // console.log("Updating candidate status to:", newValue);
                           
                           const response = await axios.put(getApiUrl(`/api/responses/call/${call_id}`), {
                             candidate_status: newValue,
@@ -215,7 +215,7 @@ function CallInfo({
                           if (response.data.success) {
                             setCandidateStatus(newValue);
                             onCandidateStatusChange(call_id, newValue);
-                            console.log("Status updated successfully");
+                            // console.log("Status updated successfully");
                           } else {
                             console.error("Failed to update status:", response.data);
                           }

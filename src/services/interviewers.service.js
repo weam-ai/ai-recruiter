@@ -53,7 +53,7 @@ const getInterviewerById = async (id, companyId) => {
       try {
         interviewer = await db.collection(COLLECTIONS.INTERVIEWER).findOne(buildQuery("_id", new ObjectId(id)));
       } catch (objectIdError) {
-        console.log("Failed to convert to ObjectId, trying as string:", objectIdError.message);
+        // console.log("Failed to convert to ObjectId, trying as string:", objectIdError.message);
         interviewer = await db.collection(COLLECTIONS.INTERVIEWER).findOne(buildQuery("_id", id));
       }
     } else {
