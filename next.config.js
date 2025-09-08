@@ -1,10 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  basePath: process.env.NEXT_PUBLIC_API_BASE_PATH,
-  assetPrefix: process.env.NEXT_PUBLIC_API_BASE_PATH,
-  trailingSlash: false,
-  output: "standalone",
-  reactStrictMode: true,
+  // basePath: process.env.NEXT_PUBLIC_API_BASE_PATH,
+  // assetPrefix: process.env.NEXT_PUBLIC_API_BASE_PATH,
+  // trailingSlash: false,
+  // output: "standalone",
+  // reactStrictMode: true,
   eslint: {
     // Warning: This allows production builds to successfully complete even if
     // your project has ESLint errors.
