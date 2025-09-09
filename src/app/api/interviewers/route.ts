@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
       ],
     });
 
-    console.log("Created LLM model:", newModel.llm_id);
+    // console.log("Created LLM model:", newModel.llm_id);
 
     // Create the Retell agent
     const newAgent = await retellClient.agent.create({
@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
       agent_name: body.name || "Custom Interviewer",
     });
 
-    console.log("Created agent:", newAgent.agent_id);
+    // console.log("Created agent:", newAgent.agent_id);
 
     const interviewerData = {
       ...body,

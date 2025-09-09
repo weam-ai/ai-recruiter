@@ -16,7 +16,7 @@ export default function HomePage() {
         router.push('/dashboard');
       } else {
         // User is not authenticated, stay on home page
-        console.log('No user session found. Please log in through your external authentication system.');
+        // console.log('No user session found. Please log in through your external authentication system.');
       }
     }
   }, [user, isLoaded, router]);

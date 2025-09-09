@@ -1,19 +1,18 @@
 import { MongoClient } from 'mongodb';
 import { NextResponse } from "next/server";
 import { COLLECTIONS } from "@/lib/collection-constants";
-const config = require('../../../config/config');
+import { getMongoUri } from "@/lib/mongodb-uri";
 
 export async function GET() {
   try {
-    if (!config.DATABASE.MONGODB_URI) {
+    const uri = getMongoUri();
+    if (!uri) {
       return NextResponse.json({
         success: false,
         message: "MongoDB URI not configured",
         error: "Please configure MongoDB connection. Either set MONGODB_URI or provide DB_CONNECTION, DB_HOST, DB_DATABASE, DB_USERNAME, and DB_PASSWORD in your environment variables."
       }, { status: 500 });
     }
-
-    const uri = config.DATABASE.MONGODB_URI;
     const client = new MongoClient(uri);
     
     await client.connect();

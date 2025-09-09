@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const interviewerId = body.interviewer_id;
     
-    console.log("Registering call for interviewer ID:", interviewerId);
+    // console.log("Registering call for interviewer ID:", interviewerId);
     
     // Check if Retell API key is configured
     if (!config.RETELL.API_KEY) {
@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
     }
     
     const interviewer = await InterviewerService.getInterviewerById(interviewerId, user.companyId || session.companyId);
-    console.log("Found interviewer:", interviewer ? "Yes" : "No");
+    // console.log("Found interviewer:", interviewer ? "Yes" : "No");
     
     if (!interviewer || !interviewer.agent_id) {
       console.error("No interviewer found or no agent_id configured");
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
       retell_llm_dynamic_variables: body.dynamic_data || {},
     });
 
-    console.log("Successfully registered call with Retell:", registerCallResponse.call_id);
+    // console.log("Successfully registered call with Retell:", registerCallResponse.call_id);
     return NextResponse.json({
       registerCallResponse: registerCallResponse
     });

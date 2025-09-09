@@ -1,6 +1,8 @@
 import { cookies } from 'next/headers';
 import { getSession } from '../../config/withSession';
 
+export const dynamic = 'force-dynamic';
+
 export default async function CookieDisplayPage() {
   // Get the weam cookie using Next.js cookies
   const cookieStore = cookies();

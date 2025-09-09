@@ -129,6 +129,7 @@ db.createCollection("solution_foloup_response", {
         is_analysed: { bsonType: "bool" },
         is_ended: { bsonType: "bool" },
         is_viewed: { bsonType: "bool" },
+        is_deleted: { bsonType: "bool" },
         tab_switch_count: { bsonType: ["int", "null"] },
         user: { 
           bsonType: ["object", "null"],
