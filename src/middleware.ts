@@ -11,6 +11,7 @@ const publicRoutes = [
   "/api/generate-interview-questions",
   "/api/create-interviewer",
   "/api/analyze-communication",
+  "/api/feedback",
   "/api/auth/session",
   "/api/auth/logout",
 ];

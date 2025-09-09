@@ -168,7 +168,7 @@ function DetailsPopup({
                   className=" p-0 inline-block cursor-pointer ml-1 mr-5 rounded-xl shrink-0 overflow-hidden"
                   key={item._id || item.id}
                 >
-                  <button
+                  {/* <button
                     className="absolute ml-9"
                     onClick={(e) => {
                       e.stopPropagation();
@@ -177,18 +177,18 @@ function DetailsPopup({
                     }}
                   >
                     <Info size={18} color="#4f46e5" strokeWidth={2.2} />
-                  </button>
+                  </button> */}
                   <div
                     className={`w-[96px] overflow-hidden rounded-full transition-all duration-200 ${
                       selectedInterviewer === (item._id || item.id)
-                        ? "border-4 border-indigo-600 ring-2 ring-indigo-200 scale-105"
+                        ? "border-2 border-indigo-600"
                         : "border-2 border-gray-200 hover:border-gray-300"
                     }`}
                     onClick={() => {
                       const interviewerId = item._id || item.id;
-                      console.log(`Clicked interviewer: ${item.name}, _id: ${item._id}, id: ${item.id}, Current selection: ${selectedInterviewer}`);
+                      // console.log(`Clicked interviewer: ${item.name}, _id: ${item._id}, id: ${item.id}, Current selection: ${selectedInterviewer}`);
                       setSelectedInterviewer(interviewerId);
-                      console.log(`New selection set to: ${interviewerId}`);
+                      // console.log(`New selection set to: ${interviewerId}`);
                     }}
                   >
                     <Image
@@ -203,9 +203,9 @@ function DetailsPopup({
                     selectedInterviewer === (item._id || item.id) ? "text-indigo-600 font-semibold" : "text-gray-700"
                   }`}>
                     {item.name}
-                    {selectedInterviewer === (item._id || item.id) && (
+                    {/* {selectedInterviewer === (item._id || item.id) && (
                       <span className="block text-xs text-indigo-500 mt-1">✓ Selected</span>
-                    )}
+                    )} */}
                   </CardTitle>
                 </div>
               ))}
@@ -373,7 +373,11 @@ function DetailsPopup({
           setOpenInterviewerDetails(false);
         }}
       >
-        <InterviewerDetailsModal interviewer={interviewerDetails} />
+        <InterviewerDetailsModal 
+          interviewer={interviewerDetails} 
+          isOpen={openInterviewerDetails}
+          onClose={() => setOpenInterviewerDetails(false)}
+        />
       </Modal>
     </>
   );

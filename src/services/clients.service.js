@@ -10,14 +10,14 @@ const updateOrganization = async (payload, id) => {
     );
     
     if (result.matchedCount === 0) {
-      console.log("Organization not found");
+      // console.log("Organization not found");
       return [];
     }
     
     const updatedOrg = await db.collection(COLLECTIONS.ORGANIZATION).findOne({ id });
     return updatedOrg ? [updatedOrg] : [];
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return [];
   }
 };
@@ -58,7 +58,7 @@ const getClientById = async (
 
     return user || null;
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return null;
   }
 };
@@ -100,7 +100,7 @@ const getOrganizationById = async (
 
     return organization || null;
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return null;
   }
 };

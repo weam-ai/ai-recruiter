@@ -38,10 +38,10 @@ export interface FeedbackData {
   feedback: string | null;
   email: string | null;
   user: {
-    id: string;
-    email: string;
+    id: string | null;
+    email: string | null;
   };
-  companyId: string;
+  companyId: string | null;
 }
 
 export interface CallData {

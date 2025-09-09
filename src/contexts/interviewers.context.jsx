@@ -20,21 +20,21 @@ export const InterviewersProvider = ({ children }) => {
 
   const getAllInterviewers = useCallback(async (companyId = "") => {
     try {
-      console.log("getAllInterviewers called with companyId:", companyId);
+      // console.log("getAllInterviewers called with companyId:", companyId);
       setInterviewersLoading(true);
       
       const response = await fetch(
         getApiUrl(`/api/interviewers?companyId=${companyId}`)
       );
       
-      console.log("API response status:", response.status);
-      console.log("API response ok:", response.ok);
+      // console.log("API response status:", response.status);
+      // console.log("API response ok:", response.ok);
       
       if (response.ok) {
         const data = await response.json();
-        console.log("API response data:", data);
+        // console.log("API response data:", data);
         setInterviewers(data);
-        console.log("Interviewers state updated:", data);
+        // console.log("Interviewers state updated:", data);
       } else {
         console.error("API response not ok:", response.status, response.statusText);
         const errorText = await response.text();
@@ -59,13 +59,19 @@ export const InterviewersProvider = ({ children }) => {
       if (response.ok) {
         const newInterviewer = await response.json();
         setInterviewers((prev) => [newInterviewer, ...prev]);
+        return newInterviewer;
+      } else {
+        const errorData = await response.json();
+        console.error('Error creating interviewer:', errorData);
+        throw new Error(errorData.error || 'Failed to create interviewer');
       }
     } catch (error) {
       console.error("Error creating interviewer:", error);
+      throw error;
     }
   }, []); // Empty dependency array
 
-  console.log("InterviewersContext render:", { interviewers, interviewersLoading });
+  // console.log("InterviewersContext render:", { interviewers, interviewersLoading });
 
   return (
     <InterviewersContext.Provider

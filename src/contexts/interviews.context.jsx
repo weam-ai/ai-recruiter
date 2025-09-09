@@ -101,7 +101,7 @@ export const InterviewsProvider = ({ children }) => {
   };
 
   const fetchInterviews = async (companyId) => {
-    console.log("fetchInterviews called with:", { companyId });
+    // console.log("fetchInterviews called with:", { companyId });
     if (companyId) {
       await getAllInterviews(companyId);
     }

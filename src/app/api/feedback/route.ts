@@ -4,22 +4,23 @@ import { getSession } from "@/config/withSession";
 
 export async function POST(request: NextRequest) {
   try {
-    // Get user session data
+    // Get user session data (optional for public feedback)
     const session = await getSession();
-    const user = session.user;
+    const user = session?.user;
     
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
     const body = await request.json();
+    
+    // Prepare feedback data - handle both authenticated and non-authenticated users
     const feedbackData = {
       ...body,
-      user: {
+      user: user ? {
         id: user._id,
         email: user.email,
+      } : {
+        id: null, // No user ID for public feedback
+        email: body.email || null, // Use email from form if provided
       },
-      companyId: user.companyId || session.companyId,
+      companyId: user?.companyId || session?.companyId || null, // May be null for public feedback
     };
     
     const feedback = await FeedbackService.submitFeedback(feedbackData);

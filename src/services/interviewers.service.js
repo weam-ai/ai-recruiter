@@ -24,7 +24,12 @@ const createInterviewer = async (payload) => {
       created_at: new Date(),
     };
     const result = await db.collection(COLLECTIONS.INTERVIEWER).insertOne(newInterviewer);
-    return result;
+    
+    // Return the created interviewer with the inserted ID
+    return {
+      ...newInterviewer,
+      _id: result.insertedId,
+    };
   } catch (error) {
     console.error("Error creating interviewer:", error);
     throw error;
@@ -53,7 +58,7 @@ const getInterviewerById = async (id, companyId) => {
       try {
         interviewer = await db.collection(COLLECTIONS.INTERVIEWER).findOne(buildQuery("_id", new ObjectId(id)));
       } catch (objectIdError) {
-        console.log("Failed to convert to ObjectId, trying as string:", objectIdError.message);
+        // console.log("Failed to convert to ObjectId, trying as string:", objectIdError.message);
         interviewer = await db.collection(COLLECTIONS.INTERVIEWER).findOne(buildQuery("_id", id));
       }
     } else {

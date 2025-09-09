@@ -52,7 +52,7 @@ function FileUpload({
         setUploadedDocumentContext(fullText);
         setIsUploaded(true);
       } catch (error) {
-        console.log(error);
+        // console.log(error);
         toast.error("Error reading PDF", {
           description: "Please try again.",
           duration: 3000,

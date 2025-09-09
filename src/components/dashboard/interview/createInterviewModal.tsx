@@ -40,7 +40,7 @@ function CreateInterviewModal({ open, setOpen }: Props) {
   const hasLoadedInterviewers = useRef(false);
 
   // Debug logging
-  console.log("CreateInterviewModal render:", { open, interviewersCount: interviewers?.length });
+  // console.log("CreateInterviewModal render:", { open, interviewersCount: interviewers?.length });
 
   // Below for File Upload
   const [isUploaded, setIsUploaded] = useState(false);
@@ -49,7 +49,7 @@ function CreateInterviewModal({ open, setOpen }: Props) {
   // Load interviewers only once when modal opens
   useEffect(() => {
     if (open && !hasLoadedInterviewers.current && user?.companyId) {
-      console.log("Modal opened, loading interviewers for companyId:", user.companyId);
+      // console.log("Modal opened, loading interviewers for companyId:", user.companyId);
       getAllInterviewers(user.companyId);
       hasLoadedInterviewers.current = true;
     }
@@ -78,11 +78,11 @@ function CreateInterviewModal({ open, setOpen }: Props) {
   }, [open]);
 
   const handleClose = () => {
-    console.log("Modal close handler called");
+    // console.log("Modal close handler called");
     setOpen(false);
   };
 
-  console.log("Modal should be visible:", open, "Interviewers available:", interviewers?.length);
+  // console.log("Modal should be visible:", open, "Interviewers available:", interviewers?.length);
 
   return (
     <Modal open={open} onClose={handleClose}>

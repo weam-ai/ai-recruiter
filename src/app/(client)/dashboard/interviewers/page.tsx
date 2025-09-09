@@ -21,6 +21,13 @@ function Interviewers() {
     }
   }, [user, getAllInterviewers]);
 
+  // Refresh interviewers when the context changes
+  useEffect(() => {
+    if (user && interviewers.length === 0 && !interviewersLoading) {
+      getAllInterviewers(user.companyId || "");
+    }
+  }, [user, interviewers.length, interviewersLoading, getAllInterviewers]);
+
   const handleInterviewerClick = (interviewer: Interviewer) => {
     setSelectedInterviewer(interviewer);
     setIsModalOpen(true);
@@ -60,12 +67,12 @@ function Interviewers() {
             interviewers.map((interviewer) => (
               <div 
                 key={interviewer._id || interviewer.id} 
-                className="flex flex-col items-center cursor-pointer hover:scale-105 transition-transform duration-200 p-4 rounded-lg hover:bg-gray-50"
+                className="flex flex-col items-center cursor-pointer hover:scale-105 transition-transform duration-200 p-4 rounded-lg hover:bg-gray-50 border-2 border-gray-200"
                 onClick={() => handleInterviewerClick(interviewer)}
               >
                 <div className="w-24 h-24 mb-4 flex items-center justify-center">
                   <Image
-                    src={getImageUrl("/avatars/7.png")}
+                    src={interviewer.image || getImageUrl("/avatars/7.png")}
                     alt={interviewer.name}
                     width={96}
                     height={96}
