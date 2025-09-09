@@ -2,9 +2,14 @@ services:
   foloup:
     build: .
     ports:
-      - "4000:4000"
+      - "4000:3000"
     env_file:
       - .env
     environment:
       - NODE_ENV=production
     restart: unless-stopped
+    networks:
+      - weamai_app-network
+networks:
+  weamai_app-network:
+    external: true
