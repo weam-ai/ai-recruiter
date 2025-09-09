@@ -373,7 +373,11 @@ function DetailsPopup({
           setOpenInterviewerDetails(false);
         }}
       >
-        <InterviewerDetailsModal interviewer={interviewerDetails} />
+        <InterviewerDetailsModal 
+          interviewer={interviewerDetails} 
+          isOpen={openInterviewerDetails}
+          onClose={() => setOpenInterviewerDetails(false)}
+        />
       </Modal>
     </>
   );
