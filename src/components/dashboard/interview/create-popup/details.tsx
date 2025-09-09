@@ -168,7 +168,7 @@ function DetailsPopup({
                   className=" p-0 inline-block cursor-pointer ml-1 mr-5 rounded-xl shrink-0 overflow-hidden"
                   key={item._id || item.id}
                 >
-                  <button
+                  {/* <button
                     className="absolute ml-9"
                     onClick={(e) => {
                       e.stopPropagation();
@@ -177,7 +177,7 @@ function DetailsPopup({
                     }}
                   >
                     <Info size={18} color="#4f46e5" strokeWidth={2.2} />
-                  </button>
+                  </button> */}
                   <div
                     className={`w-[96px] overflow-hidden rounded-full transition-all duration-200 ${
                       selectedInterviewer === (item._id || item.id)
