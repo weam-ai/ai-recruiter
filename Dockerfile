@@ -6,6 +6,7 @@ WORKDIR /app
 FROM base AS deps
 COPY package.json yarn.lock ./
 RUN yarn install --check-files
+
 # Build the application
 FROM base AS builder
 COPY --from=deps /app/node_modules ./node_modules
@@ -25,5 +26,6 @@ COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 # Expose the application port
 EXPOSE 4000
+
 # Start the application
 CMD ["yarn", "start"]
