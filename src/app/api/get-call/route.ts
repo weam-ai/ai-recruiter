@@ -54,14 +54,14 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { id: callId } = body;
 
-    console.log("POST /api/get-call received with body:", body);
+    // console.log("POST /api/get-call received with body:", body);
 
     if (!callId) {
       console.error("No call ID provided in request body");
       return NextResponse.json({ error: "Call ID is required" }, { status: 400 });
     }
 
-    console.log("Processing call analysis for call ID:", callId);
+    // console.log("Processing call analysis for call ID:", callId);
 
     // Get the response record to find interview details
     const response = await ResponseService.getResponseByCallId(callId);
@@ -70,15 +70,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Response not found" }, { status: 404 });
     }
     
-    console.log("Fetched response record:", {
-      call_id: response.call_id,
-      candidate_status: response.candidate_status,
-      is_analysed: response.is_analysed
-    });
+    // console.log("Fetched response record:", {
+    //   call_id: response.call_id,
+    //   candidate_status: response.candidate_status,
+    //   is_analysed: response.is_analysed
+    // });
 
     // Get call details from Retell API
     const callResponse = await retellClient.call.retrieve(callId);
-    console.log("Retrieved call details from Retell");
+    // console.log("Retrieved call details from Retell");
 
     // Calculate duration
     const duration = callResponse.end_timestamp 
@@ -116,7 +116,7 @@ export async function POST(request: NextRequest) {
         });
 
         analytics = JSON.parse(completion.choices[0]?.message?.content || "{}");
-        console.log("Generated analytics successfully");
+        // console.log("Generated analytics successfully");
       } catch (error) {
         console.error("Error generating analytics:", error);
         // Continue without analytics if generation fails
@@ -131,12 +131,12 @@ export async function POST(request: NextRequest) {
     const meaningfulStatuses = ["SELECTED", "NOT_SELECTED", "POTENTIAL", "NO_STATUS"];
     const shouldPreserveStatus = latestResponse.candidate_status && meaningfulStatuses.includes(latestResponse.candidate_status);
     
-    console.log("Status preservation check:", {
-      originalStatus: response.candidate_status,
-      latestStatus: latestResponse.candidate_status,
-      isMeaningful: meaningfulStatuses.includes(latestResponse.candidate_status),
-      shouldPreserve: shouldPreserveStatus
-    });
+    // console.log("Status preservation check:", {
+    //   originalStatus: response.candidate_status,
+    //   latestStatus: latestResponse.candidate_status,
+    //   isMeaningful: meaningfulStatuses.includes(latestResponse.candidate_status),
+    //   shouldPreserve: shouldPreserveStatus
+    // });
     
     const updateData = {
       duration,
@@ -146,15 +146,15 @@ export async function POST(request: NextRequest) {
       ...(shouldPreserveStatus ? {} : { candidate_status: "completed" }),
     };
 
-    console.log("Updating response record with data:", {
-      duration,
-      hasDetails: !!callResponse,
-      hasAnalytics: !!analytics,
-      is_analysed: true,
-      currentStatus: response.candidate_status,
-      shouldPreserveStatus: shouldPreserveStatus,
-      willSetStatus: !shouldPreserveStatus
-    });
+    // console.log("Updating response record with data:", {
+    //   duration,
+    //   hasDetails: !!callResponse,
+    //   hasAnalytics: !!analytics,
+    //   is_analysed: true,
+    //   currentStatus: response.candidate_status,
+    //   shouldPreserveStatus: shouldPreserveStatus,
+    //   willSetStatus: !shouldPreserveStatus
+    // });
 
     const updated = await ResponseService.saveResponse(updateData, callId);
     
@@ -163,8 +163,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Failed to update response" }, { status: 500 });
     }
 
-    console.log("Successfully processed call analysis for call ID:", callId);
-    console.log("Response record updated with details and analytics");
+    // console.log("Successfully processed call analysis for call ID:", callId);
+    // console.log("Response record updated with details and analytics");
 
     return NextResponse.json({
       success: true,

@@ -45,21 +45,27 @@ const createInterviewerCard = () => {
     }
   }, [open]);
 
+
   const onSave = async () => {
-    await createInterviewer({
-      name: name,
-      empathy: empathy * 10,
-      rapport: rapport * 10,
-      exploration: exploration * 10,
-      speed: speed * 10,
-      user: {
-        id: user?._id || "",
-        email: user?.email || "",
-      },
-      image: image,
-    });
-    setIsClicked(false);
-    setOpen(false);
+    try {
+      await createInterviewer({
+        name: name,
+        empathy: empathy * 10,
+        rapport: rapport * 10,
+        exploration: exploration * 10,
+        speed: speed * 10,
+        user: {
+          id: user?._id || "",
+          email: user?.email || "",
+        },
+        image: image,
+      });
+      setIsClicked(false);
+      setOpen(false);
+    } catch (error) {
+      console.error('Error creating interviewer:', error);
+      setIsClicked(false);
+    }
   };
 
   return (
@@ -88,13 +94,19 @@ const createInterviewerCard = () => {
               onClick={() => setGallery(true)}
             >
               {image ? (
-                <Image
-                  src={image}
-                  alt="Picture of the interviewer"
-                  width={140}
-                  height={140}
-                  className="w-full h-full object-cover object-center"
-                />
+                <div className="w-full h-full flex items-center justify-center">
+                  <Image
+                    src={image}
+                    alt="Picture of the interviewer"
+                    width={140}
+                    height={140}
+                    className="w-full h-full object-cover object-center rounded-lg"
+                    onError={(e) => {
+                      console.error('Image failed to load:', image);
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
+                </div>
               ) : (
                 <div>
                   <LucideImage

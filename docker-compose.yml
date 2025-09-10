@@ -8,3 +8,8 @@ services:
     environment:
       - NODE_ENV=production
     restart: unless-stopped
+    networks:
+      - weamai_app-network
+networks:
+  weamai_app-network:
+    external: true

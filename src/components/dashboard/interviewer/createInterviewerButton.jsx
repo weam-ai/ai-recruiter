@@ -20,7 +20,7 @@ function CreateInterviewerButton() {
     
     try {
       const response = await axios.get(getApiUrl("/api/create-interviewer"), {});
-      console.log("Interviewers created:", response.data);
+      // console.log("Interviewers created:", response.data);
       
       if (response.status === 200) {
         setIsSuccess(true);
@@ -33,7 +33,7 @@ function CreateInterviewerButton() {
         alert(`🎉 Successfully created interviewers!\n\n${lisaName}: Explorer with voice Chloe\n${bobName}: Empathetic with voice Brian\n\nBoth interviewers are now available for your interviews!`);
         
         // Refresh the interviewers list to show the new ones
-        console.log("Refreshing interviewers list...");
+        // console.log("Refreshing interviewers list...");
         await getAllInterviewers();
         
         // Reset after showing the alert

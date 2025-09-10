@@ -25,10 +25,10 @@ export async function PUT(
 ) {
   try {
     const body = await request.json();
-    console.log("PUT /api/responses/call/[callId] - Updating response:", {
-      callId: params.callId,
-      body: body
-    });
+    // console.log("PUT /api/responses/call/[callId] - Updating response:", {
+    //   callId: params.callId,
+    //   body: body
+    // });
     
     const success = await ResponseService.saveResponse(body, params.callId);
     
@@ -37,7 +37,7 @@ export async function PUT(
       return NextResponse.json({ error: 'Failed to save response' }, { status: 500 });
     }
 
-    console.log("Successfully updated response for callId:", params.callId);
+    // console.log("Successfully updated response for callId:", params.callId);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error saving response:', error);

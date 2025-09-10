@@ -38,7 +38,7 @@ function InterviewCard({ interview }) {
     const callUrl = `${baseUrl}` + config.APP.API_BASE_PATH + `/call/${interview.id || interview._id}`;
     
     navigator.clipboard.writeText(callUrl);
-    console.log("Interview URL copied to clipboard:", callUrl);
+    // console.log("Interview URL copied to clipboard:", callUrl);
   };
 
   return (

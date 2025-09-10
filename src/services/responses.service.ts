@@ -14,13 +14,13 @@ const createResponse = async (payload: any) => {
     const result = await db.collection(COLLECTIONS.RESPONSE).insertOne(newResponse);
     
     if (!result.acknowledged) {
-      console.log("Failed to create response");
+      // console.log("Failed to create response");
       return null;
     }
     
     return result.insertedId.toString();
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return null;
   }
 };
@@ -38,14 +38,14 @@ const saveResponse = async (payload: any, call_id: string) => {
       { $set: { ...payload } }
     );
     
-    console.log("Database update result:", {
-      matchedCount: result.matchedCount,
-      modifiedCount: result.modifiedCount,
-      acknowledged: result.acknowledged
-    });
+    // console.log("Database update result:", {
+    //   matchedCount: result.matchedCount,
+    //   modifiedCount: result.modifiedCount,
+    //   acknowledged: result.acknowledged
+    // });
     
     if (result.matchedCount === 0) {
-      console.log("Response not found for call_id:", call_id);
+      // console.log("Response not found for call_id:", call_id);
       return null;
     }
     
@@ -69,7 +69,7 @@ const getResponseByCallId = async (call_id: string, companyId?: string) => {
     const response = await db.collection(COLLECTIONS.RESPONSE).findOne(query);
     return response;
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return null;
   }
 };
@@ -78,8 +78,14 @@ const getAllResponses = async (interviewId: string, companyId?: string) => {
   try {
     const db = await getDb();
     
-    // Build query with companyId filter
-    const query: any = { interview_id: interviewId };
+    // Build query with companyId filter and exclude deleted records
+    const query: any = { 
+      interview_id: interviewId,
+      $or: [
+        { is_deleted: { $exists: false } }, // Records without is_deleted field (legacy)
+        { is_deleted: { $ne: true } }       // Records where is_deleted is not true
+      ]
+    };
     if (companyId) {
       query.companyId = companyId;
     }
@@ -91,7 +97,7 @@ const getAllResponses = async (interviewId: string, companyId?: string) => {
     
     return responses;
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return [];
   }
 };
@@ -106,7 +112,7 @@ const updateResponse = async (id: string, updates: any) => {
     
     return result.modifiedCount > 0;
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return false;
   }
 };
@@ -118,14 +124,18 @@ const getResponseCountByOrganizationId = async (organizationId: string): Promise
     const interviews = await db.collection(COLLECTIONS.INTERVIEW).find({ organization_id: organizationId }).toArray();
     const interviewIds = interviews.map((interview: any) => interview.id);
     
-    // Then count responses for those interviews
+    // Then count responses for those interviews, excluding deleted records
     const count = await db.collection(COLLECTIONS.RESPONSE).countDocuments({ 
-      interview_id: { $in: interviewIds } 
+      interview_id: { $in: interviewIds },
+      $or: [
+        { is_deleted: { $exists: false } }, // Records without is_deleted field (legacy)
+        { is_deleted: { $ne: true } }       // Records where is_deleted is not true
+      ]
     });
     
     return count;
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return 0;
   }
 };
@@ -134,13 +144,19 @@ const getAllEmailAddressesForInterview = async (interviewId: string) => {
   try {
     const db = await getDb();
     const responses = await db.collection(COLLECTIONS.RESPONSE)
-      .find({ interview_id: interviewId })
+      .find({ 
+        interview_id: interviewId,
+        $or: [
+          { is_deleted: { $exists: false } }, // Records without is_deleted field (legacy)
+          { is_deleted: { $ne: true } }       // Records where is_deleted is not true
+        ]
+      })
       .project({ email: 1 })
       .toArray();
     
     return responses.map((response: any) => response.email).filter(Boolean);
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return [];
   }
 };
