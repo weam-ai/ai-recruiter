@@ -24,8 +24,7 @@ export async function POST(request: NextRequest) {
     const basicauth = Buffer.from(
       `${config.BASIC_AUTH.USERNAME}:${config.BASIC_AUTH.PASSWORD}`
     ).toString("base64");
-    console.log('basicauth', basicauth);
-
+    
     const response = await fetch(externalApiUrl, {
       method: "POST",
       headers: {

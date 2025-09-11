@@ -32,7 +32,6 @@ async function callCheckAccessAPI(userId: string, urlPath: string, baseUrl: stri
     
     const basePath = process.env.NEXT_PUBLIC_API_BASE_PATH;
     const fullUrl = `${baseUrl}${basePath}/api/auth/check-access`;
-    console.log('fullUrl', fullUrl);
     
     const response = await fetch(fullUrl, {
       method: 'POST',
@@ -45,10 +44,7 @@ async function callCheckAccessAPI(userId: string, urlPath: string, baseUrl: stri
       }),
     });
 
-    console.log('response...', response.ok);
-
     if (!response.ok) {
-      // console.error('Check-access API error:', response.status);
       return false;
     }
 
