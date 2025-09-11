@@ -30,8 +30,6 @@ async function callCheckAccessAPI(userId: string, urlPath: string, baseUrl: stri
   try {
     // Construct the full URL for the API call
     
-    // const baseUrl = baseUrl;
-    // baseUrl = 'http://localhost:3002';
     const basePath = process.env.NEXT_PUBLIC_API_BASE_PATH;
     const fullUrl = `${baseUrl}${basePath}/api/auth/check-access`;
     console.log('fullUrl', fullUrl);
@@ -55,7 +53,7 @@ async function callCheckAccessAPI(userId: string, urlPath: string, baseUrl: stri
     }
 
     const jsonData = await response.json();
-    console.log('Check-access API response:', jsonData, jsonData.data?.hasAccess);
+    
     return jsonData.data?.hasAccess;
   } catch (error) {
     // console.error('Error calling check-access API....:', error);

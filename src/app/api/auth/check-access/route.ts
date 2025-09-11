@@ -18,13 +18,13 @@ export async function POST(request: NextRequest) {
     }
     
     // Call the external API
-    // console.log('domain', getHostnameFromRequest(request));
     const externalApiUrl = getHostnameFromRequest(request) + '/napi/v1/common/check-access-solution';
-    // const externalApiUrl = 'https://dev.weam.ai/napi/v1/common/check-access-solution';
+    
     // Create basic auth header
     const basicauth = Buffer.from(
       `${config.BASIC_AUTH.USERNAME}:${config.BASIC_AUTH.PASSWORD}`
     ).toString("base64");
+    console.log('basicauth', basicauth);
 
     const response = await fetch(externalApiUrl, {
       method: "POST",
