@@ -18,6 +18,39 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                var chatbotConfig = {
+                  _id: '68c270e6327969ed36f26e61',
+                  theme: 'light',
+                  position: 'bottom-right',
+                  size: {
+                    width: '400px',
+                    height: '600px'
+                  },
+                  autoOpen: true,
+                  welcomeMessage: 'Hi! How can I help you today inside weam?',
+                  customCSS: \`\`,
+                  customJS: \`\`
+                };
+                
+                var script = document.createElement('script');
+                script.src = 'https://dev.weam.ai/ai-chatbot/widget/chat-widget.js';
+                script.async = true;
+                script.onload = function() {
+                  if (window.AIChatbotWidget) {
+                    window.AIChatbotWidget.init(chatbotConfig);
+                  }
+                };
+                document.head.appendChild(script);
+              })();
+            `,
+          }}
+        />
+      </head>
       <body className={inter.className}>
         <AuthProvider>
           <Providers>
