@@ -23,5 +23,9 @@ module.exports = {
     SESSION: {
         COOKIE_NAME: process.env.NEXT_PUBLIC_COOKIE_NAME,
         COOKIE_PASSWORD: process.env.NEXT_PUBLIC_COOKIE_PASSWORD
+    },
+    BASIC_AUTH: {
+        USERNAME: process.env.API_BASIC_AUTH_USERNAME,
+        PASSWORD: process.env.API_BASIC_AUTH_PASSWORD
     }
 };

@@ -67,3 +67,22 @@ export function getImageUrl(imagePath) {
   const result = `${basePath}${normalizedImagePath}`;
   return result;
 }
+
+export function getHostnameFromRequest(request) {
+  try {
+    const host = request.headers.get('x-forwarded-host') || request.headers.get('host');
+    if (!host) {
+      return null;
+    }
+
+    // Determine protocol
+    const proto = request.headers.get('x-forwarded-proto') 
+      || (request.url?.startsWith('https://') ? 'https' : 'http');
+
+    return `${proto}://${host}`;
+  } catch (error) {
+    console.error('Error getting hostname from request:', error);
+    return null;
+  }
+}
+
