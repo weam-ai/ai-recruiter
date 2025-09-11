@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { getSession } from '@/config/withSession';
+import { getHostnameFromRequest } from '@/lib/utils';
 
 // Define public routes that don't require authentication
 const publicRoutes = [
@@ -14,6 +16,7 @@ const publicRoutes = [
   "/api/feedback",
   "/api/auth/session",
   "/api/auth/logout",
+  "/api/auth/check-access",
 ];
 
 // Define protected routes that require authentication
@@ -21,6 +24,44 @@ const protectedRoutes = [
   "/dashboard",
   "/interview",
 ];
+
+// Helper function to call check-access API
+async function callCheckAccessAPI(userId: string, urlPath: string, baseUrl: string) {
+  try {
+    // Construct the full URL for the API call
+    
+    // const baseUrl = baseUrl;
+    // baseUrl = 'http://localhost:3002';
+    const basePath = process.env.NEXT_PUBLIC_API_BASE_PATH;
+    const fullUrl = `${baseUrl}${basePath}/api/auth/check-access`;
+    console.log('fullUrl', fullUrl);
+    
+    const response = await fetch(fullUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        userId,
+        urlPath
+      }),
+    });
+
+    console.log('response...', response.ok);
+
+    if (!response.ok) {
+      // console.error('Check-access API error:', response.status);
+      return false;
+    }
+
+    const jsonData = await response.json();
+    console.log('Check-access API response:', jsonData, jsonData.data?.hasAccess);
+    return jsonData.data?.hasAccess;
+  } catch (error) {
+    // console.error('Error calling check-access API....:', error);
+    return false;
+  }
+}
 
 // Check if a route is public
 function isPublicRoute(pathname: string): boolean {
@@ -44,8 +85,35 @@ function isProtectedRoute(pathname: string): boolean {
   });
 }
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const hostname = getHostnameFromRequest(request);
+  const session = await getSession();
+  
+  // Call check-access API for every page access (except API routes and static files)
+  if (!pathname.startsWith('/api/') && !pathname.startsWith('/_next/') && !pathname.includes('.') && session?.user?.roleCode === 'USER') {
+    try {          
+      if (session?.user && session?.user?._id) {
+        // Call check-access API for every page access
+        const hasAccess = await callCheckAccessAPI(session?.user?._id, process.env.NEXT_PUBLIC_API_BASE_PATH, hostname);
+        
+        // If access is denied, redirect to login page
+        if (!hasAccess) {          
+          console.log('Access denied, redirecting to login page');
+          return NextResponse.redirect(new URL('/login', request.url));
+        } else {
+          return NextResponse.next();
+        }
+      } else {
+        console.log('No user session found, redirecting to login page');
+        return NextResponse.redirect(new URL('/login', request.url));
+      }
+    } catch (error) {
+      console.error('Error in middleware check-access call:', error);
+      // Redirect to login page on error
+      return NextResponse.redirect(new URL('/login', request.url));
+    }
+  }
 
   // Allow public routes
   if (isPublicRoute(pathname)) {
