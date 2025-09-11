@@ -25,7 +25,7 @@ module.exports = {
         COOKIE_PASSWORD: process.env.NEXT_PUBLIC_COOKIE_PASSWORD
     },
     BASIC_AUTH: {
-        USERNAME: 'adminOFweam',
-        PASSWORD: '51QFDBgA3EJmVyH'
+        USERNAME: process.env.API_BASIC_AUTH_USERNAME,
+        PASSWORD: process.env.API_BASIC_AUTH_PASSWORD
     }
 };
