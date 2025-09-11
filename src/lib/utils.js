@@ -70,15 +70,19 @@ export function getImageUrl(imagePath) {
 
 export function getHostnameFromRequest(request) {
   try {
-    const host = request.headers.get('x-forwarded-host');
+    const host = request.headers.get('x-forwarded-host') || request.headers.get('host');
     if (!host) {
       return null;
     }
-    // Remove port if present (e.g., "localhost:3000" -> "localhost")
-    // return host.split(':')[0];
-    return host;
+
+    // Determine protocol
+    const proto = request.headers.get('x-forwarded-proto') 
+      || (request.url?.startsWith('https://') ? 'https' : 'http');
+
+    return `${proto}://${host}`;
   } catch (error) {
     console.error('Error getting hostname from request:', error);
     return null;
   }
 }
+
