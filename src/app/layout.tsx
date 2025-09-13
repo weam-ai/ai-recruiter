@@ -7,7 +7,7 @@ import Providers from "@/components/providers";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "FoloUp",
+  title: "AI Recruiter",
   description: "AI-powered Interviews",
 };
 
