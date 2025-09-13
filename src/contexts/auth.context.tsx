@@ -134,7 +134,7 @@ export function useOrganization() {
     organization: user?.companyId ? {
       id: user.companyId,
       name: `${user.name || user.email}'s Company`,
-      imageUrl: "/FoloUp.png"
+      imageUrl: "/ai-recruiter.png"
     } : null 
   };
 }
