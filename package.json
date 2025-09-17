@@ -11,6 +11,7 @@
   "dependencies": {
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
+    "@heygen/streaming-avatar": "^2.0.13",
     "@hookform/resolvers": "^3.3.2",
     "@mui/material": "^5.15.20",
     "@mui/x-charts": "^7.7.1",
@@ -40,6 +41,7 @@
     "@tanstack/react-table": "^8.20.1",
     "@types/md5": "^2.3.5",
     "@types/pdf-parse": "^1.1.4",
+    "ahooks": "^3.8.4",
     "axios": "^1.6.7",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",

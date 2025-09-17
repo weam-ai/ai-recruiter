@@ -36,6 +36,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { InterviewAvatar } from "@/components/interview-avatar";
+import { InterviewMode } from "@/lib/heygen-constants";
 
 
 const webClient = new RetellWebClient();
@@ -81,6 +83,8 @@ function Call({ interview }: InterviewProps) {
     useState<string>("1");
   const [time, setTime] = useState(0);
   const [currentTimeDuration, setCurrentTimeDuration] = useState<string>("0");
+  const [useHeyGenAvatar, setUseHeyGenAvatar] = useState(false);
+  const [interviewMode, setInterviewMode] = useState<InterviewMode>("voice");
 
   const lastUserResponseRef = useRef<HTMLDivElement | null>(null);
 
@@ -106,6 +110,28 @@ function Call({ interview }: InterviewProps) {
     }
   };
 
+  const handleInterviewStart = () => {
+    setIsStarted(true);
+    setIsCalling(true);
+  };
+
+  const handleInterviewEnd = () => {
+    console.log("handleInterviewEnd called - setting isEnded to true");
+    console.log("Current useHeyGenAvatar:", useHeyGenAvatar);
+    console.log("Current isStarted:", isStarted);
+    setIsEnded(true);
+    setIsCalling(false);
+    setIsStarted(false);
+  };
+
+  const handleQuestionAsked = (question: string) => {
+    setLastInterviewerResponse(question);
+  };
+
+  const handleResponseReceived = (response: string) => {
+    setLastUserResponse(response);
+  };
+
   useEffect(() => {
     if (lastUserResponseRef.current) {
       const { current } = lastUserResponseRef;
@@ -115,19 +141,21 @@ function Call({ interview }: InterviewProps) {
 
   useEffect(() => {
     let intervalId: any;
-    if (isCalling) {
+    if (isCalling && !useHeyGenAvatar) {
       // setting time from 0 to 1 every 10 milisecond using javascript setInterval method
+      // Only run this for traditional Retell mode, not HeyGen avatar mode
       intervalId = setInterval(() => setTime(time + 1), 10);
     }
     setCurrentTimeDuration(String(Math.floor(time / 100)));
-    if (Number(currentTimeDuration) == Number(interviewTimeDuration) * 60) {
+    if (Number(currentTimeDuration) == Number(interviewTimeDuration) * 60 && !useHeyGenAvatar) {
+      // Only auto-end for traditional Retell mode
       webClient.stopCall();
       setIsEnded(true);
     }
 
     return () => clearInterval(intervalId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isCalling, time, currentTimeDuration]);
+  }, [isCalling, time, currentTimeDuration, useHeyGenAvatar]);
 
   useEffect(() => {
     if (testEmail(email)) {
@@ -239,7 +267,10 @@ function Call({ interview }: InterviewProps) {
   const onEndCallClick = async () => {
     if (isStarted) {
       setLoading(true);
-      webClient.stopCall();
+      if (!useHeyGenAvatar) {
+        // Only stop webClient for traditional Retell mode
+        webClient.stopCall();
+      }
       setIsEnded(true);
       setLoading(false);
     } else {
@@ -249,12 +280,15 @@ function Call({ interview }: InterviewProps) {
 
   const requestMicrophonePermission = async () => {
     try {
+      console.log("Requesting microphone permission...");
       const stream = await navigator.mediaDevices.getUserMedia({ 
         audio: true,
         video: false 
       });
+      console.log("Microphone permission granted, stream:", stream);
       // Stop the stream immediately as we just needed permission
       stream.getTracks().forEach(track => track.stop());
+      console.log("Microphone stream stopped after permission check");
       
       // Initialize audio context on user interaction to trigger sound permissions
       if (typeof window !== 'undefined' && window.AudioContext) {
@@ -295,7 +329,7 @@ function Call({ interview }: InterviewProps) {
     };
     setLoading(true);
 
-    // Request microphone permission first
+    // Request microphone permission first (for both modes)
     const hasPermission = await requestMicrophonePermission();
     if (!hasPermission) {
       setLoading(false);
@@ -311,60 +345,82 @@ function Call({ interview }: InterviewProps) {
     if (OldUser) {
       setIsOldUser(true);
     } else {
-      let registerCallResponse: registerCallResponseType;
-      
-      try {
-        // First try the public API route (no authentication required)
-        registerCallResponse = await axios.post(
-          getApiUrl("/api/public/register-call"),
-          { dynamic_data: data, interviewer_id: interview?.interviewer_id },
-        );
-      } catch (publicError) {
-        // console.log("Public register-call failed, trying authenticated route:", publicError);
-        // If public route fails, try the authenticated route
-        registerCallResponse = await axios.post(
-          getApiUrl("/api/register-call"),
-          { dynamic_data: data, interviewer_id: interview?.interviewer_id },
-        );
-      }
-      if (registerCallResponse.data.registerCallResponse.access_token) {
-        const accessToken = registerCallResponse.data.registerCallResponse.access_token;
-        const callId = registerCallResponse.data.registerCallResponse.call_id;
+      if (useHeyGenAvatar) {
+        // HeyGen Avatar mode - just start the interview
+        console.log("Starting HeyGen avatar mode...");
+        const callId = `heygen-${Date.now()}`;
+        setCallId(callId);
         
-        // Production flow with real Retell client
-        try {
-          // Ensure microphone permission before starting call
-          const stream = await navigator.mediaDevices.getUserMedia({ 
-            audio: true,
-            video: false 
-          });
-          // Stop the stream as Retell will handle its own stream
-          stream.getTracks().forEach(track => track.stop());
-          
-          await webClient.startCall({
-            accessToken: accessToken,
-          });
-          setIsCalling(true);
-          setIsStarted(true);
-          setCallId(callId);
-
-          const response = await createResponse({
-            interview_id: interview.id,
-            call_id: callId,
-            email: email,
-            name: name,
-          });
-        } catch (error) {
-          console.error("Error starting call:", error);
-          if (error.name === 'NotAllowedError') {
-            toast.error('Microphone access is required for this interview. Please allow microphone access and try again.');
-          } else {
-            toast.error('Error starting the call. Please check your Retell API configuration and try again.');
-          }
-        }
+        // Create response record for HeyGen session
+        const response = await createResponse({
+          interview_id: interview.id,
+          call_id: callId,
+          email: email,
+          name: name,
+        });
+        
+        console.log("Response created for HeyGen session:", response);
+        
+        // Set states to show the InterviewAvatar component
+        setIsStarted(true);
+        setIsCalling(true);
       } else {
-        // console.log("Failed to register call");
-        alert("Failed to register call. Please try again.");
+        // Traditional Retell mode
+        let registerCallResponse: registerCallResponseType;
+        
+        try {
+          // First try the public API route (no authentication required)
+          registerCallResponse = await axios.post(
+            getApiUrl("/api/public/register-call"),
+            { dynamic_data: data, interviewer_id: interview?.interviewer_id },
+          );
+        } catch (publicError) {
+          // console.log("Public register-call failed, trying authenticated route:", publicError);
+          // If public route fails, try the authenticated route
+          registerCallResponse = await axios.post(
+            getApiUrl("/api/register-call"),
+            { dynamic_data: data, interviewer_id: interview?.interviewer_id },
+          );
+        }
+        if (registerCallResponse.data.registerCallResponse.access_token) {
+          const accessToken = registerCallResponse.data.registerCallResponse.access_token;
+          const callId = registerCallResponse.data.registerCallResponse.call_id;
+          
+          // Production flow with real Retell client
+          try {
+            // Ensure microphone permission before starting call
+            const stream = await navigator.mediaDevices.getUserMedia({ 
+              audio: true,
+              video: false 
+            });
+            // Stop the stream as Retell will handle its own stream
+            stream.getTracks().forEach(track => track.stop());
+            
+            await webClient.startCall({
+              accessToken: accessToken,
+            });
+            setIsCalling(true);
+            setIsStarted(true);
+            setCallId(callId);
+
+            const response = await createResponse({
+              interview_id: interview.id,
+              call_id: callId,
+              email: email,
+              name: name,
+            });
+          } catch (error) {
+            console.error("Error starting call:", error);
+            if (error.name === 'NotAllowedError') {
+              toast.error('Microphone access is required for this interview. Please allow microphone access and try again.');
+            } else {
+              toast.error('Error starting the call. Please check your Retell API configuration and try again.');
+            }
+          }
+        } else {
+          // console.log("Failed to register call");
+          alert("Failed to register call. Please try again.");
+        }
       }
     }
 
@@ -464,6 +520,74 @@ function Call({ interview }: InterviewProps) {
             {!isStarted && !isEnded && !isOldUser && (
               <div className="w-fit min-w-[400px] max-w-[400px] mx-auto mt-2  border border-indigo-200 rounded-md p-2 m-2 bg-slate-50">
                 <div>
+                  {/* Interview Mode Selection */}
+                  <div className="p-2 mb-4 border-b border-gray-200">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Choose Interview Mode:
+                    </label>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => setUseHeyGenAvatar(false)}
+                        className={`px-3 py-2 rounded-lg text-sm transition-colors ${
+                          !useHeyGenAvatar 
+                            ? 'bg-blue-600 text-white' 
+                            : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                        }`}
+                      >
+                        Traditional Voice
+                      </button>
+                      <button
+                        onClick={() => setUseHeyGenAvatar(true)}
+                        className={`px-3 py-2 rounded-lg text-sm transition-colors ${
+                          useHeyGenAvatar 
+                            ? 'bg-blue-600 text-white' 
+                            : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                        }`}
+                      >
+                        AI Avatar
+                      </button>
+                    </div>
+                    {useHeyGenAvatar && (
+                      <div className="mt-2">
+                        <label className="block text-xs text-gray-600 mb-1">
+                          Avatar Mode:
+                        </label>
+                        <div className="flex gap-1">
+                          <button
+                            onClick={() => setInterviewMode("voice")}
+                            className={`px-2 py-1 rounded text-xs transition-colors ${
+                              interviewMode === "voice" 
+                                ? 'bg-green-600 text-white' 
+                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                            }`}
+                          >
+                            Voice
+                          </button>
+                          <button
+                            onClick={() => setInterviewMode("text")}
+                            className={`px-2 py-1 rounded text-xs transition-colors ${
+                              interviewMode === "text" 
+                                ? 'bg-green-600 text-white' 
+                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                            }`}
+                          >
+                            Text
+                          </button>
+                          <button
+                            onClick={() => setInterviewMode("mixed")}
+                            className={`px-2 py-1 rounded text-xs transition-colors ${
+                              interviewMode === "mixed" 
+                                ? 'bg-green-600 text-white' 
+                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                            }`}
+                          >
+                            Mixed
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
                   <div className="p-2 font-normal text-sm mb-4 whitespace-pre-line">
                     {interview?.description}
                     <p className="font-bold text-sm">
@@ -555,7 +679,25 @@ function Call({ interview }: InterviewProps) {
                 </div>
               </div>
             )}
-            {isStarted && !isEnded && !isOldUser && (
+            {useHeyGenAvatar && !isOldUser && (isStarted || Loading) && (
+              // HeyGen Avatar Mode - Show after form submission
+              <div className="flex flex-row p-2 grow">
+                <div className="w-full">
+                  <InterviewAvatar
+                    interview={interview}
+                    onInterviewStart={handleInterviewStart}
+                    onInterviewEnd={handleInterviewEnd}
+                    onQuestionAsked={handleQuestionAsked}
+                    onResponseReceived={handleResponseReceived}
+                    mode={interviewMode}
+                    className="h-full"
+                  />
+                </div>
+              </div>
+            )}
+            
+            {!useHeyGenAvatar && isStarted && !isEnded && !isOldUser && (
+              // Traditional Retell Mode
               <div className="flex flex-row p-2 grow">
                 <div className="border-x-2 border-grey w-[50%] my-auto min-h-[70%]">
                   <div className="flex flex-col justify-evenly">
@@ -605,7 +747,7 @@ function Call({ interview }: InterviewProps) {
                 </div>
               </div>
             )}
-            {isStarted && !isEnded && !isOldUser && (
+            {!useHeyGenAvatar && isStarted && !isEnded && !isOldUser && (
               <div className="items-center p-2">
                 <AlertDialog>
                   <AlertDialogTrigger className="w-full">

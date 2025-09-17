@@ -13,6 +13,10 @@ module.exports = {
     RETELL: {
         API_KEY: process.env.RETELL_API_KEY
     },
+    HEYGEN: {
+        API_KEY: process.env.HEYGEN_API_KEY,
+        BASE_API_URL: process.env.NEXT_PUBLIC_HEYGEN_BASE_API_URL || "https://api.heygen.com"
+    },
     OPENAI: {
         API_KEY: process.env.OPENAI_API_KEY
     },
