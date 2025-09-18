@@ -74,10 +74,14 @@ export const InterviewsProvider = ({ children }) => {
     }
   };
 
-  const getInterviewById = async (id) => {
+  const getInterviewById = async (id, token = null) => {
     try {
-      // First try the public API route (no authentication required)
-      const response = await fetch(getApiUrl(`/api/public/interviews/${id}`));
+      // Build URL with token if provided
+      const url = token 
+        ? getApiUrl(`/api/public/interviews/${id}?token=${token}`)
+        : getApiUrl(`/api/public/interviews/${id}`);
+        
+      const response = await fetch(url);
       if (response.ok) {
         const data = await response.json();
         return data;
@@ -100,6 +104,29 @@ export const InterviewsProvider = ({ children }) => {
     }
   };
 
+  const generateSecureUrl = async (interviewId) => {
+    try {
+      const response = await fetch(getApiUrl(`/api/interviews/${interviewId}/generate-token`), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        return data.secure_url;
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        console.error("API Error:", response.status, errorData);
+        return null;
+      }
+    } catch (error) {
+      console.error("Error generating secure URL:", error);
+      return null;
+    }
+  };
+
   const fetchInterviews = async (companyId) => {
     // console.log("fetchInterviews called with:", { companyId });
     if (companyId) {
@@ -116,6 +143,7 @@ export const InterviewsProvider = ({ children }) => {
     updateInterview,
     deleteInterview,
     getInterviewById,
+    generateSecureUrl,
     fetchInterviews,
   };
 

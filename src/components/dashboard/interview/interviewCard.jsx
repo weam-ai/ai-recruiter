@@ -2,43 +2,115 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
-import { ArrowUpRight, Copy } from "lucide-react";
+import { ArrowUpRight, Copy, RefreshCw } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { getImageUrl } from "@/lib/utils";
+import { useInterviews } from "@/contexts/interviews.context";
+import { toast } from "sonner";
 const config = require('../../../config/config');
 
 function InterviewCard({ interview }) {
   const router = useRouter();
+  const { generateSecureUrl } = useInterviews();
 
   const handleCardClick = () => {
     router.push(`/interviews/${interview.id || interview._id}`);
   };
 
-  const handleShareClick = (e) => {
+  const handleShareClick = async (e) => {
     e.stopPropagation();
-    // Navigate to the call/interview page
-    // const callUrl = interview?.readable_slug 
-    //   ? `/call/${interview.readable_slug}`
-    //   : `/call/${interview.id || interview._id}`;
     
-    const callUrl = config.APP.API_BASE_PATH + `/call/${interview.id || interview._id}`;
-
-    window.open(callUrl, '_blank');
+    try {
+      // Generate secure URL with token
+      const secureUrl = await generateSecureUrl(interview.id || interview._id);
+      
+      if (secureUrl) {
+        window.open(secureUrl, '_blank');
+      } else {
+        // Fallback to regular URL if token generation fails
+        const baseUrl = window.location.origin;
+        const callUrl = `${baseUrl}` + config.APP.API_BASE_PATH + `/call/${interview.id || interview._id}`;
+        window.open(callUrl, '_blank');
+      }
+    } catch (error) {
+      console.error('Error generating secure URL:', error);
+      // Fallback to regular URL
+      const baseUrl = window.location.origin;
+      const callUrl = `${baseUrl}` + config.APP.API_BASE_PATH + `/call/${interview.id || interview._id}`;
+      window.open(callUrl, '_blank');
+    }
   };
 
-  const handleCopyClick = (e) => {
+  const handleCopyClick = async (e) => {
     e.stopPropagation();
-    // Copy the call URL to clipboard
-    const baseUrl = window.location.origin;
-    // const callUrl = interview?.readable_slug 
-    //   ? `${baseUrl}/call/${interview.readable_slug}`
-    //   : `${baseUrl}/call/${interview.id || interview._id}`;
-
-    const callUrl = `${baseUrl}` + config.APP.API_BASE_PATH + `/call/${interview.id || interview._id}`;
     
-    navigator.clipboard.writeText(callUrl);
-    // console.log("Interview URL copied to clipboard:", callUrl);
+    try {
+      // Generate secure URL with token
+      const secureUrl = await generateSecureUrl(interview.id || interview._id);
+      
+      if (secureUrl) {
+        navigator.clipboard.writeText(secureUrl);
+        toast.success("Secure link copied to clipboard!", {
+          position: "bottom-right",
+          duration: 3000,
+        });
+      } else {
+        // Fallback to regular URL if token generation fails
+        const baseUrl = window.location.origin;
+        const callUrl = `${baseUrl}` + config.APP.API_BASE_PATH + `/call/${interview.id || interview._id}`;
+        navigator.clipboard.writeText(callUrl);
+        toast.warning("Regular link copied to clipboard (secure link generation failed)", {
+          position: "bottom-right",
+          duration: 3000,
+        });
+      }
+    } catch (error) {
+      console.error('Error generating secure URL:', error);
+      // Fallback to regular URL
+      const baseUrl = window.location.origin;
+      const callUrl = `${baseUrl}` + config.APP.API_BASE_PATH + `/call/${interview.id || interview._id}`;
+      navigator.clipboard.writeText(callUrl);
+      toast.error("Regular link copied to clipboard (error occurred)", {
+        position: "bottom-right",
+        duration: 3000,
+      });
+    }
+  };
+
+  const handleFreshLinkClick = async (e) => {
+    e.stopPropagation();
+    
+    try {
+      // Generate new token (doesn't invalidate existing tokens)
+      const response = await fetch(`/api/interviews/${interview.id || interview._id}/generate-token`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        navigator.clipboard.writeText(data.secure_url);
+        toast.success(`New link generated and copied! ${data.message}`, {
+          position: "bottom-right",
+          duration: 4000,
+        });
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        toast.error(`Failed to generate new link: ${errorData.error || 'Unknown error'}`, {
+          position: "bottom-right",
+          duration: 3000,
+        });
+      }
+    } catch (error) {
+      console.error('Error generating new link:', error);
+      toast.error('Error generating new link. Please try again.', {
+        position: "bottom-right",
+        duration: 3000,
+      });
+    }
   };
 
   return (
@@ -73,14 +145,23 @@ function InterviewCard({ interview }) {
           <Button 
             className="inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-white hover:bg-gray-50 text-gray-700 border-0 shadow-sm py-1 px-1 h-6 w-6"
             onClick={handleShareClick}
+            title="Open interview"
           >
             <ArrowUpRight className="w-3 h-3" />
           </Button>
           <Button 
             className="inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-white hover:bg-gray-50 text-gray-700 border-0 shadow-sm py-1 px-1 h-6 w-6"
             onClick={handleCopyClick}
+            title="Copy current link"
           >
             <Copy className="w-3 h-3" />
+          </Button>
+          <Button 
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-white hover:bg-gray-50 text-gray-700 border-0 shadow-sm py-1 px-1 h-6 w-6"
+            onClick={handleFreshLinkClick}
+            title="Generate new unique link (keeps existing links active)"
+          >
+            <RefreshCw className="w-3 h-3" />
           </Button>
         </div>
       </div>

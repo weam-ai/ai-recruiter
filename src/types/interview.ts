@@ -38,6 +38,9 @@ export interface InterviewDetails {
   logo_url: string;
   respondents: string[];
   readable_slug: string;
+  access_token?: string;
+  token_used?: boolean;
+  token_expires_at?: Date;
 }
 
 export interface Interview extends InterviewBase, InterviewDetails {}
