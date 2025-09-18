@@ -61,6 +61,19 @@ function CallInfo({
   const [interviewId, setInterviewId] = useState<string>("");
   const [tabSwitchCount, setTabSwitchCount] = useState<number>();
 
+  // Clear all state when call_id changes to prevent showing stale data
+  useEffect(() => {
+    setCall(undefined);
+    setAnalytics(null);
+    setEmail("");
+    setName("");
+    setTranscript("");
+    setCandidateStatus("");
+    setInterviewId("");
+    setTabSwitchCount(undefined);
+    setIsLoading(true);
+  }, [call_id]);
+
   useEffect(() => {
     const fetchResponses = async () => {
       setIsLoading(true);
