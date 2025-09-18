@@ -1,8 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowUpRight, Copy, RefreshCw } from "lucide-react";
+import { ArrowUpRight, Copy, Check } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { getImageUrl } from "@/lib/utils";
@@ -13,6 +13,7 @@ const config = require('../../../config/config');
 function InterviewCard({ interview }) {
   const router = useRouter();
   const { generateSecureUrl } = useInterviews();
+  const [isCopied, setIsCopied] = useState(false);
 
   const handleCardClick = () => {
     router.push(`/interviews/${interview.id || interview._id}`);
@@ -45,6 +46,9 @@ function InterviewCard({ interview }) {
   const handleCopyClick = async (e) => {
     e.stopPropagation();
     
+    // Set copied state immediately for visual feedback
+    setIsCopied(true);
+    
     try {
       // Generate secure URL with token
       const secureUrl = await generateSecureUrl(interview.id || interview._id);
@@ -76,42 +80,13 @@ function InterviewCard({ interview }) {
         duration: 3000,
       });
     }
+    
+    // Reset the copied state after 2 seconds
+    setTimeout(() => {
+      setIsCopied(false);
+    }, 2000);
   };
 
-  const handleFreshLinkClick = async (e) => {
-    e.stopPropagation();
-    
-    try {
-      // Generate new token (doesn't invalidate existing tokens)
-      const response = await fetch(`/api/interviews/${interview.id || interview._id}/generate-token`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        navigator.clipboard.writeText(data.secure_url);
-        toast.success(`New link generated and copied! ${data.message}`, {
-          position: "bottom-right",
-          duration: 4000,
-        });
-      } else {
-        const errorData = await response.json().catch(() => ({}));
-        toast.error(`Failed to generate new link: ${errorData.error || 'Unknown error'}`, {
-          position: "bottom-right",
-          duration: 3000,
-        });
-      }
-    } catch (error) {
-      console.error('Error generating new link:', error);
-      toast.error('Error generating new link. Please try again.', {
-        position: "bottom-right",
-        duration: 3000,
-      });
-    }
-  };
 
   return (
     <div className="bg-white relative p-0 mt-4 inline-block cursor-pointer h-60 w-56 ml-1 mr-3 rounded-xl shrink-0 overflow-hidden shadow-md">
@@ -142,26 +117,23 @@ function InterviewCard({ interview }) {
         
         {/* Top-right action buttons */}
         <div className="absolute top-2 right-2 flex gap-1">
-          <Button 
+          {/* <Button 
             className="inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-white hover:bg-gray-50 text-gray-700 border-0 shadow-sm py-1 px-1 h-6 w-6"
             onClick={handleShareClick}
             title="Open interview"
           >
             <ArrowUpRight className="w-3 h-3" />
-          </Button>
+          </Button> */}
           <Button 
             className="inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-white hover:bg-gray-50 text-gray-700 border-0 shadow-sm py-1 px-1 h-6 w-6"
             onClick={handleCopyClick}
-            title="Copy current link"
+            title={isCopied ? "Copied!" : "Copy current link"}
           >
-            <Copy className="w-3 h-3" />
-          </Button>
-          <Button 
-            className="inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-white hover:bg-gray-50 text-gray-700 border-0 shadow-sm py-1 px-1 h-6 w-6"
-            onClick={handleFreshLinkClick}
-            title="Generate new unique link (keeps existing links active)"
-          >
-            <RefreshCw className="w-3 h-3" />
+            {isCopied ? (
+              <Check className="w-3 h-3 text-green-600" />
+            ) : (
+              <Copy className="w-3 h-3" />
+            )}
           </Button>
         </div>
       </div>
