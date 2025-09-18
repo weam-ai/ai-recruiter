@@ -1,45 +1,92 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowUpRight, Copy } from "lucide-react";
+import { ArrowUpRight, Copy, Check } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { getImageUrl } from "@/lib/utils";
+import { useInterviews } from "@/contexts/interviews.context";
+import { toast } from "sonner";
 const config = require('../../../config/config');
 
 function InterviewCard({ interview }) {
   const router = useRouter();
+  const { generateSecureUrl } = useInterviews();
+  const [isCopied, setIsCopied] = useState(false);
 
   const handleCardClick = () => {
     router.push(`/interviews/${interview.id || interview._id}`);
   };
 
-  const handleShareClick = (e) => {
+  const handleShareClick = async (e) => {
     e.stopPropagation();
-    // Navigate to the call/interview page
-    // const callUrl = interview?.readable_slug 
-    //   ? `/call/${interview.readable_slug}`
-    //   : `/call/${interview.id || interview._id}`;
     
-    const callUrl = config.APP.API_BASE_PATH + `/call/${interview.id || interview._id}`;
-
-    window.open(callUrl, '_blank');
+    try {
+      // Generate secure URL with token
+      const secureUrl = await generateSecureUrl(interview.id || interview._id);
+      
+      if (secureUrl) {
+        window.open(secureUrl, '_blank');
+      } else {
+        // Fallback to regular URL if token generation fails
+        const baseUrl = window.location.origin;
+        const callUrl = `${baseUrl}` + config.APP.API_BASE_PATH + `/call/${interview.id || interview._id}`;
+        window.open(callUrl, '_blank');
+      }
+    } catch (error) {
+      console.error('Error generating secure URL:', error);
+      // Fallback to regular URL
+      const baseUrl = window.location.origin;
+      const callUrl = `${baseUrl}` + config.APP.API_BASE_PATH + `/call/${interview.id || interview._id}`;
+      window.open(callUrl, '_blank');
+    }
   };
 
-  const handleCopyClick = (e) => {
+  const handleCopyClick = async (e) => {
     e.stopPropagation();
-    // Copy the call URL to clipboard
-    const baseUrl = window.location.origin;
-    // const callUrl = interview?.readable_slug 
-    //   ? `${baseUrl}/call/${interview.readable_slug}`
-    //   : `${baseUrl}/call/${interview.id || interview._id}`;
-
-    const callUrl = `${baseUrl}` + config.APP.API_BASE_PATH + `/call/${interview.id || interview._id}`;
     
-    navigator.clipboard.writeText(callUrl);
-    // console.log("Interview URL copied to clipboard:", callUrl);
+    // Set copied state immediately for visual feedback
+    setIsCopied(true);
+    
+    try {
+      // Generate secure URL with token
+      const secureUrl = await generateSecureUrl(interview.id || interview._id);
+      
+      if (secureUrl) {
+        navigator.clipboard.writeText(secureUrl);
+        toast.success("Secure link copied to clipboard!", {
+          position: "bottom-right",
+          duration: 3000,
+        });
+      } else {
+        // Fallback to regular URL if token generation fails
+        const baseUrl = window.location.origin;
+        const callUrl = `${baseUrl}` + config.APP.API_BASE_PATH + `/call/${interview.id || interview._id}`;
+        navigator.clipboard.writeText(callUrl);
+        toast.warning("Regular link copied to clipboard (secure link generation failed)", {
+          position: "bottom-right",
+          duration: 3000,
+        });
+      }
+    } catch (error) {
+      console.error('Error generating secure URL:', error);
+      // Fallback to regular URL
+      const baseUrl = window.location.origin;
+      const callUrl = `${baseUrl}` + config.APP.API_BASE_PATH + `/call/${interview.id || interview._id}`;
+      navigator.clipboard.writeText(callUrl);
+      toast.error("Regular link copied to clipboard (error occurred)", {
+        position: "bottom-right",
+        duration: 3000,
+      });
+    }
+    
+    // Reset the copied state after 2 seconds
+    setTimeout(() => {
+      setIsCopied(false);
+    }, 2000);
   };
+
 
   return (
     <div className="bg-white relative p-0 mt-4 inline-block cursor-pointer h-60 w-56 ml-1 mr-3 rounded-xl shrink-0 overflow-hidden shadow-md">
@@ -70,17 +117,23 @@ function InterviewCard({ interview }) {
         
         {/* Top-right action buttons */}
         <div className="absolute top-2 right-2 flex gap-1">
-          <Button 
+          {/* <Button 
             className="inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-white hover:bg-gray-50 text-gray-700 border-0 shadow-sm py-1 px-1 h-6 w-6"
             onClick={handleShareClick}
+            title="Open interview"
           >
             <ArrowUpRight className="w-3 h-3" />
-          </Button>
+          </Button> */}
           <Button 
             className="inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-white hover:bg-gray-50 text-gray-700 border-0 shadow-sm py-1 px-1 h-6 w-6"
             onClick={handleCopyClick}
+            title={isCopied ? "Copied!" : "Copy current link"}
           >
-            <Copy className="w-3 h-3" />
+            {isCopied ? (
+              <Check className="w-3 h-3 text-green-600" />
+            ) : (
+              <Copy className="w-3 h-3" />
+            )}
           </Button>
         </div>
       </div>

@@ -295,6 +295,19 @@ function Call({ interview }: InterviewProps) {
     };
     setLoading(true);
 
+    // Mark token as used when user actually starts the interview
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+    if (token) {
+      try {
+        await fetch(getApiUrl(`/api/interviews/${interview.id}/use-token?token=${token}`), {
+          method: 'POST',
+        });
+      } catch (error) {
+        console.error('Error marking token as used:', error);
+      }
+    }
+
     // Request microphone permission first
     const hasPermission = await requestMicrophonePermission();
     if (!hasPermission) {

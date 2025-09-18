@@ -92,9 +92,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Interview not found" }, { status: 404 });
     }
 
-    // Generate analytics using OpenAI
+    // Check if analytics already exist to avoid regenerating
     let analytics = null;
-    if (callResponse.transcript) {
+    
+    // Use existing analytics if already analyzed
+    if (response.is_analysed && response.analytics) {
+      analytics = response.analytics;
+      // console.log("Using existing analytics for call ID:", callId);
+    } else if (callResponse.transcript) {
+      // Generate analytics using OpenAI only if not already analyzed
       try {
         const mainQuestions = interview.questions 
           ? interview.questions.map((q: any) => q.question).join("\n")
@@ -116,51 +122,54 @@ export async function POST(request: NextRequest) {
         });
 
         analytics = JSON.parse(completion.choices[0]?.message?.content || "{}");
-        // console.log("Generated analytics successfully");
+        // console.log("Generated new analytics for call ID:", callId);
       } catch (error) {
         console.error("Error generating analytics:", error);
         // Continue without analytics if generation fails
       }
     }
 
-    // Fetch the latest response record to get the most current status
-    const latestResponse = await ResponseService.getResponseByCallId(callId);
-    
-    // Update response record with complete call data and analytics
-    // Only set candidate_status to "completed" if no meaningful status is already set
-    const meaningfulStatuses = ["SELECTED", "NOT_SELECTED", "POTENTIAL", "NO_STATUS"];
-    const shouldPreserveStatus = latestResponse.candidate_status && meaningfulStatuses.includes(latestResponse.candidate_status);
-    
-    // console.log("Status preservation check:", {
-    //   originalStatus: response.candidate_status,
-    //   latestStatus: latestResponse.candidate_status,
-    //   isMeaningful: meaningfulStatuses.includes(latestResponse.candidate_status),
-    //   shouldPreserve: shouldPreserveStatus
-    // });
-    
-    const updateData = {
-      duration,
-      details: callResponse,
-      analytics,
-      is_analysed: true,
-      ...(shouldPreserveStatus ? {} : { candidate_status: "completed" }),
-    };
+    // Only update the database if we generated new analytics or if this is the first analysis
+    if (analytics && (!response.is_analysed || !response.analytics)) {
+      // Fetch the latest response record to get the most current status
+      const latestResponse = await ResponseService.getResponseByCallId(callId);
+      
+      // Update response record with complete call data and analytics
+      // Only set candidate_status to "completed" if no meaningful status is already set
+      const meaningfulStatuses = ["SELECTED", "NOT_SELECTED", "POTENTIAL", "NO_STATUS"];
+      const shouldPreserveStatus = latestResponse.candidate_status && meaningfulStatuses.includes(latestResponse.candidate_status);
+      
+      // console.log("Status preservation check:", {
+      //   originalStatus: response.candidate_status,
+      //   latestStatus: latestResponse.candidate_status,
+      //   isMeaningful: meaningfulStatuses.includes(latestResponse.candidate_status),
+      //   shouldPreserve: shouldPreserveStatus
+      // });
+      
+      const updateData = {
+        duration,
+        details: callResponse,
+        analytics,
+        is_analysed: true,
+        ...(shouldPreserveStatus ? {} : { candidate_status: "completed" }),
+      };
 
-    // console.log("Updating response record with data:", {
-    //   duration,
-    //   hasDetails: !!callResponse,
-    //   hasAnalytics: !!analytics,
-    //   is_analysed: true,
-    //   currentStatus: response.candidate_status,
-    //   shouldPreserveStatus: shouldPreserveStatus,
-    //   willSetStatus: !shouldPreserveStatus
-    // });
+      // console.log("Updating response record with data:", {
+      //   duration,
+      //   hasDetails: !!callResponse,
+      //   hasAnalytics: !!analytics,
+      //   is_analysed: true,
+      //   currentStatus: response.candidate_status,
+      //   shouldPreserveStatus: shouldPreserveStatus,
+      //   willSetStatus: !shouldPreserveStatus
+      // });
 
-    const updated = await ResponseService.saveResponse(updateData, callId);
-    
-    if (!updated) {
-      console.error("Failed to update response record");
-      return NextResponse.json({ error: "Failed to update response" }, { status: 500 });
+      const updated = await ResponseService.saveResponse(updateData, callId);
+      
+      if (!updated) {
+        console.error("Failed to update response record");
+        return NextResponse.json({ error: "Failed to update response" }, { status: 500 });
+      }
     }
 
     // console.log("Successfully processed call analysis for call ID:", callId);

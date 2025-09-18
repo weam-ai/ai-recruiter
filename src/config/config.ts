@@ -27,5 +27,8 @@ module.exports = {
     BASIC_AUTH: {
         USERNAME: process.env.API_BASIC_AUTH_USERNAME,
         PASSWORD: process.env.API_BASIC_AUTH_PASSWORD
+    },
+    INTERVIEW: {
+        TOKEN_EXPIRY_DAYS: 1
     }
 };

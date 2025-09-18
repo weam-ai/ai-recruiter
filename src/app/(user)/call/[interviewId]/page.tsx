@@ -7,7 +7,7 @@ import Image from "next/image";
 import { ArrowUpRightSquareIcon } from "lucide-react";
 import { Interview } from "@/types/interview";
 import LoaderWithText from "@/components/loaders/loader-with-text/loaderWithText";
-import { getImageUrl } from "@/lib/utils";
+import { getImageUrl, getApiUrl } from "@/lib/utils";
 
 type Props = {
   params: {
@@ -98,12 +98,36 @@ function InterviewInterface({ params }: Props) {
     const fetchinterview = async () => {
       try {
         setIsLoading(true);
-        const response = await getInterviewById(params.interviewId);
-        if (response) {
-          setInterview(response);
+        
+        // Get token from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+        
+        // Build the URL with token if present
+        const interviewUrl = token 
+          ? getApiUrl(`/api/public/interviews/${params.interviewId}?token=${token}`)
+          : getApiUrl(`/api/public/interviews/${params.interviewId}`);
+        
+        const response = await fetch(interviewUrl);
+        
+        if (response.ok) {
+          const interviewData = await response.json();
+          setInterview(interviewData);
+          
+          // Note: Token will be marked as used when user actually starts the interview
+          // This is handled in the Call component when the interview begins
+          
           // Only set document.title on client side
           if (typeof window !== 'undefined') {
-            document.title = response.name;
+            document.title = interviewData.name;
+          }
+        } else if (response.status === 403) {
+          // Handle token-related errors
+          const errorData = await response.json();
+          if (errorData.requires_token) {
+            setInterviewNotFound(true);
+          } else {
+            setInterviewNotFound(true);
           }
         } else {
           setInterviewNotFound(true);
@@ -143,8 +167,8 @@ function InterviewInterface({ params }: Props) {
       <div className="hidden md:block p-8 mx-auto form-container">
         {interviewNotFound ? (
           <PopUpMessage
-            title="Invalid URL"
-            description="The interview link you're trying to access is invalid. Please check the URL and try again."
+            title="Access Denied"
+            description="This interview link is no longer available. It may have been used already, expired, or the URL is invalid. Please contact the sender for a new link."
             image="/invalid-url.png"
           />
         ) : !isActive ? (
