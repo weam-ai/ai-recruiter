@@ -134,7 +134,7 @@ function CallInfo({
       if (data) {
         const interview_id = data.interview_id;
 
-        await axios.put(getApiUrl(`/api/responses/call/${call_id}`), { is_deleted: true });
+        await axios.delete(getApiUrl(`/api/responses/call/${call_id}`));
 
         router.push(`/interviews/${interview_id}`);
 

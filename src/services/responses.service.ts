@@ -161,6 +161,25 @@ const getAllEmailAddressesForInterview = async (interviewId: string) => {
   }
 };
 
+const deleteResponseByCallId = async (call_id: string, companyId?: string) => {
+  try {
+    const db = await getDb();
+    
+    // Build query with companyId filter
+    const query: any = { call_id };
+    if (companyId) {
+      query.companyId = companyId;
+    }
+    
+    const result = await db.collection(COLLECTIONS.RESPONSE).deleteOne(query);
+    
+    return result.deletedCount > 0;
+  } catch (error) {
+    console.error("Error in deleteResponseByCallId:", error);
+    return false;
+  }
+};
+
 export const ResponseService = {
   createResponse,
   saveResponse,
@@ -169,4 +188,5 @@ export const ResponseService = {
   updateResponse,
   getResponseCountByOrganizationId,
   getAllEmails: getAllEmailAddressesForInterview,
+  deleteResponseByCallId,
 };

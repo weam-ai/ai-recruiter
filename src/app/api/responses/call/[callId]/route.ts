@@ -44,3 +44,22 @@ export async function PUT(
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { callId: string } }
+) {
+  try {
+    const success = await ResponseService.deleteResponseByCallId(params.callId);
+    
+    if (!success) {
+      console.error("Failed to delete response for callId:", params.callId);
+      return NextResponse.json({ error: 'Failed to delete response' }, { status: 500 });
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Error deleting response:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}
