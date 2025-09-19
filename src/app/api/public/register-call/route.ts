@@ -85,6 +85,13 @@ export async function POST(request: NextRequest) {
     console.error("Full error object:", JSON.stringify(error, Object.getOwnPropertyNames(error), 2));
     console.error("=== END ERROR DEBUG ===");
     
+    console.error("Error registering public call:", error);
+    console.error("Error details:", {
+      message: error.message,
+      status: error.status,
+      response: error.response?.data,
+      
+    });
     return NextResponse.json(
       { 
         error: "Failed to register call with Retell API. Please check your configuration.",
