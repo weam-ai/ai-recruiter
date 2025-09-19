@@ -11,7 +11,7 @@ module.exports = {
         DB_PORT: process.env.DB_PORT
     },
     RETELL: {
-        API_KEY: process.env.RETELL_API_KEY
+        API_KEY: 'key_de331a0fef0b8dc86466a96de149'
     },
     OPENAI: {
         API_KEY: process.env.OPENAI_API_KEY
@@ -27,5 +27,8 @@ module.exports = {
     BASIC_AUTH: {
         USERNAME: process.env.API_BASIC_AUTH_USERNAME,
         PASSWORD: process.env.API_BASIC_AUTH_PASSWORD
+    },
+    INTERVIEW: {
+        TOKEN_EXPIRY_DAYS: 1
     }
 };

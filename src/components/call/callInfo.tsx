@@ -61,6 +61,19 @@ function CallInfo({
   const [interviewId, setInterviewId] = useState<string>("");
   const [tabSwitchCount, setTabSwitchCount] = useState<number>();
 
+  // Clear all state when call_id changes to prevent showing stale data
+  useEffect(() => {
+    setCall(undefined);
+    setAnalytics(null);
+    setEmail("");
+    setName("");
+    setTranscript("");
+    setCandidateStatus("");
+    setInterviewId("");
+    setTabSwitchCount(undefined);
+    setIsLoading(true);
+  }, [call_id]);
+
   useEffect(() => {
     const fetchResponses = async () => {
       setIsLoading(true);
@@ -134,7 +147,7 @@ function CallInfo({
       if (data) {
         const interview_id = data.interview_id;
 
-        await axios.put(getApiUrl(`/api/responses/call/${call_id}`), { is_deleted: true });
+        await axios.delete(getApiUrl(`/api/responses/call/${call_id}`));
 
         router.push(`/interviews/${interview_id}`);
 

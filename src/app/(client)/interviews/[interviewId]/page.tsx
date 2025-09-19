@@ -69,6 +69,12 @@ function InterviewHome({ params, searchParams }: Props) {
   const { organization } = useOrganization();
   const [filterStatus, setFilterStatus] = useState<string>("ALL");
 
+  // Clear responses when interviewId changes to prevent showing stale data
+  useEffect(() => {
+    setResponses(undefined);
+    setLoading(true);
+  }, [params.interviewId]);
+
   const seeInterviewPreviewPage = () => {
     const protocol = base_url?.includes("localhost") ? "http" : "https";
     if (interview?.url) {
@@ -138,7 +144,7 @@ function InterviewHome({ params, searchParams }: Props) {
 
     fetchResponses();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [params.interviewId]);
 
   const handleDeleteResponse = (deletedCallId: string) => {
     if (responses) {

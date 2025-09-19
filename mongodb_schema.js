@@ -103,7 +103,10 @@ db.createCollection("solution_foloup_interview", {
             email: { bsonType: "string" }
           }
         },
-        companyId: { bsonType: ["string", "null"] }
+        companyId: { bsonType: ["string", "null"] },
+        access_token: { bsonType: ["string", "null"] },
+        token_used: { bsonType: ["bool", "null"] },
+        token_expires_at: { bsonType: ["date", "null"] }
       }
     }
   }
@@ -170,6 +173,33 @@ db.createCollection("solution_foloup_feedback", {
   }
 });
 
+// Interview Tokens Collection
+db.createCollection("solution_foloup_interview_tokens", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["id", "interview_id", "token", "created_at"],
+      properties: {
+        id: { bsonType: "string" },
+        interview_id: { bsonType: "string" },
+        token: { bsonType: "string" },
+        created_at: { bsonType: "date" },
+        expires_at: { bsonType: "date" },
+        is_used: { bsonType: "bool" },
+        used_at: { bsonType: ["date", "null"] },
+        user: { 
+          bsonType: ["object", "null"],
+          properties: {
+            id: { bsonType: "string" },
+            email: { bsonType: "string" }
+          }
+        },
+        companyId: { bsonType: ["string", "null"] }
+      }
+    }
+  }
+});
+
 // Create indexes for better performance
 db.organization.createIndex({ "id": 1 }, { unique: true });
 db.user.createIndex({ "id": 1 }, { unique: true });
@@ -189,5 +219,12 @@ db.feedback.createIndex({ "id": 1 }, { unique: true });
 db.feedback.createIndex({ "interview_id": 1 });
 db.feedback.createIndex({ "user.id": 1 });
 db.feedback.createIndex({ "companyId": 1 });
+db.interview_tokens.createIndex({ "id": 1 }, { unique: true });
+db.interview_tokens.createIndex({ "interview_id": 1 });
+db.interview_tokens.createIndex({ "token": 1 }, { unique: true });
+db.interview_tokens.createIndex({ "expires_at": 1 });
+db.interview_tokens.createIndex({ "is_used": 1 });
+db.interview_tokens.createIndex({ "user.id": 1 });
+db.interview_tokens.createIndex({ "companyId": 1 });
 
 print("MongoDB collections and indexes created successfully!");
