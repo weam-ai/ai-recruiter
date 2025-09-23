@@ -10,6 +10,7 @@ export default async function CookieDisplayPage() {
   
   const session = await getSession();
     if (session.user) {
+      
         return <div>Welcome, {session.user.email}!</div>;
     }
     
