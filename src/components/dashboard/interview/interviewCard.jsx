@@ -2,18 +2,23 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowUpRight, Copy, Check } from "lucide-react";
+import { ArrowUpRight, Copy, Check, Info } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { getImageUrl } from "@/lib/utils";
 import { useInterviews } from "@/contexts/interviews.context";
+import { useAuth } from "@/contexts/auth.context";
 import { toast } from "sonner";
 const config = require('../../../config/config');
 
 function InterviewCard({ interview }) {
   const router = useRouter();
   const { generateSecureUrl } = useInterviews();
+  const { user } = useAuth();
   const [isCopied, setIsCopied] = useState(false);
+
+  // Check if current user is the creator of this interview
+  const isInterviewCreator = user && interview.user && user._id === interview.user.id;
 
   const handleCardClick = () => {
     router.push(`/interviews/${interview.id || interview._id}`);
@@ -29,25 +34,24 @@ function InterviewCard({ interview }) {
       if (secureUrl) {
         window.open(secureUrl, '_blank');
       } else {
-        // Fallback to regular URL if token generation fails
-        const baseUrl = window.location.origin;
-        const callUrl = `${baseUrl}` + config.APP.API_BASE_PATH + `/call/${interview.id || interview._id}`;
-        window.open(callUrl, '_blank');
+        // Show error message instead of falling back to regular URL
+        toast.error("Failed to generate secure link. Please try again.", {
+          position: "bottom-right",
+          duration: 3000,
+        });
       }
     } catch (error) {
       console.error('Error generating secure URL:', error);
-      // Fallback to regular URL
-      const baseUrl = window.location.origin;
-      const callUrl = `${baseUrl}` + config.APP.API_BASE_PATH + `/call/${interview.id || interview._id}`;
-      window.open(callUrl, '_blank');
+      // Show error message instead of falling back to regular URL
+      toast.error("Failed to generate secure link. Please try again.", {
+        position: "bottom-right",
+        duration: 3000,
+      });
     }
   };
 
   const handleCopyClick = async (e) => {
     e.stopPropagation();
-    
-    // Set copied state immediately for visual feedback
-    setIsCopied(true);
     
     try {
       // Generate secure URL with token
@@ -55,36 +59,31 @@ function InterviewCard({ interview }) {
       
       if (secureUrl) {
         navigator.clipboard.writeText(secureUrl);
+        setIsCopied(true);
         toast.success("Secure link copied to clipboard!", {
           position: "bottom-right",
           duration: 3000,
         });
+        
+        // Reset the copied state after 2 seconds
+        setTimeout(() => {
+          setIsCopied(false);
+        }, 2000);
       } else {
-        // Fallback to regular URL if token generation fails
-        const baseUrl = window.location.origin;
-        const callUrl = `${baseUrl}` + config.APP.API_BASE_PATH + `/call/${interview.id || interview._id}`;
-        navigator.clipboard.writeText(callUrl);
-        toast.warning("Regular link copied to clipboard (secure link generation failed)", {
+        // Show error message instead of falling back to regular URL
+        toast.error("Failed to generate secure link. Please try again.", {
           position: "bottom-right",
           duration: 3000,
         });
       }
     } catch (error) {
       console.error('Error generating secure URL:', error);
-      // Fallback to regular URL
-      const baseUrl = window.location.origin;
-      const callUrl = `${baseUrl}` + config.APP.API_BASE_PATH + `/call/${interview.id || interview._id}`;
-      navigator.clipboard.writeText(callUrl);
-      toast.error("Regular link copied to clipboard (error occurred)", {
+      // Show error message instead of falling back to regular URL
+      toast.error("Failed to generate secure link. Please try again.", {
         position: "bottom-right",
         duration: 3000,
       });
     }
-    
-    // Reset the copied state after 2 seconds
-    setTimeout(() => {
-      setIsCopied(false);
-    }, 2000);
   };
 
 
@@ -117,24 +116,28 @@ function InterviewCard({ interview }) {
         
         {/* Top-right action buttons */}
         <div className="absolute top-2 right-2 flex gap-1">
-          {/* <Button 
-            className="inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-white hover:bg-gray-50 text-gray-700 border-0 shadow-sm py-1 px-1 h-6 w-6"
-            onClick={handleShareClick}
-            title="Open interview"
-          >
-            <ArrowUpRight className="w-3 h-3" />
-          </Button> */}
+          {/* Info button - shows created by info on hover */}
           <Button 
             className="inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-white hover:bg-gray-50 text-gray-700 border-0 shadow-sm py-1 px-1 h-6 w-6"
-            onClick={handleCopyClick}
-            title={isCopied ? "Copied!" : "Copy current link"}
+            title={`Created by: ${interview.user?.email || 'Unknown'}`}
           >
-            {isCopied ? (
-              <Check className="w-3 h-3 text-green-600" />
-            ) : (
-              <Copy className="w-3 h-3" />
-            )}
+            <Info className="w-3 h-3" />
           </Button>
+          
+          {/* Copy button - only show for interview creators */}
+          {isInterviewCreator && (
+            <Button 
+              className="inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-white hover:bg-gray-50 text-gray-700 border-0 shadow-sm py-1 px-1 h-6 w-6"
+              onClick={handleCopyClick}
+              title={isCopied ? "Copied!" : "Copy current link"}
+            >
+              {isCopied ? (
+                <Check className="w-3 h-3 text-green-600" />
+              ) : (
+                <Copy className="w-3 h-3" />
+              )}
+            </Button>
+          )}
         </div>
       </div>
     </div>

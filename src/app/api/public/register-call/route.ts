@@ -26,6 +26,11 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       );
     }
+
+    console.log("body", body);
+    
+    // Log API key info for debugging (first 8 chars only for security)
+    console.log("Using Retell API key:", config.RETELL.API_KEY ? `${config.RETELL.API_KEY.substring(0, 8)}...` : "NOT SET");
     
     // Get interviewer without companyId filter for public access
     const interviewer = await InterviewerService.getInterviewerById(interviewerId);
@@ -50,8 +55,17 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error("Error registering public call:", error);
+    console.error("Error details:", {
+      message: error.message,
+      status: error.status,
+      response: error.response?.data,
+      
+    });
     return NextResponse.json(
-      { error: "Failed to register call with Retell API. Please check your configuration." },
+      { 
+        error: "Failed to register call with Retell API. Please check your configuration.",
+        details: error.message
+      },
       { status: 500 }
     );
   }
