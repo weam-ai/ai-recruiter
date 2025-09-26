@@ -11,7 +11,7 @@ module.exports = {
         DB_PORT: process.env.DB_PORT
     },
     RETELL: {
-        API_KEY: 'key_de331a0fef0b8dc86466a96de149'
+        API_KEY: process.env.RETELL_API_KEY
     },
     OPENAI: {
         API_KEY: process.env.OPENAI_API_KEY
