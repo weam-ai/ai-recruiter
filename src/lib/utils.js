@@ -86,3 +86,22 @@ export function getHostnameFromRequest(request) {
   }
 }
 
+export function validateApiKeys() {
+  const missingKeys = [];
+  
+  // Check if OpenAI API key is properly configured
+  if (!config.OPENAI.API_KEY || config.OPENAI.API_KEY.trim() === '') {
+    missingKeys.push('OpenAI API key');
+  }
+  
+  // Check if Retell API key is properly configured
+  if (!config.RETELL.API_KEY || config.RETELL.API_KEY.trim() === '') {
+    missingKeys.push('Retell API key');
+  }
+  
+  return {
+    isValid: missingKeys.length === 0,
+    missingKeys
+  };
+}
+

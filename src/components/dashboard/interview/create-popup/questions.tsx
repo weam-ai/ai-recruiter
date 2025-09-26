@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { ChevronLeft } from "lucide-react";
 import { getApiUrl } from "@/lib/utils";
+import { toast } from "sonner";
 
 interface Props {
   interviewData: InterviewBase;
@@ -91,8 +92,29 @@ function QuestionsPopup({ interviewData, setProceed, setOpen }: Props) {
       setIsClicked(false);
       fetchInterviews(user?.companyId);
       setOpen(false);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error creating interview:", error);
+      setIsClicked(false);
+      
+      // Handle API key validation errors
+      if (error.response?.status === 500 && error.response?.data?.missingKeys) {
+        const missingKeys = error.response.data.missingKeys;
+        toast.error(
+          `Missing API Configuration`,
+          {
+            description: `Please configure the following API keys in your environment: ${missingKeys.join(', ')}`,
+            duration: 5000,
+          }
+        );
+      } else {
+        toast.error(
+          "Failed to create interview",
+          {
+            description: "An error occurred while creating the interview. Please try again.",
+            duration: 4000,
+          }
+        );
+      }
     }
   };
 
