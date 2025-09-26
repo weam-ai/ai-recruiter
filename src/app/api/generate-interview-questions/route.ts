@@ -5,12 +5,28 @@ import {
   generateQuestionsPrompt,
 } from "@/lib/prompts/generate-questions";
 import { logger } from "@/lib/logger";
+import { validateApiKeys } from "@/lib/utils";
 const config = require('../../../config/config');
 
 export const maxDuration = 60;
 
 export async function POST(req: Request, res: Response) {
   logger.info("generate-interview-questions request received");
+  
+  // Validate API keys before processing
+  const apiKeyValidation = validateApiKeys();
+  if (!apiKeyValidation.isValid) {
+    logger.error(`Missing API keys: ${apiKeyValidation.missingKeys.join(', ')}`);
+    return NextResponse.json(
+      { 
+        error: "API configuration error", 
+        message: `Missing required API keys: ${apiKeyValidation.missingKeys.join(', ')}. Please configure the environment variables.`,
+        missingKeys: apiKeyValidation.missingKeys
+      },
+      { status: 500 }
+    );
+  }
+  
   const body = await req.json();
 
   const openai = new OpenAI({
