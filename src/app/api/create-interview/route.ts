@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { InterviewService } from "@/services/interviews.service";
 import { logger } from "@/lib/logger";
 import { getSession } from "@/config/withSession";
+import { validateApiKeys } from "@/lib/utils";
 const config = require('../../../config/config');
 
 // Force dynamic rendering for this route
@@ -12,6 +13,20 @@ const base_url = config.APP.LIVE_URL;
 
 export async function POST(req: Request, res: Response) {
   try {
+    // Validate API keys before processing
+    const apiKeyValidation = validateApiKeys();
+    if (!apiKeyValidation.isValid) {
+      logger.error(`Missing API keys: ${apiKeyValidation.missingKeys.join(', ')}`);
+      return NextResponse.json(
+        { 
+          error: "API configuration error", 
+          message: `Missing required API keys: ${apiKeyValidation.missingKeys.join(', ')}. Please configure the environment variables.`,
+          missingKeys: apiKeyValidation.missingKeys
+        },
+        { status: 500 }
+      );
+    }
+
     // Get user session data
     const session = await getSession();
     const user = session.user;

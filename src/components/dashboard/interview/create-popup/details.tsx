@@ -14,6 +14,7 @@ import Modal from "@/components/dashboard/Modal";
 import InterviewerDetailsModal from "@/components/dashboard/interviewer/interviewerDetailsModal";
 import { Interviewer } from "@/types/interviewer";
 import { getApiUrl, getImageUrl } from "@/lib/utils";
+import { toast } from "sonner";
 
 interface Props {
   open: boolean;
@@ -81,35 +82,61 @@ function DetailsPopup({
       context: uploadedDocumentContext,
     };
 
-    const generatedQuestions = (await axios.post(
-      getApiUrl("/api/generate-interview-questions"),
-      data,
-    )) as any;
+    try {
+      const generatedQuestions = (await axios.post(
+        getApiUrl("/api/generate-interview-questions"),
+        data,
+      )) as any;
 
-    const generatedQuestionsResponse = JSON.parse(
-      generatedQuestions?.data?.response,
-    );
+      const generatedQuestionsResponse = JSON.parse(
+        generatedQuestions?.data?.response,
+      );
 
-    const updatedQuestions = generatedQuestionsResponse.questions.map(
-      (question: Question) => ({
-        id: uuidv4(),
-        question: question.question.trim(),
-        follow_up_count: 1,
-      }),
-    );
+      const updatedQuestions = generatedQuestionsResponse.questions.map(
+        (question: Question) => ({
+          id: uuidv4(),
+          question: question.question.trim(),
+          follow_up_count: 1,
+        }),
+      );
 
-    const updatedInterviewData = {
-      ...interviewData,
-      name: name.trim(),
-      objective: objective.trim(),
-      questions: updatedQuestions,
-      interviewer_id: selectedInterviewer,
-      question_count: Number(numQuestions),
-      time_duration: duration,
-      description: generatedQuestionsResponse.description,
-      is_anonymous: isAnonymous,
-    };
-    setInterviewData(updatedInterviewData);
+      const updatedInterviewData = {
+        ...interviewData,
+        name: name.trim(),
+        objective: objective.trim(),
+        questions: updatedQuestions,
+        interviewer_id: selectedInterviewer,
+        question_count: Number(numQuestions),
+        time_duration: duration,
+        description: generatedQuestionsResponse.description,
+        is_anonymous: isAnonymous,
+      };
+      setInterviewData(updatedInterviewData);
+    } catch (error: any) {
+      console.error("Error generating questions:", error);
+      setLoading(false);
+      setIsClicked(false);
+      
+      // Handle API key validation errors
+      if (error.response?.status === 500 && error.response?.data?.missingKeys) {
+        const missingKeys = error.response.data.missingKeys;
+        toast.error(
+          `Missing API Configuration`,
+          {
+            description: `Please configure the following API keys in your environment: ${missingKeys.join(', ')}`,
+            duration: 5000,
+          }
+        );
+      } else {
+        toast.error(
+          "Failed to generate questions",
+          {
+            description: "An error occurred while generating interview questions. Please try again.",
+            duration: 4000,
+          }
+        );
+      }
+    }
   };
 
   const onManual = () => {
