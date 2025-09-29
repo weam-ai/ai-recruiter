@@ -20,6 +20,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useInterviewers } from "@/contexts/interviewers.context";
 import { useClerk } from "@/contexts/auth.context";
 import { getImageUrl } from "@/lib/utils";
+import { toast } from "sonner";
 
 const createInterviewerCard = () => {
   const [open, setOpen] = useState(false);
@@ -62,9 +63,28 @@ const createInterviewerCard = () => {
       });
       setIsClicked(false);
       setOpen(false);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error creating interviewer:', error);
       setIsClicked(false);
+      
+      // Handle API key validation errors
+      if (error.message && error.message.includes('Missing API Configuration')) {
+        toast.error(
+          `Missing API Configuration`,
+          {
+            description: error.message,
+            duration: 5000,
+          }
+        );
+      } else {
+        toast.error(
+          "Failed to create interviewer",
+          {
+            description: error.message || "An error occurred while creating the interviewer. Please try again.",
+            duration: 4000,
+          }
+        );
+      }
     }
   };
 
