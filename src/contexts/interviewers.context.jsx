@@ -63,6 +63,13 @@ export const InterviewersProvider = ({ children }) => {
       } else {
         const errorData = await response.json();
         console.error('Error creating interviewer:', errorData);
+        
+        // Handle API key validation errors
+        if (response.status === 500 && errorData.missingKeys) {
+          const missingKeys = errorData.missingKeys;
+          throw new Error(`Missing API Configuration: Please configure the following API keys in your environment: ${missingKeys.join(', ')}`);
+        }
+        
         throw new Error(errorData.error || 'Failed to create interviewer');
       }
     } catch (error) {

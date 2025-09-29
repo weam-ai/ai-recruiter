@@ -3,6 +3,7 @@ import { InterviewerService } from "@/services/interviewers.service";
 import { getSession } from "@/config/withSession";
 import Retell from "retell-sdk";
 import { RETELL_AGENT_GENERAL_PROMPT } from "@/lib/constants";
+import { validateApiKeys } from "@/lib/utils";
 const config = require('../../../config/config');
 
 // Force dynamic rendering for this route
@@ -33,11 +34,16 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
     
-    // Check if Retell API key is configured
-    if (!config.RETELL.API_KEY) {
-      console.error("RETELL_API_KEY is not configured");
+    // Validate API keys before processing
+    const apiKeyValidation = validateApiKeys();
+    if (!apiKeyValidation.isValid) {
+      console.error(`Missing API keys: ${apiKeyValidation.missingKeys.join(', ')}`);
       return NextResponse.json(
-        { error: "Retell API key is not configured. Please set RETELL_API_KEY in your environment variables." },
+        { 
+          error: "API configuration error", 
+          message: `Missing required API keys: ${apiKeyValidation.missingKeys.join(', ')}. Please configure the environment variables.`,
+          missingKeys: apiKeyValidation.missingKeys
+        },
         { status: 500 }
       );
     }
