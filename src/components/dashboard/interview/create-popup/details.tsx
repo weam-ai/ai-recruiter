@@ -186,85 +186,100 @@ function DetailsPopup({
           </div>
           <h3 className="text-sm mt-3 font-medium">Select an Interviewer:</h3>
           <div className="relative flex items-center mt-1">
-            <div
-              id="slider-3"
-              className=" h-36 pt-1 overflow-x-scroll scroll whitespace-nowrap scroll-smooth scrollbar-hide w-[27.5rem]"
-            >
-              {interviewers.map((item, key) => (
+            {interviewers.length > 0 ? (
+              <>
                 <div
-                  className=" p-0 inline-block cursor-pointer ml-1 mr-5 rounded-xl shrink-0 overflow-hidden"
-                  key={item._id || item.id}
+                  id="slider-3"
+                  className=" h-36 pt-1 overflow-x-scroll scroll whitespace-nowrap scroll-smooth scrollbar-hide w-[27.5rem]"
                 >
-                  {/* <button
-                    className="absolute ml-9"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setInterviewerDetails(item);
-                      setOpenInterviewerDetails(true);
-                    }}
-                  >
-                    <Info size={18} color="#4f46e5" strokeWidth={2.2} />
-                  </button> */}
-                  <div
-                    className={`w-[96px] overflow-hidden rounded-full transition-all duration-200 ${
-                      selectedInterviewer === (item._id || item.id)
-                        ? "border-2 border-indigo-600"
-                        : "border-2 border-gray-200 hover:border-gray-300"
-                    }`}
-                    onClick={() => {
-                      const interviewerId = item._id || item.id;
-                      // console.log(`Clicked interviewer: ${item.name}, _id: ${item._id}, id: ${item.id}, Current selection: ${selectedInterviewer}`);
-                      setSelectedInterviewer(interviewerId);
-                      // console.log(`New selection set to: ${interviewerId}`);
-                    }}
-                  >
-                    <Image
-                      src={item.image || getImageUrl("/avatars/7.png")}
-                      alt="Picture of the interviewer"
-                      width={70}
-                      height={70}
-                      className="w-full h-full object-cover"
+                  {interviewers.map((item, key) => (
+                    <div
+                      className=" p-0 inline-block cursor-pointer ml-1 mr-5 rounded-xl shrink-0 overflow-hidden"
+                      key={item._id || item.id}
+                    >
+                      {/* <button
+                        className="absolute ml-9"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setInterviewerDetails(item);
+                          setOpenInterviewerDetails(true);
+                        }}
+                      >
+                        <Info size={18} color="#4f46e5" strokeWidth={2.2} />
+                      </button> */}
+                      <div
+                        className={`w-[96px] overflow-hidden rounded-full transition-all duration-200 ${
+                          selectedInterviewer === (item._id || item.id)
+                            ? "border-2 border-indigo-600"
+                            : "border-2 border-gray-200 hover:border-gray-300"
+                        }`}
+                        onClick={() => {
+                          const interviewerId = item._id || item.id;
+                          // console.log(`Clicked interviewer: ${item.name}, _id: ${item._id}, id: ${item.id}, Current selection: ${selectedInterviewer}`);
+                          setSelectedInterviewer(interviewerId);
+                          // console.log(`New selection set to: ${interviewerId}`);
+                        }}
+                      >
+                        <Image
+                          src={item.image || getImageUrl("/avatars/7.png")}
+                          alt="Picture of the interviewer"
+                          width={70}
+                          height={70}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <CardTitle className={`mt-0 text-xs text-center ${
+                        selectedInterviewer === (item._id || item.id) ? "text-indigo-600 font-semibold" : "text-gray-700"
+                      }`}>
+                        {item.name}
+                        {/* {selectedInterviewer === (item._id || item.id) && (
+                          <span className="block text-xs text-indigo-500 mt-1">✓ Selected</span>
+                        )} */}
+                      </CardTitle>
+                    </div>
+                  ))}
+                </div>
+                {interviewers.length > 4 ? (
+                  <div className="flex-row justify-center ml-3 mb-1 items-center space-y-6">
+                    <ChevronRight
+                      className="opacity-50 cursor-pointer hover:opacity-100"
+                      size={27}
+                      onClick={() => slideRight("slider-3", 115)}
+                    />
+                    <ChevronLeft
+                      className="opacity-50 cursor-pointer hover:opacity-100"
+                      size={27}
+                      onClick={() => slideLeft("slider-3", 115)}
                     />
                   </div>
-                  <CardTitle className={`mt-0 text-xs text-center ${
-                    selectedInterviewer === (item._id || item.id) ? "text-indigo-600 font-semibold" : "text-gray-700"
-                  }`}>
-                    {item.name}
-                    {/* {selectedInterviewer === (item._id || item.id) && (
-                      <span className="block text-xs text-indigo-500 mt-1">✓ Selected</span>
-                    )} */}
-                  </CardTitle>
-                </div>
-              ))}
-            </div>
-            {interviewers.length > 4 ? (
-              <div className="flex-row justify-center ml-3 mb-1 items-center space-y-6">
-                <ChevronRight
-                  className="opacity-50 cursor-pointer hover:opacity-100"
-                  size={27}
-                  onClick={() => slideRight("slider-3", 115)}
-                />
-                <ChevronLeft
-                  className="opacity-50 cursor-pointer hover:opacity-100"
-                  size={27}
-                  onClick={() => slideLeft("slider-3", 115)}
-                />
-              </div>
+                ) : (
+                  <></>
+                )}
+              </>
             ) : (
-              <></>
+              <div className="w-[33.5rem] h-36 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 mb-2">
+                <div className="text-center">
+                  <div className="text-gray-500 text-sm mb-2">No interviewers available</div>
+                  <div className="text-gray-400 text-xs">Please create an interviewer first</div>
+                </div>
+              </div>
             )}
           </div>
           
           {/* Selection status */}
-          {selectedInterviewer && selectedInterviewer !== "0" ? (
-            <div className="mt-2 p-2 bg-indigo-50 border border-indigo-200 rounded text-xs text-indigo-700">
-              ✓ Interviewer selected: {interviewers.find(i => (i._id || i.id) === selectedInterviewer)?.name}
-            </div>
-          ) : (
-            <div className="mt-2 p-2 bg-gray-50 border border-gray-200 rounded text-xs text-gray-600">
-              Please select an interviewer to continue
-            </div>
-          )}
+          {interviewers.length > 0 ? (
+            selectedInterviewer && selectedInterviewer !== "0" ? (
+              <div className="mt-2 p-2 bg-indigo-50 border border-indigo-200 rounded text-xs text-indigo-700">
+                ✓ Interviewer selected: {interviewers.find(i => (i._id || i.id) === selectedInterviewer)?.name}
+              </div>
+            ) : (
+              <div className="mt-2 p-2 bg-gray-50 border border-gray-200 rounded text-xs text-gray-600">
+                Please select an interviewer to continue
+              </div>
+            )
+          ) : 
+          ''
+          }
           
           <h3 className="text-sm font-medium">Objective:</h3>
           <Textarea
@@ -311,7 +326,7 @@ function DetailsPopup({
               <input
                 type="number"
                 step="1"
-                max="5"
+                max="15"
                 min="1"
                 className="border-b-2 text-center focus:outline-none  border-gray-500 w-14 px-2 py-0.5 ml-3"
                 value={numQuestions}
@@ -321,8 +336,8 @@ function DetailsPopup({
                     value === "" ||
                     (Number.isInteger(Number(value)) && Number(value) > 0)
                   ) {
-                    if (Number(value) > 5) {
-                      value = "5";
+                    if (Number(value) > 15) {
+                      value = "15";
                     }
                     setNumQuestions(value);
                   }
@@ -334,7 +349,7 @@ function DetailsPopup({
               <input
                 type="number"
                 step="1"
-                max="10"
+                max="30"
                 min="1"
                 className="border-b-2 text-center focus:outline-none  border-gray-500 w-14 px-2 py-0.5 ml-3"
                 value={duration}
@@ -344,8 +359,8 @@ function DetailsPopup({
                     value === "" ||
                     (Number.isInteger(Number(value)) && Number(value) > 0)
                   ) {
-                    if (Number(value) > 10) {
-                      value = "10";
+                    if (Number(value) > 30) {
+                      value = "30";
                     }
                     setDuration(value);
                   }
