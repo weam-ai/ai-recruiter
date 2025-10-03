@@ -314,7 +314,7 @@ function EditInterview({ interview }: EditInterviewProps) {
             <input
               type="number"
               step="1"
-              max="5"
+              max="15"
               min={questions.length.toString()}
               className="border-2 text-center focus:outline-none  bg-slate-100 rounded-md border-gray-500 w-14 px-2 py-0.5 ml-3"
               value={numQuestions}
@@ -324,8 +324,8 @@ function EditInterview({ interview }: EditInterviewProps) {
                   value === "" ||
                   (Number.isInteger(Number(value)) && Number(value) > 0)
                 ) {
-                  if (Number(value) > 5) {
-                    value = "5";
+                  if (Number(value) > 15) {
+                    value = "15";
                   }
                   setNumQuestions(Number(value));
                 }
@@ -337,7 +337,7 @@ function EditInterview({ interview }: EditInterviewProps) {
             <input
               type="number"
               step="1"
-              max="10"
+              max="30"
               min="1"
               className="border-2 text-center focus:outline-none bg-slate-100 rounded-md border-gray-500 w-14 px-2 py-0.5 ml-3"
               value={Number(duration)}
@@ -347,8 +347,8 @@ function EditInterview({ interview }: EditInterviewProps) {
                   value === "" ||
                   (Number.isInteger(Number(value)) && Number(value) > 0)
                 ) {
-                  if (Number(value) > 10) {
-                    value = "10";
+                  if (Number(value) > 30) {
+                    value = "30";
                   }
                   setDuration(Number(value));
                 }
