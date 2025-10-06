@@ -5,7 +5,7 @@ import { Switch } from "@/components/ui/switch";
 import React, { useState, useEffect } from "react";
 import { useOrganization } from "@/contexts/auth.context";
 import { useInterviews } from "@/contexts/interviews.context";
-import { Share2, Filter, Pencil, UserIcon, Eye, Palette } from "lucide-react";
+import { Share2, Filter, Pencil, UserIcon, Eye, Palette, Copy, Info } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useRouter } from "next/navigation";
 import axios from "axios";
@@ -68,6 +68,7 @@ function InterviewHome({ params, searchParams }: Props) {
   const [iconColor, seticonColor] = useState<string>("#4F46E5");
   const { organization } = useOrganization();
   const [filterStatus, setFilterStatus] = useState<string>("ALL");
+  const [copiedLink, setCopiedLink] = useState(false);
 
   // Clear responses when interviewId changes to prevent showing stale data
   useEffect(() => {
@@ -234,6 +235,43 @@ function InterviewHome({ params, searchParams }: Props) {
     setIsSharePopupOpen(false);
   };
 
+  const copyLinkToClipboard = () => {
+    const protocol = base_url?.includes("localhost") ? "http" : "https";
+    const interviewURL = interview?.readable_slug
+      ? `${protocol}://${base_url}/call/${interview?.readable_slug}`
+      : interview?.url?.startsWith("http")
+        ? interview.url
+        : `https://${interview?.url}`;
+
+    if (interviewURL) {
+      navigator.clipboard.writeText(interviewURL).then(
+        () => {
+          setCopiedLink(true);
+          toast.success("Interview link copied to clipboard", {
+            description: "This link will be valid for 24 hours. A new link should be generated and shared with each candidate every time it is copied.",
+            position: "bottom-right",
+            duration: 5000,
+          });
+          setTimeout(() => setCopiedLink(false), 2000);
+        },
+        (err) => {
+          console.error("Failed to copy", err);
+          toast.error("Failed to copy link", {
+            description: "Please try again or copy the link manually.",
+            position: "bottom-right",
+            duration: 3000,
+          });
+        }
+      );
+    } else {
+      toast.error("No interview URL available", {
+        description: "Please ensure the interview is properly configured.",
+        position: "bottom-right",
+        duration: 3000,
+      });
+    }
+  };
+
   const handleColorChange = (color: any) => {
     setThemeColor(color.hex);
   };
@@ -279,32 +317,7 @@ function InterviewHome({ params, searchParams }: Props) {
               <UserIcon className="my-auto" size={16} />:{" "}
               {String(responses?.length)}
             </div>
-
-            {/* <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    className={
-                      "bg-transparent shadow-none relative text-xs text-indigo-600 px-1 h-7 hover:scale-110 hover:bg-transparent"
-                    }
-                    variant={"secondary"}
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      openSharePopup();
-                    }}
-                  >
-                    <Share2 size={16} />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent
-                  className="bg-zinc-300"
-                  side="bottom"
-                  sideOffset={4}
-                >
-                  <span className="text-black flex flex-row gap-4">Share</span>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider> */}
+            
             {/* <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -353,29 +366,7 @@ function InterviewHome({ params, searchParams }: Props) {
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider> */}
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    className="bg-transparent shadow-none text-xs text-indigo-600 px-0 h-7 hover:scale-110 relative"
-                    onClick={(event) => {
-                      router.push(
-                        `/interviews/${params.interviewId}?edit=true`,
-                      );
-                    }}
-                  >
-                    <Pencil size={16} />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent
-                  className="bg-zinc-300"
-                  side="bottom"
-                  sideOffset={4}
-                >
-                  <span className="text-black flex flex-row gap-4">Edit</span>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            
 
             <label className="inline-flex cursor-pointer">
               {currentPlan == "free_trial_over" ? (
@@ -406,6 +397,75 @@ function InterviewHome({ params, searchParams }: Props) {
                 </>
               )}
             </label>
+
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    className="bg-transparent shadow-none text-xs text-indigo-600 px-0 h-7 hover:scale-110 relative"
+                    onClick={(event) => {
+                      router.push(
+                        `/interviews/${params.interviewId}?edit=true`,
+                      );
+                    }}
+                  >
+                    <Pencil size={16} />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent
+                  className="bg-zinc-300"
+                  side="bottom"
+                  sideOffset={4}
+                >
+                  <span className="text-black flex flex-row gap-4">Edit</span>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    className={
+                      "bg-transparent shadow-none relative text-xs text-indigo-600 px-1 h-7 hover:scale-110 hover:bg-transparent"
+                    }
+                    variant={"secondary"}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      copyLinkToClipboard();
+                    }}
+                  >
+                    <Copy size={16} />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent
+                  className="bg-zinc-300"
+                  side="bottom"
+                  sideOffset={4}
+                >
+                  <span className="text-black flex flex-row gap-4">Copy Link</span>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="flex items-center">
+                    <Info size={16} className="text-gray-400" />
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent
+                  className="bg-gray-800 text-white max-w-xs p-3"
+                  side="bottom"
+                  sideOffset={4}
+                >
+                  <span className="text-sm">
+                    This link will be valid for 24 hours. A new link should be generated and shared with each candidate every time it is copied.
+                  </span>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
           <div className="flex flex-row w-full p-2 h-[85%] gap-1 ">
             <div className="w-[20%] flex flex-col p-2 divide-y-2 rounded-sm border-2 border-slate-100">

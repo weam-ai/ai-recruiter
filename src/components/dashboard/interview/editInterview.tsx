@@ -242,39 +242,48 @@ function EditInterview({ interview }: EditInterviewProps) {
           <div>
             <p className="mt-3 mb-1 ml-2 font-medium">Interviewer</p>
             <div className=" flex items-center mt-1">
-              <div
-                id="slider-3"
-                className=" h-32 pt-1 ml-2 overflow-x-scroll scroll whitespace-nowrap scroll-smooth scrollbar-hide w-[27.5rem]"
-              >
-                {interviewers.map((item) => (
-                  <div
-                    className=" p-0 inline-block cursor-pointer hover:scale-105 ease-in-out duration-300  ml-1 mr-3 rounded-xl shrink-0 overflow-hidden"
-                    key={item.id}
-                  >
+              {interviewers.length > 0 ? (
+                <div
+                  id="slider-3"
+                  className=" h-32 pt-1 ml-2 overflow-x-scroll scroll whitespace-nowrap scroll-smooth scrollbar-hide w-[27.5rem]"
+                >
+                  {interviewers.map((item) => (
                     <div
-                      className={`w-[96px] overflow-hidden rounded-full ${
-                        selectedInterviewer === item.id
-                          ? "border-4 border-indigo-600"
-                          : ""
-                      }`}
-                      onClick={() => {
-                        setSelectedInterviewer(item.id);
-                      }}
+                      className=" p-0 inline-block cursor-pointer hover:scale-105 ease-in-out duration-300  ml-1 mr-3 rounded-xl shrink-0 overflow-hidden"
+                      key={item.id}
                     >
-                      <Image
-                        src={item.image}
-                        alt="Picture of the interviewer"
-                        width={70}
-                        height={70}
-                        className="w-full h-full object-cover"
-                      />
+                      <div
+                        className={`w-[96px] overflow-hidden rounded-full ${
+                          selectedInterviewer === item.id
+                            ? "border-4 border-indigo-600"
+                            : ""
+                        }`}
+                        onClick={() => {
+                          setSelectedInterviewer(item.id);
+                        }}
+                      >
+                        <Image
+                          src={item.image}
+                          alt="Picture of the interviewer"
+                          width={70}
+                          height={70}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <CardTitle className="mt-0 text-xs text-center">
+                        {item.name}
+                      </CardTitle>
                     </div>
-                    <CardTitle className="mt-0 text-xs text-center">
-                      {item.name}
-                    </CardTitle>
+                  ))}
+                </div>
+              ) : (
+                <div className="ml-2 w-[27.5rem] h-32 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg bg-gray-50">
+                  <div className="text-center">
+                    <div className="text-gray-500 text-sm mb-2">No interviewers available</div>
+                    <div className="text-gray-400 text-xs">Please create an interviewer first</div>
                   </div>
-                ))}
-              </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -305,7 +314,7 @@ function EditInterview({ interview }: EditInterviewProps) {
             <input
               type="number"
               step="1"
-              max="5"
+              max="15"
               min={questions.length.toString()}
               className="border-2 text-center focus:outline-none  bg-slate-100 rounded-md border-gray-500 w-14 px-2 py-0.5 ml-3"
               value={numQuestions}
@@ -315,8 +324,8 @@ function EditInterview({ interview }: EditInterviewProps) {
                   value === "" ||
                   (Number.isInteger(Number(value)) && Number(value) > 0)
                 ) {
-                  if (Number(value) > 5) {
-                    value = "5";
+                  if (Number(value) > 15) {
+                    value = "15";
                   }
                   setNumQuestions(Number(value));
                 }
@@ -328,7 +337,7 @@ function EditInterview({ interview }: EditInterviewProps) {
             <input
               type="number"
               step="1"
-              max="10"
+              max="30"
               min="1"
               className="border-2 text-center focus:outline-none bg-slate-100 rounded-md border-gray-500 w-14 px-2 py-0.5 ml-3"
               value={Number(duration)}
@@ -338,8 +347,8 @@ function EditInterview({ interview }: EditInterviewProps) {
                   value === "" ||
                   (Number.isInteger(Number(value)) && Number(value) > 0)
                 ) {
-                  if (Number(value) > 10) {
-                    value = "10";
+                  if (Number(value) > 30) {
+                    value = "30";
                   }
                   setDuration(Number(value));
                 }
