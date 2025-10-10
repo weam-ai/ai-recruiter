@@ -85,7 +85,7 @@ export async function middleware(request: NextRequest) {
   const session = await getSession();
   
   // Call check-access API for every page access (except API routes and static files)
-  if (!pathname.startsWith('/api/') && !pathname.startsWith('/_next/') && !pathname.includes('.') && session?.user?.roleCode === 'USER') {
+  if (!pathname.startsWith('/api/') && session?.user?.roleCode === 'USER') {
     try {          
       if (session?.user && session?.user?._id) {
         // Call check-access API for every page access
