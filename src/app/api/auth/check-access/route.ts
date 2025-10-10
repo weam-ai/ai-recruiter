@@ -7,7 +7,8 @@ export const dynamic = "force-dynamic";
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { userId, urlPath } = body;
+    let { userId, urlPath } = body;
+    urlPath = urlPath + '/dashboard';
 
     // Validate required fields
     if (!userId || !urlPath) {
