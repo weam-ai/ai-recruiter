@@ -20,6 +20,8 @@ export async function POST(request: NextRequest) {
     
     // Call the external API
     const externalApiUrl = getHostnameFromRequest(request) + '/napi/v1/common/check-access-solution';
+    console.log('externalApiUrl: ', externalApiUrl);
+    console.log('urlPath: ', urlPath);
     
     // Create basic auth header
     const basicauth = Buffer.from(
