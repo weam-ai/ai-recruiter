@@ -7,7 +7,8 @@ export const dynamic = "force-dynamic";
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { userId, urlPath } = body;
+    let { userId, urlPath } = body;
+    urlPath = urlPath + '/dashboard';
 
     // Validate required fields
     if (!userId || !urlPath) {
@@ -19,6 +20,8 @@ export async function POST(request: NextRequest) {
     
     // Call the external API
     const externalApiUrl = getHostnameFromRequest(request) + '/napi/v1/common/check-access-solution';
+    console.log('externalApiUrl: ', externalApiUrl);
+    console.log('urlPath: ', urlPath);
     
     // Create basic auth header
     const basicauth = Buffer.from(
