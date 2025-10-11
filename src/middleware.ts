@@ -84,13 +84,13 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const hostname = getHostnameFromRequest(request);
   const session = await getSession();
-  console.log('session: ', session);
+  console.log('session: ', session, session?.user?.companyId);
   // Call check-access API for every page access (except API routes and static files)
   if (!pathname.startsWith('/api/') && session?.user?.roleCode === 'USER') {
     try {          
       if (session?.user && session?.user?._id) {
         // Call check-access API for every page access
-        const hasAccess = await callCheckAccessAPI(session?.user?._id, session?.companyId, process.env.NEXT_PUBLIC_API_BASE_PATH, hostname);
+        const hasAccess = await callCheckAccessAPI(session?.user?._id, session?.user?.companyId, process.env.NEXT_PUBLIC_API_BASE_PATH, hostname);
         
         // If access is denied, redirect to login page
         if (!hasAccess) {          
