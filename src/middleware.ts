@@ -84,9 +84,10 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const hostname = getHostnameFromRequest(request);
   const session = await getSession();
-  console.log('session: ', session, session?.user?.companyId);
+  console.log('!pathname.startsWith(/api/): ', !pathname.startsWith('/api/'));
   // Call check-access API for every page access (except API routes and static files)
-  if (!pathname.startsWith('/api/') && session?.user?.roleCode === 'USER') {
+  if (pathname.startsWith('/api/') === false && session?.user?.roleCode === 'USER') {
+    console.log('session?.user?.roleCode: ', session?.user?.roleCode);
     try {          
       if (session?.user && session?.user?._id) {
         // Call check-access API for every page access
