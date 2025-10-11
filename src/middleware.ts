@@ -26,7 +26,7 @@ const protectedRoutes = [
 ];
 
 // Helper function to call check-access API
-async function callCheckAccessAPI(userId: string, urlPath: string, baseUrl: string) {
+async function callCheckAccessAPI(userId: string, companyId: string, urlPath: string, baseUrl: string) {
   try {
     // Construct the full URL for the API call
     
@@ -40,6 +40,7 @@ async function callCheckAccessAPI(userId: string, urlPath: string, baseUrl: stri
       },
       body: JSON.stringify({
         userId,
+        companyId,
         urlPath
       }),
     });
@@ -83,13 +84,13 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const hostname = getHostnameFromRequest(request);
   const session = await getSession();
-  
+  console.log('session: ', session);
   // Call check-access API for every page access (except API routes and static files)
   if (!pathname.startsWith('/api/') && session?.user?.roleCode === 'USER') {
     try {          
       if (session?.user && session?.user?._id) {
         // Call check-access API for every page access
-        const hasAccess = await callCheckAccessAPI(session?.user?._id, process.env.NEXT_PUBLIC_API_BASE_PATH, hostname);
+        const hasAccess = await callCheckAccessAPI(session?.user?._id, session?.companyId, process.env.NEXT_PUBLIC_API_BASE_PATH, hostname);
         
         // If access is denied, redirect to login page
         if (!hasAccess) {          
