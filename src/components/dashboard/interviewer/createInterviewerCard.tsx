@@ -11,7 +11,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
@@ -22,8 +21,24 @@ import { useClerk } from "@/contexts/auth.context";
 import { getImageUrl } from "@/lib/utils";
 import { toast } from "sonner";
 
-const createInterviewerCard = () => {
-  const [open, setOpen] = useState(false);
+interface CreateInterviewerCardProps {
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  showPlusIcon?: boolean;
+}
+
+const createInterviewerCard = ({ open: openProp, onOpenChange, showPlusIcon = true }: CreateInterviewerCardProps = {} as CreateInterviewerCardProps) => {
+  const [internalOpen, setInternalOpen] = useState(false);
+  const open = openProp !== undefined ? openProp : internalOpen;
+  
+  // Handle dialog open/close changes
+  const handleOpenChange = (newOpen: boolean) => {
+    if (onOpenChange) {
+      onOpenChange(newOpen);
+    } else {
+      setInternalOpen(newOpen);
+    }
+  };
   const [gallery, setGallery] = useState(false);
   const [name, setName] = useState("");
   const [empathy, setEmpathy] = useState(0.4);
@@ -62,7 +77,7 @@ const createInterviewerCard = () => {
         image: image,
       });
       setIsClicked(false);
-      setOpen(false);
+      handleOpenChange(false);
     } catch (error: any) {
       console.error('Error creating interviewer:', error);
       setIsClicked(false);
@@ -90,14 +105,12 @@ const createInterviewerCard = () => {
 
   return (
     <>
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger asChild>
-          <Plus
-            size={30}
-            strokeWidth={2}
-            className="cursor-pointer bg-indigo-600 rounded-full text-white"
-          />
-        </DialogTrigger>
+      {/* Plus icon display without DialogTrigger - conditionally rendered */}
+      {showPlusIcon && (
+        <Plus size={36} className="mx-auto text-gray-600 mb-4" />
+      )}
+      
+      <Dialog open={open} onOpenChange={handleOpenChange}>
         <DialogContent className="max-w-[35rem]">
           <DialogHeader>
             <DialogTitle className="text-2xl font-semibold text-center">
@@ -207,7 +220,7 @@ const createInterviewerCard = () => {
             <div className="flex flex-row justify-end mr-4">
               <Button
                 disabled={(name && image ? false : true) || isClicked}
-                className="bg-indigo-600  hover:bg-indigo-800"
+                className="bg-gray-800  hover:bg-black"
                 onClick={() => {
                   setIsClicked(true);
                   onSave();
@@ -235,7 +248,7 @@ const createInterviewerCard = () => {
               {avatars.map((item, key) => (
                 <div
                   key={item.id}
-                  className="flex flex-col items-center justify-center border-2 border-gray-300 rounded-lg overflow-hidden cursor-pointer hover:border-indigo-500 transition-colors p-2"
+                  className="flex flex-col items-center justify-center border-2 border-gray-300 rounded-lg overflow-hidden cursor-pointer hover:border-black transition-colors p-2"
                   onClick={() => {
                     setImage(item.img);
                     setGallery(false);
@@ -252,4 +265,5 @@ const createInterviewerCard = () => {
   );
 };
 
+export { createInterviewerCard, type CreateInterviewerCardProps };
 export default createInterviewerCard;

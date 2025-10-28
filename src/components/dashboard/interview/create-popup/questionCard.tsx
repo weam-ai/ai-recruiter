@@ -34,9 +34,9 @@ const questionCard = ({
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button
-                      className={`text-xs h-7  hover:bg-brand-800  ${
+                      className={`text-xs h-7  hover:bg-black  ${
                         questionData?.follow_up_count == 1
-                          ? "bg-brand"
+                          ? "bg-black"
                           : "opacity-50"
                       } `}
                       onClick={() =>
@@ -59,9 +59,9 @@ const questionCard = ({
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button
-                      className={`text-xs h-7  hover:bg-brand-800 ${
+                      className={`text-xs h-7  hover:bg-black ${
                         questionData?.follow_up_count == 2
-                          ? "bg-brand"
+                          ? "bg-black"
                           : "opacity-50"
                       } `}
                       onClick={() =>
@@ -84,9 +84,9 @@ const questionCard = ({
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button
-                      className={`text-xs h-7 hover:bg-brand-800  ${
+                      className={`text-xs h-7 hover:bg-black  ${
                         questionData?.follow_up_count == 3
-                          ? "bg-brand"
+                          ? "bg-black"
                           : "opacity-50"
                       } `}
                       onClick={() =>

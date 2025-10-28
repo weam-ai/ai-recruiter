@@ -14,6 +14,7 @@ function Interviewers() {
   const { user } = useClerk();
   const [selectedInterviewer, setSelectedInterviewer] = useState<Interviewer | undefined>();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const hasLoadedInterviewers = useRef(false);
 
   // Load interviewers only once when user is available
@@ -45,7 +46,10 @@ function Interviewers() {
         
         <div className="flex gap-8">
           {/* Create Interviewer Button - Left Card */}
-          <div className="flex flex-col items-center cursor-pointer hover:scale-105 transition-transform duration-200 p-4 rounded-lg border-2 border-dashed border-gray-300 hover:bg-gray-50">
+          <div 
+            className="flex flex-col items-center cursor-pointer hover:scale-105 transition-transform duration-200 p-4 rounded-lg border-2 border-dashed border-gray-300 hover:bg-gray-50"
+            onClick={() => setIsCreateDialogOpen(true)}
+          >
             <div className="w-24 h-24 mb-4 flex items-center justify-center">
               <CreateInterviewerCard />
             </div>
@@ -110,6 +114,9 @@ function Interviewers() {
           onClose={() => setIsModalOpen(false)}
         />
       )}
+
+      {/* Create Interviewer Dialog - rendered outside clickable area */}
+      <CreateInterviewerCard open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen} showPlusIcon={false} />
     </div>
   );
 }
