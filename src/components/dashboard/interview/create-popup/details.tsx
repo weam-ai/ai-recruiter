@@ -210,7 +210,7 @@ function DetailsPopup({
                       <div
                         className={`w-[96px] overflow-hidden rounded-full transition-all duration-200 ${
                           selectedInterviewer === (item._id || item.id)
-                            ? "border-2 border-indigo-600"
+                            ? "border-2 border-gray-600"
                             : "border-2 border-gray-200 hover:border-gray-300"
                         }`}
                         onClick={() => {
@@ -229,12 +229,9 @@ function DetailsPopup({
                         />
                       </div>
                       <CardTitle className={`mt-0 text-xs text-center ${
-                        selectedInterviewer === (item._id || item.id) ? "text-indigo-600 font-semibold" : "text-gray-700"
+                        selectedInterviewer === (item._id || item.id) ? "text-gray-600 font-semibold" : "text-gray-700"
                       }`}>
                         {item.name}
-                        {/* {selectedInterviewer === (item._id || item.id) && (
-                          <span className="block text-xs text-indigo-500 mt-1">✓ Selected</span>
-                        )} */}
                       </CardTitle>
                     </div>
                   ))}
@@ -269,7 +266,7 @@ function DetailsPopup({
           {/* Selection status */}
           {interviewers.length > 0 ? (
             selectedInterviewer && selectedInterviewer !== "0" ? (
-              <div className="mt-2 p-2 bg-indigo-50 border border-indigo-200 rounded text-xs text-indigo-700">
+              <div className="mt-2 p-2 bg-gray-50 border border-gray-200 rounded text-xs text-gray-700">
                 ✓ Interviewer selected: {interviewers.find(i => (i._id || i.id) === selectedInterviewer)?.name}
               </div>
             ) : (
@@ -307,7 +304,7 @@ function DetailsPopup({
               <Switch
                 checked={isAnonymous}
                 className={`ml-4 mt-1 ${
-                  isAnonymous ? "bg-indigo-600" : "bg-[#E6E7EB]"
+                  isAnonymous ? "bg-black" : "bg-[#E6E7EB]"
                 }`}
                 onCheckedChange={(checked) => setIsAnonymous(checked)}
               />
@@ -379,7 +376,7 @@ function DetailsPopup({
                   ? false
                   : true) || isClicked
               }
-              className="bg-indigo-600 hover:bg-indigo-800  w-40"
+              className="bg-gray-800 hover:bg-black  w-40"
               onClick={() => {
                 setIsClicked(true);
                 onGenrateQuestions();
@@ -397,7 +394,7 @@ function DetailsPopup({
                   ? false
                   : true) || isClicked
               }
-              className="bg-indigo-600 w-40 hover:bg-indigo-800"
+              className="bg-gray-800 w-40 hover:bg-black"
               onClick={() => {
                 setIsClicked(true);
                 onManual();
