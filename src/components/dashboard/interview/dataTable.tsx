@@ -78,7 +78,7 @@ function DataTable({ data, interviewId }: DataTableProps) {
         return (
           <Button
             variant="ghost"
-            className={`w-full justify-start font-semibold text-[15px] mb-1 ${column.getIsSorted() ? "text-indigo-600" : "text-black"}`}
+            className={`w-full justify-start font-semibold text-[15px] mb-1 ${column.getIsSorted() ? "text-gray-600" : "text-black"}`}
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
             Name
@@ -88,31 +88,6 @@ function DataTable({ data, interviewId }: DataTableProps) {
       },
       cell: ({ row }) => (
         <div className="flex items-center justify-left min-h-[2.6em]">
-          {/* <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <span className="cursor-pointer mr-2 flex-shrink-0">
-                  <ExternalLink
-                    size={16}
-                    className="text-current hover:text-indigo-600"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      window.open(
-                        `/interviews/${interviewId}?call=${row.original.call_id}`,
-                        "_blank",
-                      );
-                    }}
-                  />
-                </span>
-              </TooltipTrigger>
-              <TooltipContent
-                side="top"
-                className="bg-gray-500 text-white font-normal"
-              >
-                View Response
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider> */}
           <span className="truncate">{row.getValue("name")}</span>
         </div>
       ),
@@ -129,7 +104,7 @@ function DataTable({ data, interviewId }: DataTableProps) {
         return (
           <Button
             variant="ghost"
-            className={`w-full justify-start font-semibold text-[15px] mb-1 ${column.getIsSorted() ? "text-indigo-600" : "text-black"}`}
+            className={`w-full justify-start font-semibold text-[15px] mb-1 ${column.getIsSorted() ? "text-gray-600" : "text-black"}`}
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
             Overall Score
@@ -155,7 +130,7 @@ function DataTable({ data, interviewId }: DataTableProps) {
         return (
           <Button
             variant="ghost"
-            className={`w-full justify-start font-semibold text-[15px] mb-1 ${column.getIsSorted() ? "text-indigo-600" : "text-black"}`}
+            className={`w-full justify-start font-semibold text-[15px] mb-1 ${column.getIsSorted() ? "text-gray-600" : "text-black"}`}
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
             Communication Score

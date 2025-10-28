@@ -9,15 +9,14 @@ function SideMenu() {
   const router = useRouter();
 
     return (
-    <aside className="sidebar bg-white w-64 h-full border-r border-gray-200 flex flex-col">
+    <aside className="sidebar bg-white w-full md:w-64 h-auto md:h-full border-b md:border-r border-gray-200 flex flex-col">
       {/* Header Section */}
       
       
       {/* Menu Section */}
-      <div className="flex-1 p-4">
-        <div className="flex flex-col space-y-1">
+        <div className="flex flex-row md:flex-col gap-2 md:gap-0 md:space-y-1 flex-1 p-2 md:p-4">
           <div
-            className={`flex flex-row items-center p-3 rounded-md cursor-pointer transition-colors ${
+            className={`flex flex-row items-center py-1.5 px-2 md:p-3 rounded-md cursor-pointer transition-colors ${
               pathname.endsWith("/dashboard") ||
               pathname.includes("/interviews")
                 ? "bg-gray-100"
@@ -25,8 +24,8 @@ function SideMenu() {
             }`}
             onClick={() => router.push("/dashboard")}
           >
-            <PlayCircle className="w-5 h-5 mr-3 text-gray-700" />
-            <span className={`font-medium ${
+            <PlayCircle className="w-4 h-4 md:w-5 md:h-5 mr-2 md:mr-3 text-gray-700" />
+            <span className={`font-medium leading-tight ${
               pathname.endsWith("/dashboard") ||
               pathname.includes("/interviews")
                 ? "text-gray-900 font-semibold"
@@ -36,15 +35,15 @@ function SideMenu() {
             </span>
           </div>
           <div
-            className={`flex flex-row items-center p-3 rounded-md cursor-pointer transition-colors ${
+            className={`flex flex-row items-center py-1.5 px-2 md:p-3 rounded-md cursor-pointer transition-colors ${
               pathname.endsWith("/interviewers")
                 ? "bg-gray-100"
                 : "hover:bg-gray-50"
             }`}
             onClick={() => router.push("/dashboard/interviewers")}
           >
-            <Headphones className="w-5 h-5 mr-3 text-gray-700" />
-            <span className={`font-medium ${
+            <Headphones className="w-4 h-4 md:w-5 md:h-5 mr-2 md:mr-3 text-gray-700" />
+            <span className={`font-medium leading-tight ${
               pathname.endsWith("/interviewers")
                 ? "text-gray-900 font-semibold"
                 : "text-gray-700"
@@ -53,7 +52,6 @@ function SideMenu() {
             </span>
           </div>
         </div>
-      </div>
     </aside>
   );
 }
