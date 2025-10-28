@@ -22,12 +22,9 @@ function Navbar() {
 
   return (
     <div className="navbar fixed inset-x-0 top-0 bg-white border-b border-gray-200 z-50 h-16 py-4 shadow-sm">
-      <div className="flex items-center justify-between h-full gap-2 px-8 mx-auto">
+      <div className="flex items-center justify-between h-full gap-2 px-4 sm:px-6 md:px-8 mx-auto">
         <div className="flex flex-row gap-3 justify-center items-center">
           <Link href={"/dashboard"} className="flex items-center gap-2">
-            {/* <p className="px-2 py-1 text-2xl font-bold text-black">
-              Weam AI
-            </p> */}
             <svg
               width={32}
               height={32}
@@ -63,7 +60,7 @@ function Navbar() {
               const mainDomain = `${url.protocol}//${url.hostname}${url.port ? ':' + url.port : ''}`;
               window.location.href = mainDomain;
             }}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 hover:bg-black hover:text-white"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to App
