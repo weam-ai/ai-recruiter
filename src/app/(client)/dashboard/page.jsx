@@ -80,7 +80,7 @@ function Interviews() {
       </div>
       
       {/* Cards Section */}
-      <div className="flex flex-wrap gap-x-4">
+      <div className="flex flex-wrap gap-0">
         {/* Create Interview Card */}
         <div onClick={handleCreateInterview} style={{ cursor: 'pointer' }} className="">
           <CreateInterviewCard />
@@ -88,7 +88,7 @@ function Interviews() {
         
         {/* Existing Interviews */}
         {interviewsLoading ? (
-          <div className="h-60 w-56 rounded-md bg-gray-300 flex items-center justify-center ml-1 mr-3">
+          <div className="h-60 w-56 rounded-xl bg-gray-300 flex items-center justify-center ml-1 mr-3">
             <p className="text-gray-600">Loading interviews...</p>
           </div>
         ) : interviews && interviews.length > 0 ? (
@@ -97,8 +97,8 @@ function Interviews() {
           ))
         ) : (
           // No interviews found
-          <div className="rounded-md bg-gray-100 flex items-center justify-center ml-3 p-3">
-            <p className="text-gray-500 text-center text-sm">No interviews yet.<br/>Create your first interview!</p>
+          <div className="h-60 w-56 rounded-xl bg-gray-100 flex items-center justify-center ml-1 mr-3">
+            <p className="text-gray-500 text-center">No interviews yet.<br/>Create your first interview!</p>
           </div>
         )}
       </div>

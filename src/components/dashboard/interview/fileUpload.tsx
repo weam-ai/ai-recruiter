@@ -75,7 +75,7 @@ function FileUpload({
           <input {...getInputProps()} />
           <>
             <>
-              <Inbox className="w-8 h-8 text-black" />
+              <Inbox className="w-8 h-8 text-blue-500" />
               <p className="mt-2 text-sm text-slate-400">Drop PDF Here</p>
             </>
           </>
