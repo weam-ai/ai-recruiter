@@ -112,28 +112,6 @@
   width: 100%;
 }
 
-/* Responsive overrides */
-@media (max-width: 768px) {
-  .grid-layout {
-    display: flex;
-    flex-direction: column;
-    padding-top: 64px; /* keep space for navbar */
-  }
-
-  .sidebar {
-    width: 100%;
-    height: auto;
-    border-right: none;
-    border-bottom: 1px solid #e5e7eb;
-    box-shadow: none;
-  }
-
-  .main-content {
-    height: auto;
-    overflow-y: visible;
-  }
-}
-
 /* Basic fallback styles to ensure visibility */
 .navbar {
   background-color: white;

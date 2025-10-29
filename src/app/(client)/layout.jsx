@@ -21,7 +21,7 @@ export default function ClientLayout({ children }) {
         {isProtectedRoute ? (
           <ProtectedRoute>
             <Navbar />
-            <div className="grid-layout grid grid-cols-1 md:grid-cols-[256px_1fr] h-screen pt-16">
+            <div className="grid-layout grid grid-cols-[256px_1fr] h-screen pt-16">
               <SideMenu />
               <main className="main-content overflow-y-auto bg-white">
                 {children}
