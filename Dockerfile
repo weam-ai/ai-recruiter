@@ -21,7 +21,7 @@ RUN pnpm build
 # Production image, copy all files and run
 FROM base AS runner
 ENV NODE_ENV=production
-ENV PORT=4000
+ENV PORT=3000
 
 # Add a non-root user
 RUN addgroup --system --gid 1001 nodejs
@@ -35,7 +35,7 @@ COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 
 # Expose the application port
-EXPOSE 4000
+EXPOSE 3000
 
 # Start the application
 CMD ["pnpm", "start"]
