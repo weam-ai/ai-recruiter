@@ -27,8 +27,7 @@ export async function GET(res: NextRequest) {
     }
     // Create the LLM model for the interviewers
     const newModel = await retellClient.llm.create({
-      model: "gpt-4o",
-      start_speaker: "agent",
+      model: config.OPENAI_LLM.MODEL,
       general_prompt: RETELL_AGENT_GENERAL_PROMPT,
       general_tools: [
         {

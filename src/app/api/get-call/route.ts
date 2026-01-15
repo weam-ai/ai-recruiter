@@ -107,7 +107,7 @@ export async function POST(request: NextRequest) {
           : "No specific questions provided";
 
         const completion = await openai.chat.completions.create({
-          model: "gpt-4o",
+          model: config.OPENAI_LLM.MODEL,
           messages: [
             {
               role: "system",

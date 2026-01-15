@@ -30,5 +30,8 @@ module.exports = {
     },
     INTERVIEW: {
         TOKEN_EXPIRY_DAYS: 1
+    },
+    OPENAI_LLM: {
+        MODEL: "gpt-5-mini"
     }
 };

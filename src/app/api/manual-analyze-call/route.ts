@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
         // console.log("Generating analytics with prompt length:", prompt.length);
 
         const completion = await openai.chat.completions.create({
-          model: "gpt-4o-mini",
+          model: config.OPENAI_LLM.MODEL,
           messages: [{ role: "user", content: prompt }],
           temperature: 0.3,
         });
