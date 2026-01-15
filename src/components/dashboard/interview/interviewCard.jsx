@@ -88,7 +88,7 @@ function InterviewCard({ interview }) {
 
 
   return (
-    <div className="bg-white relative p-0 mt-4 inline-block cursor-pointer h-60 w-56 ml-1 mr-3 rounded-xl shrink-0 overflow-hidden shadow-md">
+    <div className="bg-white relative p-0 inline-block cursor-pointer h-60 w-56 ml-1 mr-3 max-md:my-3 rounded-xl shrink-0 overflow-hidden shadow-md">
       <div className="p-0 h-full" onClick={handleCardClick}>
         {/* Top purple section with interview name */}
         <div className="w-full h-36 bg-black flex items-center justify-center relative">
